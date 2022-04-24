@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.JbReportMngMapper">
+    <select id="selectJbReportMngList" resultType="com.bonc.jibei.vo.JbReportMngList">
+        select
+        mng.id,
+        mng.station_id as stationId,
+        mng.report_name as reportName,
+        mng.report_year as reportYear,
+        mng.report_quarter as reportQuarter,
+        station.station_name as stationName,
+        type.type_name as stationTypeName,
+        mng.release_time as releaseTime,
+        user.user_name as releaseUserName,
+        mng.model_version as modelVersion,
+        mng.report_status as reportStatus,
+        mng.report_url as reportUrl
+        from
+        jb_report_mng mng
+        inner join jb_station station on mng.station_id = station.station_id and station.is_show=1
+        left join jb_user user on mng.release_user_id = user.user_id and user.is_delete = 0 and user.user_status=1
+        left join jb_station_type type on mng.station_type = type.id and type.is_show=1
+        where 1 =1
+        <if test="year != null">
+            and mng.report_year=#{year}
+        </if>
+        <if test="quarter != null">
+            and mng.report_quarter=#{quarter}
+        </if>
+        <if test="stationType != null">
+            and mng.report_type=#{stationType}
+        </if>
+        <if test="reportStatus != null">
+            and mng.report_status=#{reportStatus}
+        </if>
+        <if test="stationName != null and stationName != ''">
+            and station.station_name like concat('%', #{stationName}, '%')
+        </if>
+        order by mng.report_year desc,report_quarter desc,station.station_name asc
+    </select>
+
+    <select id="selectCount" resultType="int">
+        select
+          count(mng.id) as cnt
+        from
+        jb_report_mng mng
+        inner join jb_station station on mng.station_id = station.station_id and station.is_show=1
+        left join jb_user user on mng.release_user_id = user.user_id and user.is_delete = 0 and user.user_status=1
+        left join jb_station_type type on mng.station_type = type.id and type.is_show=1
+        where 1 =1
+        <if test="year != null">
+            and mng.report_year=#{year}
+        </if>
+        <if test="quarter != null">
+            and mng.report_quarter=#{quarter}
+        </if>
+        <if test="stationType != null">
+            and mng.report_type=#{stationType}
+        </if>
+        <if test="reportStatus != null">
+            and mng.report_status=#{reportStatus}
+        </if>
+        <if test="stationName != null and stationName != ''">
+            and station.station_name like concat('%', #{stationName}, '%')
+        </if>
+    </select>
+</mapper>
