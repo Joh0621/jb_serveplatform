@@ -1,11 +1,7 @@
 package com.bonc.jibei.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 /**
  * @Author: dupengling
@@ -13,7 +9,7 @@ import java.time.LocalDateTime;
  * @Description: TODO
  */
 @Data
-public class JbReportMngPatchPub {
+public class ReportMngPatchPub {
 
 //    @ApiModelProperty("报告id")
 //    private Integer id;

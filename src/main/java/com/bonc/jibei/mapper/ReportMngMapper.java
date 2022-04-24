@@ -1,10 +1,9 @@
 package com.bonc.jibei.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.bonc.jibei.entity.JbReportMng;
-import com.bonc.jibei.vo.JbReportMngIds;
-import com.bonc.jibei.vo.JbReportMngList;
-import org.apache.ibatis.annotations.Insert;
+import com.bonc.jibei.entity.ReportMng;
+import com.bonc.jibei.vo.ReportMngIds;
+import com.bonc.jibei.vo.ReportMngList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
@@ -17,8 +16,8 @@ import java.util.List;
  * @Description: TODO
  */
 @Mapper
-public interface JbReportMngMapper extends  RootMapper<JbReportMng>{
-    List<JbReportMngList> selectJbReportMngList(IPage<?> page, @Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus);
+public interface ReportMngMapper extends  RootMapper<ReportMng>{
+    List<ReportMngList> selectReportMngList(IPage<?> page, @Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus);
     Integer selectCount(@Param("stationName") String stationName,@Param("year") Integer year,@Param("quarter") Integer quarter,@Param("stationType") Integer stationType,@Param("reportStatus") Integer reportStatus);
 
     /**
@@ -29,5 +28,5 @@ public interface JbReportMngMapper extends  RootMapper<JbReportMng>{
             " update jb_report_mng set report_status=1 where id= #{idsList.id}" +
             "</foreach> " +
             "</script>")
-    int updateReportStatusBatch(@Param("idsList") List<JbReportMngIds> idsList);
+    int updateReportStatusBatch(@Param("idsList") List<ReportMngIds> idsList);
 }

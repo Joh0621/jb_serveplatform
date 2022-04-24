@@ -8,7 +8,7 @@ import lombok.Data;
  * @Description: TODO
  */
 @Data
-public class JbReportMngIds {
+public class ReportMngIds {
     Integer  id;
     Integer reportStatus;
 }
