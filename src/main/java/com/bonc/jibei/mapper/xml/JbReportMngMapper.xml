@@ -37,6 +37,9 @@
             and station.station_name like concat('%', #{stationName}, '%')
         </if>
         order by mng.report_year desc,report_quarter desc,station.station_name asc
+        <if test="start != null and size != null">
+            limit #{start}, #{size}
+        </if>
     </select>
 
     <select id="selectCount" resultType="int">
@@ -63,5 +66,14 @@
         <if test="stationName != null and stationName != ''">
             and station.station_name like concat('%', #{stationName}, '%')
         </if>
+    </select>
+
+    <select id="selectDocUrl" resultType="String">
+        select report_url
+        from jb_report_mng mng
+        where id in
+        <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </select>
 </mapper>

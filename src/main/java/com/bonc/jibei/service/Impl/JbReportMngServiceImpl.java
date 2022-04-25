@@ -21,8 +21,14 @@ public class JbReportMngServiceImpl extends ServiceImpl<JbReportMngMapper,JbRepo
     @Resource
     private JbReportMngMapper jbReportMngMapper;
     @Override
-    public List<JbReportMngList> jbReportMngList(IPage<JbReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
-        return jbReportMngMapper.selectJbReportMngList(page,stationName,year,quarter,stationType,reportStatus);
+    public List<JbReportMngList> jbReportMngList(IPage<JbReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus, Long start, Long size) {
+
+        return jbReportMngMapper.selectJbReportMngList(page,stationName,year,quarter,stationType,reportStatus, start, size);
+    }
+
+    @Override
+    public List<String> urlList(List<Integer> ids) {
+        return jbReportMngMapper.selectDocUrl(ids);
     }
 
 }

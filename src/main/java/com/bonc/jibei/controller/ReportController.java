@@ -12,13 +12,17 @@ import com.bonc.jibei.mapper.ReportAuthLogMapper;
 import com.bonc.jibei.service.JbReportMngService;
 
 import com.bonc.jibei.service.ReportAuthLogService;
+import com.bonc.jibei.util.FileDownloadUtil;
 import com.bonc.jibei.vo.JbReportMngList;
 import com.bonc.jibei.vo.JbReportMngPatchPub;
 import io.swagger.annotations.*;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,8 +33,10 @@ import java.util.List;
 @Api(tags = "报告管理接口")
 @RestController
 public class ReportController {
+
     @Resource
     private JbReportMngService jbReportMngService;
+
     @Resource
     private JbReportMngMapper jbReportMngMapper;
 
@@ -39,6 +45,9 @@ public class ReportController {
 
     @Resource
     private ReportAuthLogService reportAuthLogService;
+
+    @Resource
+    private FileDownloadUtil fileDownloadUtil;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -56,10 +65,12 @@ public class ReportController {
     @GetMapping("/report/list")
     public Result jbReportMngList(@ApiIgnore Page<JbReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
         Page<JbReportMngList> jpage = new Page<>(page.getCurrent(), page.getSize());
+        long start = (page.getCurrent() - 1) * page.getSize();
+        long size = page.getSize();
         jpage.setSearchCount(false);
-        List<JbReportMngList> list = jbReportMngService.jbReportMngList(jpage, stationName, year, quarter, stationType, reportStatus);
+        List<JbReportMngList> list = jbReportMngService.jbReportMngList(jpage, stationName, year, quarter, stationType, reportStatus, start, size);
         jpage.setRecords(list);
-        Integer cnt = jbReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
+//        Integer cnt = jbReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
         jpage.setTotal(jbReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus));
         return Result.of(jpage);
     }
@@ -154,5 +165,53 @@ public class ReportController {
         qw.eq("report_id", id);
         List<ReportAuthLog> list = reportAuthLogMapper.selectList(qw);
         return Result.of(list);
+    }
+
+    @ApiOperation(value = "报告管理报告下载")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "idsList", value = "报告id", required = true)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = ReportAuthLog.class),
+    })
+    @GetMapping("/report/reportdownload")
+    @ResponseBody
+    @CrossOrigin
+//    public Result reportDownload(@RequestBody(required = false) JbReportMngPatchPub params, HttpServletResponse response) {
+    public Result reportDownload(@RequestParam(required = false) Integer[] idsList, HttpServletResponse response) {
+        // 获取所有url
+        List<Integer> idList = Arrays.asList(idsList);
+        List<String> fileSrcPaths = jbReportMngService.urlList(idList);
+        // 生成压缩包下载
+        response.addHeader("Access-Allow-Control-Origin","*");
+        fileDownloadUtil.downloadZipFiles(response, fileSrcPaths);
+//        QueryWrapper<ReportAuthLog> qw = new QueryWrapper<>();
+//        qw.eq("report_id", id);
+//        List<ReportAuthLog> list = reportAuthLogMapper.selectList(qw);
+        return Result.of("");
+    }
+
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "idsList", value = "报告id", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布 2=重新生成", required = false),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = JbReportMngList.class),
+    })
+    @ApiOperation(value = "重新生成")
+    @PostMapping("/report/patchcreate")
+    public Result patchUpdateStatus(@RequestParam(required = false) Integer[] idsList) {
+        List<String> msglist = null;
+        for (Integer id : idsList) {
+            if (id == null || id <= 0) {
+                continue;
+            }
+            // 更新报告状态
+            JbReportMng mng = jbReportMngMapper.selectById(id);
+            mng.setReportStatus(2);
+            jbReportMngMapper.updateById(mng);
+        }
+        return Result.of(msglist);
     }
 }

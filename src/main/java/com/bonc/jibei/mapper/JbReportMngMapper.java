@@ -17,12 +17,16 @@ import java.util.List;
  * @Description: TODO
  */
 @Mapper
-public interface JbReportMngMapper extends  RootMapper<JbReportMng>{
-    List<JbReportMngList> selectJbReportMngList(IPage<?> page, @Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus);
-    Integer selectCount(@Param("stationName") String stationName,@Param("year") Integer year,@Param("quarter") Integer quarter,@Param("stationType") Integer stationType,@Param("reportStatus") Integer reportStatus);
+public interface JbReportMngMapper extends RootMapper<JbReportMng> {
+
+    List<JbReportMngList> selectJbReportMngList(IPage<?> page, @Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus, @Param("start") Long start, @Param("size") Long size);
+
+    Integer selectCount(@Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus);
+
+    List<String> selectDocUrl(@Param("ids") List<Integer> ids);
 
     /**
-     *  @description: 批量复核
+     * @description: 批量复核
      */
     @Update("<script>" +
             "<foreach collection='idsList' item='idsList'   separator=';'> " +

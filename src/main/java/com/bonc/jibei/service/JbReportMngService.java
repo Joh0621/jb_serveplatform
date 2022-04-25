@@ -14,5 +14,8 @@ import java.util.List;
  * @Description: TODO
  */
 public interface JbReportMngService extends IService<JbReportMng> {
-    List<JbReportMngList> jbReportMngList(IPage<JbReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus);
+
+    List<JbReportMngList> jbReportMngList(IPage<JbReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus, Long start, Long size);
+
+    List<String> urlList(List<Integer> ids);
 }
