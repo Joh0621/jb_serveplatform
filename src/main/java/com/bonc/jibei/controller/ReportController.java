@@ -4,19 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.api.ResultCode;
-import com.bonc.jibei.entity.JbReportMng;
+import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.entity.ReportAuthLog;
-import com.bonc.jibei.mapper.JbReportMngMapper;
+import com.bonc.jibei.mapper.ReportMngMapper;
 
 import com.bonc.jibei.mapper.ReportAuthLogMapper;
-import com.bonc.jibei.service.JbReportMngService;
-
+import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.service.ReportAuthLogService;
+
 import com.bonc.jibei.util.FileDownloadUtil;
-import com.bonc.jibei.vo.JbReportMngList;
-import com.bonc.jibei.vo.JbReportMngPatchPub;
+import com.bonc.jibei.vo.ReportMngList;
+import com.bonc.jibei.vo.ReportMngPatchPub;
+
 import io.swagger.annotations.*;
-import org.apache.commons.collections4.ListUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -35,10 +35,10 @@ import java.util.List;
 public class ReportController {
 
     @Resource
-    private JbReportMngService jbReportMngService;
+    private ReportMngService reportMngService;
 
     @Resource
-    private JbReportMngMapper jbReportMngMapper;
+    private ReportMngMapper reportMngMapper;
 
     @Resource
     private ReportAuthLogMapper reportAuthLogMapper;
@@ -59,19 +59,19 @@ public class ReportController {
             @ApiImplicitParam(name = "reportStatus", value = "报告状态", required = false),
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK", response = JbReportMngList.class),
+            @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
     })
     @ApiOperation(value = "报告管理列表")
     @GetMapping("/report/list")
-    public Result jbReportMngList(@ApiIgnore Page<JbReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
-        Page<JbReportMngList> jpage = new Page<>(page.getCurrent(), page.getSize());
+    public Result ReportMngList(@ApiIgnore Page<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
+        Page<ReportMngList> jpage = new Page<>(page.getCurrent(), page.getSize());
         long start = (page.getCurrent() - 1) * page.getSize();
         long size = page.getSize();
         jpage.setSearchCount(false);
-        List<JbReportMngList> list = jbReportMngService.jbReportMngList(jpage, stationName, year, quarter, stationType, reportStatus, start, size);
+        List<ReportMngList> list = reportMngService.reportMngList(jpage, stationName, year, quarter, stationType, reportStatus, start, size);
         jpage.setRecords(list);
-//        Integer cnt = jbReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
-        jpage.setTotal(jbReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus));
+//        Integer cnt = reportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
+        jpage.setTotal(reportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus));
         return Result.of(jpage);
     }
 
@@ -84,16 +84,15 @@ public class ReportController {
     @GetMapping("/report/publish")
     public Result updateReportStatus(Integer id, Integer reportStatus, String memo) {
 
-        QueryWrapper<JbReportMng> qw = new QueryWrapper<>();
+        QueryWrapper<ReportMng> qw = new QueryWrapper<>();
         qw.eq("id", id);
 
-        JbReportMng jbReportMng = jbReportMngMapper.selectById(id);
-        if (jbReportMng == null) {
+        ReportMng reportMng = reportMngMapper.selectById(id);
+        if (reportMng == null) {
             return Result.error(ResultCode.NOT_FOUND.getCode(), ResultCode.NOT_FOUND.getMessage());
         }
-        jbReportMng.setReportStatus(reportStatus);
-//        jbReportMng.setReportStatus(1);
-        jbReportMngMapper.updateById(jbReportMng);
+        reportMng.setReportStatus(reportStatus);
+        reportMngMapper.updateById(reportMng);
         reportAuthLogService.insertReportAuth(id, "张章", "复核发布", memo);
         return Result.ok();
     }
@@ -106,31 +105,30 @@ public class ReportController {
     @ApiOperation(value = "报告管理取消发布")
     @GetMapping("/report/pubcancell")
     public Result cancellReportStatus(Integer id, Integer reportStatus, String memo) {
-        QueryWrapper<JbReportMng> qw = new QueryWrapper<>();
+        QueryWrapper<ReportMng> qw = new QueryWrapper<>();
         qw.eq("id", id);
-        JbReportMng jbReportMng = jbReportMngMapper.selectById(id);
-        if (jbReportMng == null) {
+        ReportMng ReportMng = reportMngMapper.selectById(id);
+        if (ReportMng == null) {
             return Result.error(ResultCode.NOT_FOUND.getCode(), ResultCode.NOT_FOUND.getMessage());
         }
-        jbReportMng.setReportStatus(reportStatus);
+        ReportMng.setReportStatus(reportStatus);
 //        jbReportMng.setReportStatus(0);
-        jbReportMngMapper.updateById(jbReportMng);
+        reportMngMapper.updateById(ReportMng);
 
         reportAuthLogService.insertReportAuth(id, "张章", "取消发布", memo);
         return Result.ok();
     }
-
     @ApiImplicitParams({
             @ApiImplicitParam(name = "idsList", value = "报告id", required = true),
             @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布", required = true),
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK", response = JbReportMngList.class),
+            @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
     })
     @ApiOperation(value = "批量复核")
     @PostMapping("/report/patchpublish")
     @ResponseBody
-    public Result patchupdateReportStatus(@RequestBody(required = false) JbReportMngPatchPub params) {
+    public Result patchupdateReportStatus(@RequestBody(required = false) ReportMngPatchPub params) {
         List<String> msglist = null;
         Integer[] idsList = params.getIdsList();
         for (Integer id : idsList) {
@@ -142,12 +140,12 @@ public class ReportController {
 //                msglist.add(obj.getReportYear() + "年第" + obj.getReportQuarter() + "季度,场站类型是" + obj.getStationTypeName() + "的" + obj.getStationName());
 //                continue;
 //            }
-//            QueryWrapper<JbReportMng> mngQw = new QueryWrapper<>();
+//            QueryWrapper<ReportMng> mngQw = new QueryWrapper<>();
 //            mngQw.eq("id", id);
             // 更新报告状态
-            JbReportMng mng = jbReportMngMapper.selectById(id);
+            ReportMng mng = reportMngMapper.selectById(id);
             mng.setReportStatus(1);
-            jbReportMngMapper.updateById(mng);
+            reportMngMapper.updateById(mng);
         }
         return Result.of(msglist);
     }
@@ -177,11 +175,11 @@ public class ReportController {
     @GetMapping("/report/reportdownload")
     @ResponseBody
     @CrossOrigin
-//    public Result reportDownload(@RequestBody(required = false) JbReportMngPatchPub params, HttpServletResponse response) {
+//    public Result reportDownload(@RequestBody(required = false) reportMngPatchPub params, HttpServletResponse response) {
     public Result reportDownload(@RequestParam(required = false) Integer[] idsList, HttpServletResponse response) {
         // 获取所有url
         List<Integer> idList = Arrays.asList(idsList);
-        List<String> fileSrcPaths = jbReportMngService.urlList(idList);
+        List<String> fileSrcPaths = reportMngService.urlList(idList);
         // 生成压缩包下载
         response.addHeader("Access-Allow-Control-Origin","*");
         fileDownloadUtil.downloadZipFiles(response, fileSrcPaths);
@@ -197,7 +195,7 @@ public class ReportController {
             @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布 2=重新生成", required = false),
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK", response = JbReportMngList.class),
+            @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
     })
     @ApiOperation(value = "重新生成")
     @PostMapping("/report/patchcreate")
@@ -208,9 +206,9 @@ public class ReportController {
                 continue;
             }
             // 更新报告状态
-            JbReportMng mng = jbReportMngMapper.selectById(id);
+            ReportMng mng = reportMngMapper.selectById(id);
             mng.setReportStatus(2);
-            jbReportMngMapper.updateById(mng);
+            reportMngMapper.updateById(mng);
         }
         return Result.of(msglist);
     }

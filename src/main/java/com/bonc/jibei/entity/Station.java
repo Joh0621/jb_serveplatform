@@ -13,7 +13,7 @@ import lombok.Data;
  */
 @Data
 @TableName("jb_station")
-public class JbStation {
+public class Station {
     @TableId(type = IdType.AUTO)
     @ApiModelProperty("场站ID")
     private Integer stationId;
