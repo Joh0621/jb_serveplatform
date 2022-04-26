@@ -161,6 +161,12 @@
                 <profileActive>prod</profileActive>
             </properties>
         </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profileActive>test</profileActive>
+            </properties>
+        </profile>
     </profiles>
 
     <build>
@@ -172,6 +178,7 @@
                 <excludes>
                     <exclude>application-dev.properties</exclude>
                     <exclude>application-prod.properties</exclude>
+                    <exclude>application-test.properties</exclude>
                 </excludes>
             </resource>
             <resource>
