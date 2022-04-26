@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.api.ResultCode;
+import com.bonc.jibei.config.WordCfgProperties;
 import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.entity.ReportAuthLog;
 import com.bonc.jibei.mapper.ReportMngMapper;
@@ -12,6 +13,8 @@ import com.bonc.jibei.mapper.ReportAuthLogMapper;
 import com.bonc.jibei.service.ReportMngService;
 
 import com.bonc.jibei.service.ReportAuthLogService;
+import com.bonc.jibei.util.EchartsToPicUtil;
+import com.bonc.jibei.util.FileDownloadUtil;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportMngPatchPub;
 import io.swagger.annotations.*;
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,15 +35,24 @@ import java.util.List;
 @RestController
 public class ReportController {
     @Resource
-    private ReportMngService ReportMngService;
+    private ReportMngService reportMngService;
     @Resource
     private ReportMngMapper ReportMngMapper;
+
+    @Resource
+    private ReportMngMapper reportMngMapper;
 
     @Resource
     private ReportAuthLogMapper reportAuthLogMapper;
 
     @Resource
+    private FileDownloadUtil fileDownloadUtil;
+
+    @Resource
     private ReportAuthLogService reportAuthLogService;
+
+    @Resource
+    private WordCfgProperties wordCfgProperties;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -57,7 +71,7 @@ public class ReportController {
     public Result jbReportMngList(@ApiIgnore Page<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
         Page<ReportMngList> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<ReportMngList> list = ReportMngService.ReportMngList(jpage, stationName, year, quarter, stationType, reportStatus);
+        List<ReportMngList> list = reportMngService.reportMngList(jpage, stationName, year, quarter, stationType, reportStatus);
         jpage.setRecords(list);
         Integer cnt = ReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
         jpage.setTotal(ReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus));
@@ -209,8 +223,8 @@ public class ReportController {
     @ApiOperation(value = "echarts生成")
     @PostMapping("/report/echartscreate")
     public Result echartsCreate() {
-        EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartLine(true), wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(), wordCfgProperties.getResourcePath());
-        EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartBar(true), wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(), wordCfgProperties.getResourcePath());
+       // EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartLine(true), wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(), wordCfgProperties.getResourcePath());
+       // EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartBar(true), wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(), wordCfgProperties.getResourcePath());
         return Result.of("");
     }
 }

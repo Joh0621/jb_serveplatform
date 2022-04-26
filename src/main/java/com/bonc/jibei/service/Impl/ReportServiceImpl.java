@@ -38,9 +38,9 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
 
     @Resource
     private ReportMngMapper reportMngMapper;
-
+//List<ReportModelInter> reportlist
     @Override
-    public int insertReport( List<ReportModelInter> reportlist) {
+    public int insertReport(ReportModelInter obj) {
         String interUrl=wordCfgProperties.getInterfaceUrl();
 
         HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
@@ -52,7 +52,7 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
         String startdate= DateUtil.getDateQrt(true).toString();
         String enddate=DateUtil.getDateQrt(false).toString();
 
-        for (ReportModelInter obj:reportlist){
+       // for (ReportModelInter obj:reportlist){
             Map data1 = new HashMap<>();
             JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),startdate+" 00:00:00",enddate+" 23:59:59");
             JSONObject json1= HttpUtil.httpPost(interUrl+obj.getInterUrl(),jsonstr);
@@ -68,7 +68,7 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
                         });
                     }
                 }
-                continue;
+                //continue;
             }
             //列表
             if (obj.getStationType()==2){
@@ -108,10 +108,8 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
                         val1[i]=arr1.get(keyx).toString();
                     }
                 }
-
-                String pathFile= EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartBar(true),wordCfgProperties.getPngPath(), wordCfgProperties.getOSType());
+                String pathFile= EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartBar(true,wordCfgProperties.getPngPath(),wordCfgProperties.getOSType()),wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(),"");
             }
-
             //折线图
             if (obj.getStationType()==4){
 
@@ -128,13 +126,15 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
             mng.setStationId(obj.getStationId());
             mng.setStationType(obj.getStationType());
             //mng.setReportYear(obj.);
-        }
+            mng.setReportQuarter(0);
+            reportMngMapper.insert(mng);
+       // }
 
         return 0;
     }
 
     @Override
-    public int updateReport(JSONObject jsonObject) {
+    public int updateReport(ReportModelInter reportlist) {
         return 0;
     }
 }

@@ -58,26 +58,12 @@ public class DateUtil {
             return "";
          }
      }
-    //获取当前季度
+
+    /**
+    * 获取上一季度所在年份
+    **/
     public static Integer curQuarter() {
-        LocalDate date=LocalDate.now();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date datePar = sdf.parse(date.toString());
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(datePar);
-        String year = String.valueOf(calendar.get(Calendar.YEAR));
-        int mouth = datePar.getMonth()+1;
-        if(mouth>=1 && mouth<=3){
-            return 1;
-        }else if(mouth>=4 && mouth<=6){
-            return 2;
-        }else if(mouth>=7 && mouth<=9){
-            return 3;
-        }else if(mouth>=10 && mouth<=12){
-            return 4;
-        }else{
-            return null;
-        }
+      return 0;
     }
     /**
      * 上个季度的开始时间

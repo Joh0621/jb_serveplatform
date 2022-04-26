@@ -12,5 +12,5 @@ import java.util.List;
 @Mapper
 public interface ReportModelInterMapper extends  RootMapper<ReportModelInter>{
     List<ReportModelInter> selectReportModelInter(@Param("reportStatus") Integer reportStatus);
-
+    List<ReportModelInter> selectReReportModelInter(@Param("reportStatus") Integer reportStatus);
 }

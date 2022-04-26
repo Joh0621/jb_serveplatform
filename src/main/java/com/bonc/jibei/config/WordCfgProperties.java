@@ -40,4 +40,8 @@ public class WordCfgProperties {
      * echarts图片存储路径
      */
     private String echartsTmp;
+    /**
+     * 接口地址
+     */
+    private String interfaceUrl;
 }

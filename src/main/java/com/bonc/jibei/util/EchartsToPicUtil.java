@@ -159,7 +159,8 @@ public class EchartsToPicUtil {
      *
      * @param isHorizontal 是否水平放置
      */
-    public static String echartBar(boolean isHorizontal) {
+    public static String echartBar(boolean isHorizontal,String pngPath,String OSType) {
+    //public static String echartBar(boolean isHorizontal) {
         String[] citis = {"广州", "深圳", "珠海", "汕头", "韶关", "佛山"};
         int[] datas = {6030, 7800, 5200, 3444, 2666, 5708};
         String[] colors = {"rgb(2,111,230)", "rgb(186,73,46)",

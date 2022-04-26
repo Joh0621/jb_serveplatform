@@ -68,7 +68,7 @@
         </if>
     </select>
 
-    <select id="selectDocUrl" resultType="String">
+    <select id="selectDocUrl" resultType="java.lang.String">
         select report_url
         from jb_report_mng mng
         where id in
