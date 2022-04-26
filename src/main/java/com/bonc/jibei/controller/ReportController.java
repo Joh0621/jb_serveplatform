@@ -4,18 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.api.ResultCode;
-import com.bonc.jibei.entity.ReportMng;
+import com.bonc.jibei.config.WordCfgProperties;
 import com.bonc.jibei.entity.ReportAuthLog;
-import com.bonc.jibei.mapper.ReportMngMapper;
-
+import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.mapper.ReportAuthLogMapper;
-import com.bonc.jibei.service.ReportMngService;
+import com.bonc.jibei.mapper.ReportMngMapper;
 import com.bonc.jibei.service.ReportAuthLogService;
-
+import com.bonc.jibei.service.ReportMngService;
+import com.bonc.jibei.util.EchartsToPicUtil;
 import com.bonc.jibei.util.FileDownloadUtil;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportMngPatchPub;
-
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -48,6 +47,9 @@ public class ReportController {
 
     @Resource
     private FileDownloadUtil fileDownloadUtil;
+
+    @Resource
+    private WordCfgProperties wordCfgProperties;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -189,7 +191,6 @@ public class ReportController {
         return Result.of("");
     }
 
-
     @ApiImplicitParams({
             @ApiImplicitParam(name = "idsList", value = "报告id", required = true),
             @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布 2=重新生成", required = false),
@@ -211,5 +212,18 @@ public class ReportController {
             reportMngMapper.updateById(mng);
         }
         return Result.of(msglist);
+    }
+
+    @ApiImplicitParams({
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
+    })
+    @ApiOperation(value = "echarts生成")
+    @PostMapping("/report/echartscreate")
+    public Result echartsCreate() {
+        EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartLine(true), wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(), wordCfgProperties.getResourcePath());
+        EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartBar(true), wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(), wordCfgProperties.getResourcePath());
+        return Result.of("");
     }
 }

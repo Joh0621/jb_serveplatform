@@ -1,14 +1,12 @@
 package com.bonc.jibei.util;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.bonc.jibei.config.WordCfgProperties;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,13 +22,8 @@ import java.util.zip.ZipOutputStream;
 @Component
 public class FileDownloadUtil {
 
-    // 压缩包路径
-    @Value("${zippath}")
-    private String zipPath;
-
-    // 报告文件路径
-    @Value("${docpath}")
-    private String docPath;
+    @Resource
+    private WordCfgProperties wordCfgProperties;
 
     public HttpServletResponse download(String path, HttpServletResponse response) {
         try {
@@ -69,7 +62,7 @@ public class FileDownloadUtil {
     public void saveZipFiles(List<String> srcfiles, String zipFilePath, String zipFileName) {
         try {
             // 创建文件夹
-            File file = new File(zipPath);
+            File file = new File(wordCfgProperties.getZipPath());
             if (!file.exists()) {
                 file.mkdirs();
             }
@@ -118,7 +111,7 @@ public class FileDownloadUtil {
         try {
             //循环读取文件路径集合，获取每一个文件的路径
             for (String filePath : filePaths) {
-                filePath = docPath + filePath;
+                filePath = wordCfgProperties.getWordPath() + filePath;
                 System.out.println(filePath);
                 File inputFile = new File(filePath);
                 //判断文件是否存在

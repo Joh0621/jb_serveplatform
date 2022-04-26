@@ -1,10 +1,7 @@
 package com.bonc.jibei.task;
 
-import com.bonc.jibei.mapper.ReportModelInterMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * @Author: dupengling
@@ -13,8 +10,8 @@ import javax.annotation.Resource;
  */
 @Component
 public class GenerateReporter {
-    @Resource
-    private ReportModelInterMapper reportModelInterMapper;
+//    @Resource
+//    private ReportModelInterMapper reportModelInterMapper;
 
     //10分钟执行一次
     @Scheduled(cron = "0 0/10 * * * ?")
