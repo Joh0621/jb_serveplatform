@@ -79,7 +79,7 @@ public class ReportController {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理", required = true),
             @ApiImplicitParam(name = "memo", value = "审批意见", required = false),
     })
     @ApiOperation(value = "报告管理复核发布")
@@ -101,7 +101,7 @@ public class ReportController {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理", required = true),
             @ApiImplicitParam(name = "memo", value = "审批意见", required = false),
     })
     @ApiOperation(value = "报告管理取消发布")
@@ -122,7 +122,7 @@ public class ReportController {
     }
     @ApiImplicitParams({
             @ApiImplicitParam(name = "idsList", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理", required = true),
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
@@ -193,7 +193,7 @@ public class ReportController {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "idsList", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布 2=重新生成", required = false),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理 2=重新生成", required = false),
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
