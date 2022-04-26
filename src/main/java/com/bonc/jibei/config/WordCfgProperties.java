@@ -13,10 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix="spring.cfg")
 public class WordCfgProperties {
-
-    /**
-     * 环境标识：windows or linux
-     */
+    //环境标识：windows or linux
     private String OSType;
 
     /**

@@ -1,5 +1,10 @@
 package com.bonc.jibei.util;
 
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.config.Configure;
+import com.deepoove.poi.data.PictureRenderData;
+import com.deepoove.poi.data.PictureType;
+import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
 import com.github.abel533.echarts.axis.CategoryAxis;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.Magic;
@@ -12,11 +17,14 @@ import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.style.ItemStyle;
 import com.github.abel533.echarts.style.itemstyle.Normal;
 import com.google.gson.Gson;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -199,4 +207,55 @@ public class EchartsToPicUtil {
         return new Gson().toJson(option);
     }
 
+
+
+	public static void  testt() {
+		HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
+		Configure config = Configure.builder().bind("list", policy).build();
+		List<Map> list= Lists.newArrayList();
+		for (int i = 0; i < 5; i++) {
+			Map data = new HashMap<>();//通过map存放要填充的数据
+			data.put("year","201"+i);
+			data.put("num",33+i);
+			data.put("num1",33+i);
+			try {
+				data.put("encharts1", new PictureRenderData(500, 300, PictureType.PNG, BytePictureUtils.toByteArray(new FileInputStream("D:\\echartss\\d279ee2f.png"))));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			list.add(data);
+		}
+		Map data = new HashMap<>();//通过map存放要填充的数据
+		data.put("list",list);
+
+		data.put("title", "业绩报表");
+		data.put("userName", "JUVENILESS");
+		data.put("time", "2018-03-24");
+		data.put("sex", "男");
+
+		data.put("saignuser", "男男男");
+		data.put("date", "2022-05-01");
+
+		try {
+			data.put("encharts", new PictureRenderData(500, 300, PictureType.PNG, BytePictureUtils.toByteArray(new FileInputStream("D:\\echartss\\d279ee2f.png"))));
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		XWPFTemplate template = XWPFTemplate.compile("D:\\test\\ccc.docx",config).render(data);//调用模板，填充数据
+		try {
+			FileOutputStream out = new FileOutputStream("d:\\test\\test111.docx");//要导出的文件名
+			template.write(out);
+			out.flush();
+			out.close();
+			template.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void main(String[] args) {
+		EchartsToPicUtil.testt();
+
+
+	}
 }

@@ -3,12 +3,14 @@
 <mapper namespace="com.bonc.jibei.mapper.ReportModelInterMapper">
     <select id="selectReportModelInter" resultType="com.bonc.jibei.vo.ReportModelInter">
         SELECT
-            station.station_id,
-            station.station_type,
-            model.id AS model_id,
-            model_file_url,
-            model.model_version,
-            inter.inter_url
+            station.station_id AS stationId,
+            station.station_type AS stationType,
+            model.id AS modelId ,
+            model.report_name as reportName,
+            model.model_file_url AS modelFileUrl,
+            model.model_version AS modelVersion,
+            inter.inter_url AS interUrl
+
         FROM
             jb_station_model_rel rel
                 INNER JOIN jb_report_model model ON rel.model_id = model.id
@@ -16,6 +18,6 @@
                 AND station.is_show = 1
                 INNER JOIN jb_model_interface_rel inter_rel ON rel.model_id = inter_rel.model_id
                 INNER JOIN jb_report_interface inter ON inter.id = inter_rel.inter_id AND inter.inter_type = model.model_type
-        where rel.station_id not EXISTS (select 1 from jb_report_mng mng where mng.station_id=rel.station_id)
+        where  not EXISTS (select 1 from jb_report_mng mng where mng.station_id=rel.station_id)
     </select>
 </mapper>

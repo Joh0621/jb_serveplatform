@@ -31,4 +31,7 @@ public class ReportInterface {
 
     @ApiModelProperty("接口地址")
     private String interUrl;
+
+    @ApiModelProperty("在模板的占位符")
+    private String placeTag;
 }

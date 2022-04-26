@@ -1,6 +1,7 @@
 package com.bonc.jibei.util;
 
 import com.alibaba.fastjson.JSONObject;
+
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -11,6 +12,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -90,4 +92,5 @@ public class HttpUtil {
         }
         return jsonResult;
     }
+
 }

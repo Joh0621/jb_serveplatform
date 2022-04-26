@@ -1,5 +1,6 @@
 package com.bonc.jibei.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bonc.jibei.mapper.UserMapper;
@@ -14,6 +15,7 @@ import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.xwpf.usermodel.*;
 
 import javax.annotation.Resource;
+import javax.sound.midi.Soundbank;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -208,6 +210,18 @@ public class WordUtil {
                  "header:{age:12}" +
                  "}" +
                 "]}";
+        /**
+
+         jsonStr = "{\"success\":true," +
+         " \"message\":\"ok\", " +
+         " \"code\":\"0\", " +
+         "\"data\":[" +
+         "" +
+         "{'age':12}" +
+         ",{'name':'mmm',age:12}" +
+         "]}";
+
+         */
         //转换成为JSONObject对象
         JSONObject jsonObj =JSONObject.parseObject(jsonStr) ;
 
@@ -272,7 +286,22 @@ public class WordUtil {
         }
     }
     public static void main(String[] args) {
-        WordUtil.writeWord("");
+       // WordUtil.writeWord("");
+        JSONObject jsonstr=JsonUtil.createJson(1,2,"2022-01-01 00:00:00","2022-02-02 23:59:59");
+        JSONObject jsonstr2=JsonUtil.createJson(1,2,"2022-01-01 00:00:00","2022-02-02 23:59:59");
+
+        List<Object> maplist= Lists.newArrayList();
+        maplist.add(jsonstr);
+        maplist.add(jsonstr2);
+        String json = JSON.toJSONString(maplist);
+        List<JSONObject> jsonObjects = JSON.parseArray(json, JSONObject.class);
+        for (JSONObject jsonObject : jsonObjects) {
+            jsonObject.forEach((key, value) -> {
+                System.out.println("key = " + key + ",value=" + value);
+            });
+
+            System.out.println("===================");
+        }
 
 
     }

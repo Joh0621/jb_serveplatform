@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * fgc-portal
- * Created by renguangli at 2021/9/27 6:54 下午
+ * Created by renguangli at 2022/04/07 6:54 下午
  * @since JDK1.8
  */
 @Configuration
@@ -26,25 +26,12 @@ import java.util.ArrayList;
 public class SwaggerConfig {
     @Autowired
     private Environment environment;
-    /*
-    public SwaggerProperties swaggerProperties() {
-        return SwaggerProperties.builder()
-                .apiBasePackage("com.bonc.jibei")
-                .title("冀北模块")
-                .description("冀北后台相关接口文档")
-                .contactName("jibei")
-                .version("1.0")
-                .enableSecurity(false)
-                .build();
-    }
-    */
     @Bean
     public Docket docket() {
         // 设置显示的swagger环境信息
         Profiles profiles = Profiles.of("dev", "prod");
         // 判断是否处在自己设定的环境当中
         boolean flag = environment.acceptsProfiles(profiles);
-
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .groupName("新能源大数据精细化分析与创新服务平台")  // 配置api文档的分组

@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.api.ResultCode;
-import com.bonc.jibei.config.WordCfgProperties;
-import com.bonc.jibei.entity.ReportAuthLog;
 import com.bonc.jibei.entity.ReportMng;
-import com.bonc.jibei.mapper.ReportAuthLogMapper;
+import com.bonc.jibei.entity.ReportAuthLog;
 import com.bonc.jibei.mapper.ReportMngMapper;
-import com.bonc.jibei.service.ReportAuthLogService;
+
+import com.bonc.jibei.mapper.ReportAuthLogMapper;
 import com.bonc.jibei.service.ReportMngService;
-import com.bonc.jibei.util.EchartsToPicUtil;
-import com.bonc.jibei.util.FileDownloadUtil;
+
+import com.bonc.jibei.service.ReportAuthLogService;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportMngPatchPub;
 import io.swagger.annotations.*;
@@ -20,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,24 +29,16 @@ import java.util.List;
 @Api(tags = "报告管理接口")
 @RestController
 public class ReportController {
-
     @Resource
-    private ReportMngService reportMngService;
-
+    private ReportMngService ReportMngService;
     @Resource
-    private ReportMngMapper reportMngMapper;
+    private ReportMngMapper ReportMngMapper;
 
     @Resource
     private ReportAuthLogMapper reportAuthLogMapper;
 
     @Resource
     private ReportAuthLogService reportAuthLogService;
-
-    @Resource
-    private FileDownloadUtil fileDownloadUtil;
-
-    @Resource
-    private WordCfgProperties wordCfgProperties;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -65,21 +54,19 @@ public class ReportController {
     })
     @ApiOperation(value = "报告管理列表")
     @GetMapping("/report/list")
-    public Result ReportMngList(@ApiIgnore Page<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
+    public Result jbReportMngList(@ApiIgnore Page<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
         Page<ReportMngList> jpage = new Page<>(page.getCurrent(), page.getSize());
-        long start = (page.getCurrent() - 1) * page.getSize();
-        long size = page.getSize();
         jpage.setSearchCount(false);
-        List<ReportMngList> list = reportMngService.reportMngList(jpage, stationName, year, quarter, stationType, reportStatus, start, size);
+        List<ReportMngList> list = ReportMngService.ReportMngList(jpage, stationName, year, quarter, stationType, reportStatus);
         jpage.setRecords(list);
-//        Integer cnt = reportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
-        jpage.setTotal(reportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus));
+        Integer cnt = ReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
+        jpage.setTotal(ReportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus));
         return Result.of(jpage);
     }
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布", required = true),
             @ApiImplicitParam(name = "memo", value = "审批意见", required = false),
     })
     @ApiOperation(value = "报告管理复核发布")
@@ -89,19 +76,19 @@ public class ReportController {
         QueryWrapper<ReportMng> qw = new QueryWrapper<>();
         qw.eq("id", id);
 
-        ReportMng reportMng = reportMngMapper.selectById(id);
+        ReportMng reportMng = ReportMngMapper.selectById(id);
         if (reportMng == null) {
             return Result.error(ResultCode.NOT_FOUND.getCode(), ResultCode.NOT_FOUND.getMessage());
         }
         reportMng.setReportStatus(reportStatus);
-        reportMngMapper.updateById(reportMng);
+        ReportMngMapper.updateById(reportMng);
         reportAuthLogService.insertReportAuth(id, "张章", "复核发布", memo);
         return Result.ok();
     }
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布", required = true),
             @ApiImplicitParam(name = "memo", value = "审批意见", required = false),
     })
     @ApiOperation(value = "报告管理取消发布")
@@ -109,20 +96,20 @@ public class ReportController {
     public Result cancellReportStatus(Integer id, Integer reportStatus, String memo) {
         QueryWrapper<ReportMng> qw = new QueryWrapper<>();
         qw.eq("id", id);
-        ReportMng ReportMng = reportMngMapper.selectById(id);
+        ReportMng ReportMng = ReportMngMapper.selectById(id);
         if (ReportMng == null) {
             return Result.error(ResultCode.NOT_FOUND.getCode(), ResultCode.NOT_FOUND.getMessage());
         }
         ReportMng.setReportStatus(reportStatus);
 //        jbReportMng.setReportStatus(0);
-        reportMngMapper.updateById(ReportMng);
+        ReportMngMapper.updateById(ReportMng);
 
         reportAuthLogService.insertReportAuth(id, "张章", "取消发布", memo);
         return Result.ok();
     }
     @ApiImplicitParams({
             @ApiImplicitParam(name = "idsList", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,1=发布.0=没发布", required = true),
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
