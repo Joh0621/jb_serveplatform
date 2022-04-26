@@ -3,6 +3,7 @@ package com.bonc.jibei.task;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.vo.ReportModelInter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * @Description: 自动生成报告
  */
 @Component
+@EnableScheduling
 public class GenerateReporter {
     @Resource
     private ReportModelInterMapper reportModelInterMapper;

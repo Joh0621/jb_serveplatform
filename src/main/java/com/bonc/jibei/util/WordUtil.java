@@ -201,7 +201,7 @@ public class WordUtil {
         template.close();
         return "";
     }
-    public static void  writeWord(String  jsonStr) {
+    public static void  writeWord1(String  jsonStr) {
          jsonStr = "{\"success\":true," +
                 " \"message\":\"ok\", " +
                  " \"code\":\"0\", " +
@@ -241,21 +241,30 @@ public class WordUtil {
         HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
         Configure config = Configure.builder().bind("list", policy).build();
         List<Map> list= Lists.newArrayList();
+        /*
         for (int i = 1; i < 5; i++) {
             Map data = new HashMap<>();//通过map存放要填充的数据
-            data.put("year","2021");
+            data.put("year1","2021");
             data.put("quarter",i);
             data.put("num",33+i);
             data.put("num1",33+i);
             list.add(data);
         }
+        */
         for (int i = 1; i < 5; i++) {
             Map data = new HashMap<>();//通过map存放要填充的数据
-            data.put("year","2022");
-            data.put("quarter",i);
-            data.put("num",33+i*20);
-            data.put("num1",33+i*30);
+            data.put("year1","2022");
+            //data.put("quarter",i);
+           // data.put("num",33+i*20);
+          //  data.put("num1",33+i*30);
+            try {
+                data.put("encharts", new PictureRenderData(500, 300, PictureType.PNG, BytePictureUtils.toByteArray(new FileInputStream("D:\\echarts\\df27f3fc.png"))));
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
             list.add(data);
+
         }
         Map data = new HashMap<>();//通过map存放要填充的数据
         data.put("list",list);
@@ -286,7 +295,8 @@ public class WordUtil {
         }
     }
     public static void main(String[] args) {
-       // WordUtil.writeWord("");
+        WordUtil.writeWord();
+        /*
         JSONObject jsonstr=JsonUtil.createJson(1,2,"2022-01-01 00:00:00","2022-02-02 23:59:59");
         JSONObject jsonstr2=JsonUtil.createJson(1,2,"2022-01-01 00:00:00","2022-02-02 23:59:59");
 
@@ -302,7 +312,7 @@ public class WordUtil {
 
             System.out.println("===================");
         }
-
+    */
 
     }
 

@@ -156,7 +156,6 @@ public class EchartsToPicUtil {
 
     /**
      * 柱状图
-     *
      * @param isHorizontal 是否水平放置
      */
     public static String echartBar(boolean isHorizontal,String pngPath,String OSType) {

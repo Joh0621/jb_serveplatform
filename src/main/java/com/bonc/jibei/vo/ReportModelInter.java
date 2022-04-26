@@ -10,6 +10,10 @@ import lombok.Data;
  */
 @Data
 public class ReportModelInter {
+
+    @ApiModelProperty("报告管理id")
+    private Integer id;
+
     @ApiModelProperty("场站ID")
     private Integer stationId;
 

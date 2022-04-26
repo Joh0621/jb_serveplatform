@@ -207,7 +207,7 @@ public class ReportController {
             }
             // 更新报告状态
             ReportMng mng = reportMngMapper.selectById(id);
-            mng.setReportStatus(2);
+            mng.setReportStatus(2);//放到队列
             reportMngMapper.updateById(mng);
         }
         return Result.of(msglist);

@@ -38,7 +38,6 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
 
     @Resource
     private ReportMngMapper reportMngMapper;
-//List<ReportModelInter> reportlist
     @Override
     public int insertReport(ReportModelInter obj) {
         String interUrl=wordCfgProperties.getInterfaceUrl();
