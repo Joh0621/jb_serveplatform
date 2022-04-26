@@ -22,9 +22,9 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
     private ReportMngMapper reportMngMapper;
 
     @Override
-    public List<ReportMngList> reportMngList(IPage<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
+    public List<ReportMngList> reportMngList(IPage<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus, Long start, Long size) {
 
-        return reportMngMapper.selectReportMngList(page,stationName,year,quarter,stationType,reportStatus);
+        return reportMngMapper.selectReportMngList(page,stationName,year,quarter,stationType,reportStatus, start, size);
     }
 
     @Override

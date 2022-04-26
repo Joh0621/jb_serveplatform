@@ -13,7 +13,7 @@
     <groupId>com.bonc</groupId>
     <artifactId>jibei</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <description>jb_serveplatform</description>
 
     <properties>
@@ -170,7 +170,7 @@
     </profiles>
 
     <build>
-        <finalName>jibei-apis</finalName>
+        <finalName>reportmng</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

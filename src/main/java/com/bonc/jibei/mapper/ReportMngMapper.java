@@ -18,7 +18,7 @@ import java.util.List;
 @Mapper
 public interface ReportMngMapper extends RootMapper<ReportMng> {
 
-    List<ReportMngList> selectReportMngList(IPage<?> page, @Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus);
+    List<ReportMngList> selectReportMngList(IPage<?> page, @Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus, @Param("start") Long start, @Param("size") Long size);
 
     Integer selectCount(@Param("stationName") String stationName, @Param("year") Integer year, @Param("quarter") Integer quarter, @Param("stationType") Integer stationType, @Param("reportStatus") Integer reportStatus);
 

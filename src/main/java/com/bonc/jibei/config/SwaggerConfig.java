@@ -29,7 +29,7 @@ public class SwaggerConfig {
     @Bean
     public Docket docket() {
         // 设置显示的swagger环境信息
-        Profiles profiles = Profiles.of("dev", "prod");
+        Profiles profiles = Profiles.of("dev", "prod", "test");
         // 判断是否处在自己设定的环境当中
         boolean flag = environment.acceptsProfiles(profiles);
         return new Docket(DocumentationType.SWAGGER_2)
