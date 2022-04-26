@@ -2,6 +2,7 @@ package com.bonc.jibei.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @Table(name="jb_report_mng")
+@TableName("jb_report_mng")
 public class ReportMng {
     @TableId(type = IdType.AUTO)
     private Integer id;
