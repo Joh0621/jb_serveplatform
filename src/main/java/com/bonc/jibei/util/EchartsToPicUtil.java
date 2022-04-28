@@ -460,6 +460,7 @@ public class EchartsToPicUtil {
         echartBar(true,title,xData,yData);
         */
         //柱状|线状图
+        /*
         double[][] yData = new double[][]{{2.0, 2.2, 3.3}, {2.0, 4.9, 7.0}, {12.0, 4.9, 17.0}};
         String[] xData =new String[]{"Mon", "Tue", "Wed"};
 
@@ -468,5 +469,6 @@ public class EchartsToPicUtil {
         String []  type = new String[]{"Bar", "Line","Line"};
         String title = "地市数据";
         echartBarand(true, title, xData, yData,type , yBarName);
+        */
     }
 }

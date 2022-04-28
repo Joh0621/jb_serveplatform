@@ -26,6 +26,12 @@ public class ReportModelInter {
     @ApiModelProperty("模板ID")
     private Integer modelId;
 
+    @ApiModelProperty("年份")
+    private Integer reportYear;
+
+    @ApiModelProperty("季度")
+    private Integer reportQuarty;
+
     @ApiModelProperty("模板版本号")
     private String modelVersion;
 
