@@ -62,14 +62,35 @@ public class DateUtil {
     /**
     * 获取上一季度所在年份
     **/
-    public static Integer curQuarter() {
-      return 0;
+    public static Integer lastQrtYear() {
+        int n= LocalDate.now().getMonthValue();
+        int y=LocalDate.now().getYear();
+        int m=(n-1)/3;
+        return m>0?y:y-1;
+    }
+    /**
+     * 获取上一季度
+     **/
+    public static Integer lastQrt() {
+        int n= LocalDate.now().getMonthValue();
+        n=((n-1)/3+3)%4+1;
+        return n;
     }
     /**
      * 上个季度的开始时间
      * @param
      */
     public static String lastQrtStart(){
+        /**
+         * LocalDate now = LocalDate.of(2021,1,2);
+         *         Month month = now.getMonth().firstMonthOfQuarter();
+         *         LocalDate endTime = LocalDate.of(now.getYear(), month.getValue(), 1);
+         *         LocalDate startTime = endTime.minusMonths(3);
+         *         System.out.println(startTime);
+         *         System.out.println(endTime);
+         */
+
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.set(Calendar.MONTH, ((int) startCalendar.get(Calendar.MONTH) / 3 - 1) * 3);
@@ -119,6 +140,6 @@ public class DateUtil {
        // System.out.println(DateUtil.getDateQrt(true).toString());
         System.out.println(lastQrtStart());
         System.out.println(lastQrtEnd());
-        System.out.println(curQuarter());
+//        System.out.println(curQuarter());
     }
 }

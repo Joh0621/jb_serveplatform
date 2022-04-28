@@ -9,8 +9,9 @@
             model.report_name as reportName,
             model.model_file_url AS modelFileUrl,
             model.model_version AS modelVersion,
-            inter.inter_url AS interUrl
-
+            inter.inter_url AS interUrl,
+            inter.place_tag AS placeTag,
+            inter.pid
         FROM
             jb_station_model_rel rel
                 INNER JOIN jb_report_model model ON rel.model_id = model.id
@@ -18,26 +19,39 @@
                 AND station.is_show = 1
                 INNER JOIN jb_model_interface_rel inter_rel ON rel.model_id = inter_rel.model_id
                 INNER JOIN jb_report_interface inter ON inter.id = inter_rel.inter_id AND inter.inter_type = model.model_type
-        where  not EXISTS (select 1 from jb_report_mng mng where mng.station_id=rel.station_id)
+        where  not EXISTS (select 1 from jb_report_mng mng where mng.station_id=rel.station_id
+        <if test="year != null">
+            and  mng.report_year =#{year}
+        </if>
+        <if test="quarter != null">
+            and  mng.report_quarter =#{quarter}
+        </if>
+          )
     </select>
 
     <select id="selectReReportModelInter" resultType="com.bonc.jibei.vo.ReportModelInter">
         SELECT
+            mng.id,
             station.station_id AS stationId,
             station.station_type AS stationType,
-            model.id AS modelId ,
-            model.report_name as reportName,
+            model.id AS modelId,
+            model.report_name AS reportName,
             model.model_file_url AS modelFileUrl,
             model.model_version AS modelVersion,
-            inter.inter_url AS interUrl
-
+            inter.inter_url AS interUrl,
+            inter.place_tag AS placeTag,
+            inter.pid
         FROM
             jb_station_model_rel rel
                 INNER JOIN jb_report_model model ON rel.model_id = model.id
-                INNER JOIN jb_station station ON rel.station_id = station.station_id
-                AND station.is_show = 1
+                INNER JOIN jb_station station ON rel.station_id = station.station_id AND station.is_show = 1
                 INNER JOIN jb_model_interface_rel inter_rel ON rel.model_id = inter_rel.model_id
                 INNER JOIN jb_report_interface inter ON inter.id = inter_rel.inter_id AND inter.inter_type = model.model_type
-        where   EXISTS (select 1 from jb_report_mng mng where mng.station_id=rel.station_id and mng.report_status=2) and
+                INNER JOIN jb_report_mng mng ON mng.station_id=rel.station_id and mng.report_status=2
+        where  1=1
+        <if test="id != null">
+            and  mng.id =#{id}
+        </if>
+
     </select>
 </mapper>

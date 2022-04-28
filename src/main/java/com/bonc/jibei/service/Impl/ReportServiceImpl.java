@@ -1,8 +1,8 @@
 package com.bonc.jibei.service.Impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
+
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.bonc.jibei.config.WordCfgProperties;
 import com.bonc.jibei.entity.Report;
@@ -11,7 +11,7 @@ import com.bonc.jibei.mapper.ReportMapper;
 import com.bonc.jibei.mapper.ReportMngMapper;
 import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.util.DateUtil;
-import com.bonc.jibei.util.EchartsToPicUtil;
+
 import com.bonc.jibei.util.HttpUtil;
 import com.bonc.jibei.util.JsonUtil;
 import com.bonc.jibei.vo.ReportModelInter;
@@ -51,72 +51,11 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
         String startdate= DateUtil.getDateQrt(true).toString();
         String enddate=DateUtil.getDateQrt(false).toString();
 
-       // for (ReportModelInter obj:reportlist){
+
             Map data1 = new HashMap<>();
             JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),startdate+" 00:00:00",enddate+" 23:59:59");
             JSONObject json1= HttpUtil.httpPost(interUrl+obj.getInterUrl(),jsonstr);
-            //接口类型,1:数据 2：列表；3：柱状图，4：折线图，5：雷达图
-            if (obj.getStationType()==1){
 
-                if (json1!=null){
-                    JSONArray arr=json1.getJSONArray("data");
-                    if (arr.size()>0){
-                        JSONObject arr1=arr.getJSONObject(0);
-                        arr1.forEach((key, value) -> {
-                            data.put(key,value);
-                        });
-                    }
-                }
-                //continue;
-            }
-            //列表
-            if (obj.getStationType()==2){
-                JSONArray arr=json1.getJSONArray("data");
-                for (int i = 0; i < arr.size(); i++) {
-                    Map datax = new HashMap<>();//通过map存放要填充的数据
-                    JSONObject jsonObject= JSON.parseObject(arr.get(i).toString());
-                    jsonObject.forEach((key, value) -> {
-                        datax.put(key,value);
-                    });
-                    list.add(datax);
-                }
-                if (list.size()>0){
-                    data.put(obj.getPlaceTag(),list);
-                }
-            }
-            //柱状图
-            if (obj.getStationType()==3){
-                JSONArray arr=json1.getJSONArray("data");
-                /**
-                 jsonStr = "{\"success\":true," +
-                 " \"message\":\"ok\", " +
-                 " \"code\":\"0\", " +
-                 "\"data\":[" +
-                 "" +
-                 "" +
-                 "{title:'','name':'mmm',age:12}" +
-                 "]}";
-                 **/
-                if (arr.size()>0){
-                    JSONObject arr1=arr.getJSONObject(0);
-                    String[] key1=new String[arr1.size()];
-                    String[] val1=new String[arr1.size()];
-                    int i=0;
-                    for (String keyx:arr1.keySet()){
-                        key1[i]=keyx;
-                        val1[i]=arr1.get(keyx).toString();
-                    }
-                }
-                String pathFile= EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartBar(true,wordCfgProperties.getPngPath(),wordCfgProperties.getOSType()),wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(),"");
-            }
-            //折线图
-            if (obj.getStationType()==4){
-
-            }
-            //雷达图
-            if (obj.getStationType()==5){
-
-            }
             ReportMng mng=new ReportMng();
             mng.setReportStatus(0);//待审核
             mng.setCreateTime(LocalDateTime.now());
@@ -124,16 +63,22 @@ public class ReportServiceImpl  extends ServiceImpl<ReportMapper, Report> implem
             mng.setReportName(obj.getReportName());
             mng.setStationId(obj.getStationId());
             mng.setStationType(obj.getStationType());
-            //mng.setReportYear(obj.);
-            mng.setReportQuarter(0);
+            mng.setReportYear(DateUtil.lastQrtYear());//年份
+            mng.setReportQuarter(DateUtil.lastQrt());// 上一季度
             reportMngMapper.insert(mng);
        // }
-
         return 0;
     }
-
     @Override
     public int updateReport(ReportModelInter reportlist) {
-        return 0;
+
+
+        String reportUrl="";
+        QueryWrapper<ReportMng> queryWrapper=new QueryWrapper<>();
+        queryWrapper.eq("id",reportlist.getInterUrl());
+        ReportMng mng=reportMngMapper.selectById(queryWrapper);
+        mng.setReportUrl(reportUrl);
+        mng.setReportStatus(0);//重置待审核状态
+        return reportMngMapper.updateById(mng);
     }
 }

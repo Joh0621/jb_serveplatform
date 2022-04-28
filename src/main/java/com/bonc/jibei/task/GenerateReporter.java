@@ -2,6 +2,7 @@ package com.bonc.jibei.task;
 
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportService;
+import com.bonc.jibei.util.DateUtil;
 import com.bonc.jibei.vo.ReportModelInter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,9 +24,9 @@ public class GenerateReporter {
     @Resource
     private ReportService reportService;
     //10分钟执行一次
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void createReport() {
-        List<ReportModelInter> reportlist=reportModelInterMapper.selectReReportModelInter(0);
+        List<ReportModelInter> reportlist=reportModelInterMapper.selectReportModelInter(DateUtil.lastQrtYear(),DateUtil.lastQrt());
         for (ReportModelInter obj:reportlist){
             reportService.insertReport(obj);
         }

@@ -3,6 +3,7 @@ package com.bonc.jibei.util;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,10 +15,10 @@ import java.net.URL;
  * @DateTime: 2022/4/23 22:46
  * @Description: TODO
  */
-public final class BytePictureUtils {
-    private static Logger logger = LoggerFactory.getLogger(BytePictureUtils.class);
+public final class PictureUtils {
+    private static Logger logger = LoggerFactory.getLogger(PictureUtils.class);
 
-    public BytePictureUtils() {
+    public PictureUtils() {
     }
 
     public static byte[] getUrlByteArray(String urlPath) {
@@ -105,5 +106,31 @@ public final class BytePictureUtils {
     public static BufferedImage newBufferImage(int width, int height) {
         BufferedImage image = new BufferedImage(width, height, 5);
         return image;
+    }
+    @SuppressWarnings("deprecation")
+    public static String getImageBase(String filePath) {
+        if(filePath==null||filePath==""){
+            return "";
+        }
+        File file = new File(filePath);
+        if(!file.exists()) {
+            return "";
+        }
+        InputStream in = null;
+        byte[] data = null;
+        try {
+            in = new FileInputStream(file);
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        try {
+            data = new byte[in.available()];
+            in.read(data);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BASE64Encoder encoder = new BASE64Encoder();
+        return encoder.encode(data);
     }
 }

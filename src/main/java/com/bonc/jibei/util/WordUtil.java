@@ -1,6 +1,5 @@
 package com.bonc.jibei.util;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bonc.jibei.mapper.UserMapper;
@@ -13,8 +12,10 @@ import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.xwpf.usermodel.*;
+import sun.misc.BASE64Encoder;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 
 import java.io.*;
 import java.util.HashMap;
@@ -210,21 +211,8 @@ public class WordUtil {
                  "header:{age:12}" +
                  "}" +
                 "]}";
-        /**
-
-         jsonStr = "{\"success\":true," +
-         " \"message\":\"ok\", " +
-         " \"code\":\"0\", " +
-         "\"data\":[" +
-         "" +
-         "{'age':12}" +
-         ",{'name':'mmm',age:12}" +
-         "]}";
-
-         */
         //转换成为JSONObject对象
         JSONObject jsonObj =JSONObject.parseObject(jsonStr) ;
-
         JSONArray arr=jsonObj.getJSONArray("data");
         JSONObject arr1=arr.getJSONObject(0);
         JSONObject obj=arr1.getJSONObject("header");
@@ -258,7 +246,7 @@ public class WordUtil {
            // data.put("num",33+i*20);
           //  data.put("num1",33+i*30);
             try {
-                data.put("encharts", new PictureRenderData(500, 300, PictureType.PNG, BytePictureUtils.toByteArray(new FileInputStream("D:\\echarts\\df27f3fc.png"))));
+                data.put("encharts", new PictureRenderData(500, 300, PictureType.PNG, PictureUtils.toByteArray(new FileInputStream("D:\\echarts\\df27f3fc.png"))));
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -278,7 +266,7 @@ public class WordUtil {
         data.put("date", "2022-05-01");
 
         try {
-            data.put("encharts", new PictureRenderData(500, 300, PictureType.PNG, BytePictureUtils.toByteArray(new FileInputStream("D:\\echarts\\df27f3fc.png"))));
+            data.put("encharts", new PictureRenderData(500, 300, PictureType.PNG, PictureUtils.toByteArray(new FileInputStream("D:\\echarts\\df27f3fc.png"))));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -294,8 +282,20 @@ public class WordUtil {
             e.printStackTrace();
         }
     }
+    public static String main(String path) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(ImageIO.read(new File(path)), "jpg", baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] output = baos.toByteArray();
+        BASE64Encoder encoder = new BASE64Encoder();
+        String outstr = encoder.encode(output);
+        return outstr;
+    }
     public static void main(String[] args) {
-        WordUtil.writeWord();
+        //WordUtil.writeWord();
         /*
         JSONObject jsonstr=JsonUtil.createJson(1,2,"2022-01-01 00:00:00","2022-02-02 23:59:59");
         JSONObject jsonstr2=JsonUtil.createJson(1,2,"2022-01-01 00:00:00","2022-02-02 23:59:59");

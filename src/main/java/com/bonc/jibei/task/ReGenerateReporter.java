@@ -31,14 +31,14 @@ public class ReGenerateReporter {
     //10分钟执行一次
     @Scheduled(cron = "0 0/10 * * * ?")
     public void createReport() {
-        List<ReportModelInter> reportlist=reportModelInterMapper.selectReReportModelInter(0);
+        List<ReportModelInter> reportlist=reportModelInterMapper.selectReReportModelInter();
         for (ReportModelInter obj:reportlist){
             //更新报告管理的状态为 在处理
             ReportMng mng=new ReportMng();
             mng.setId(obj.getId());
             mng.setReportStatus(3);
             reportMngMapper.updateById(mng);
-            reportService.insertReport(obj);
+            reportService.updateReport(obj);
         }
     }
 }

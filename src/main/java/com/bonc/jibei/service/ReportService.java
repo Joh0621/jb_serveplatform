@@ -12,5 +12,5 @@ import com.bonc.jibei.vo.ReportModelInter;
  */
 public interface ReportService  extends IService<Report> {
     int insertReport(ReportModelInter reportlist);//新生成报告
-    int updateReport(ReportModelInter reportlist);//重新生成报告
+    int updateReport(ReportModelInter reportModelInter);//重新生成报告
 }
