@@ -197,7 +197,7 @@ public class ReportController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
     })
-    @ApiOperation(value = "重新生成")
+    @ApiOperation(value = "重新生成(放到队列,批量生成用)")
     @PostMapping("/report/patchcreate")
     public Result patchUpdateStatus(@RequestParam(required = false) Integer[] idsList) {
         List<String> msglist = null;
@@ -212,12 +212,21 @@ public class ReportController {
         }
         return Result.of(msglist);
     }
-
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "报告id", required = true),
     })
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
+            @ApiResponse(code = 200, message = "OK", response = ReportMng.class),
     })
+    @ApiOperation(value = "重新生成(立刻生成报告,点每行重新生成按钮时用)")
+    @PostMapping("/report/generate")
+    public Result generateReport(Integer id) {
+        QueryWrapper<ReportMng> mngq=new QueryWrapper<>();
+        mngq.eq("id",id);
+        ReportMng mng=reportMngMapper.selectById(mngq);
+        reportMngService.updateReport(mng);
+        return Result.ok();
+    }
     @ApiOperation(value = "echarts生成")
     @PostMapping("/report/echartscreate")
     public Result echartsCreate() {

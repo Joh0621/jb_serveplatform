@@ -19,5 +19,5 @@ public interface ReportModelInterMapper extends  RootMapper<ReportModelInter>{
     /**
      * 重新生成 报表数据
      */
-    List<ReportModelInter> selectReReportModelInter();
+    List<ReportModelInter> selectReReportModelInter(@Param("id") Integer id);
 }
