@@ -3,12 +3,11 @@ package com.bonc.jibei.task;
 import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.mapper.ReportMngMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
-import com.bonc.jibei.service.ReportService;
+import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.vo.ReportModelInter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -27,18 +26,18 @@ public class ReGenerateReporter {
     private ReportMngMapper reportMngMapper;
 
     @Resource
-    private ReportService reportService;
+    private ReportMngService reportService;
     //10分钟执行一次
     @Scheduled(cron = "0 0/10 * * * ?")
     public void createReport() {
-        List<ReportModelInter> reportlist=reportModelInterMapper.selectReReportModelInter();
+        List<ReportModelInter> reportlist=reportModelInterMapper.selectReReportModelInter(null);
         for (ReportModelInter obj:reportlist){
             //更新报告管理的状态为 在处理
             ReportMng mng=new ReportMng();
             mng.setId(obj.getId());
             mng.setReportStatus(3);
             reportMngMapper.updateById(mng);
-            reportService.updateReport(obj);
+            reportService.updateReport(mng);
         }
     }
 }
