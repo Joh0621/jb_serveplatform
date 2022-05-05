@@ -12,12 +12,23 @@ import java.util.List;
 @Mapper
 public interface ReportModelInterMapper extends  RootMapper<ReportModelInter>{
     /**
-     * 当前时间的上一个季度的数据
+     * 新生成报告得模板
      */
-    List<ReportModelInter> selectReportModelInter(@Param("year") Integer year,@Param("quarter") Integer quarter);
+    List<ReportModelInter> selectReportModel(@Param("year") Integer year,@Param("quarter") Integer quarter);
+    /**
+     * 重新生成报告得模板
+     */
+    List<ReportModelInter> selectReReportModel(@Param("reportStatus") Integer reportStatus);
+
+    /**
+     * 当前时间的上一个季度的数据
+     *   * param:modelType 模板类型；modelId 模板id
+     */
+    List<ReportModelInter> selectReportModelInter(@Param("modelType") Integer modelType,@Param("modelId") Integer modelId);
 
     /**
      * 重新生成 报表数据
+     * param:modelType 模板类型；modelId 模板id
      */
-    List<ReportModelInter> selectReReportModelInter(@Param("id") Integer id);
+    List<ReportModelInter> selectReReportModelInter(@Param("modelType") Integer modelType,@Param("modelId") Integer modelId);
 }

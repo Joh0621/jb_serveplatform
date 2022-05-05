@@ -224,7 +224,7 @@ public class ReportController {
         QueryWrapper<ReportMng> mngq=new QueryWrapper<>();
         mngq.eq("id",id);
         ReportMng mng=reportMngMapper.selectById(mngq);
-        reportMngService.updateReport(mng);
+        reportMngService.updateReport(null,mng);
         return Result.ok();
     }
     @ApiOperation(value = "echarts生成")

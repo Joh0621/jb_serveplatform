@@ -1,6 +1,5 @@
 package com.bonc.jibei.service.Impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -77,25 +76,29 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         String enddate=DateUtil.getDateQrt(false).toString();
 
 
-        Map data1 = new HashMap<>();
-        JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),startdate+" 00:00:00",enddate+" 23:59:59");
-        JSONObject json1= HttpUtil.httpPost(interUrl+obj.getInterUrl(),jsonstr);
+        //Map data1 = new HashMap<>();
+        //JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),startdate+" 00:00:00",enddate+" 23:59:59");
+        //JSONObject json1= HttpUtil.httpPost(interUrl+obj.getInterUrl(),jsonstr);
+        //场站模板所有接口
+        List<ReportModelInter> listInter=reportModelInterMapper.selectReportModelInter(obj.getStationType(),obj.getStationId());
+        for (ReportModelInter iobj:listInter ){
+            //调用接口
 
-        ReportMng mng=new ReportMng();
-        mng.setReportStatus(0);//待审核
-        mng.setCreateTime(LocalDateTime.now());
-        mng.setModelVersion(obj.getModelVersion());
-        mng.setReportName(obj.getReportName());
-        mng.setStationId(obj.getStationId());
-        mng.setStationType(obj.getStationType());
-        mng.setReportYear(DateUtil.lastQrtYear());//年份
-        mng.setReportQuarter(DateUtil.lastQrt());// 上一季度
-        reportMngMapper.insert(mng);
-        // }
+            ReportMng mng=new ReportMng();
+            mng.setReportStatus(0);//待审核
+            mng.setCreateTime(LocalDateTime.now());
+            mng.setModelVersion(obj.getModelVersion());
+            mng.setReportName(obj.getReportName());
+            mng.setStationId(obj.getStationId());
+            mng.setStationType(obj.getStationType());
+            mng.setReportYear(DateUtil.lastQrtYear());//年份
+            mng.setReportQuarter(DateUtil.lastQrt());// 上一季度
+            reportMngMapper.insert(mng);
+        }
         return 0;
     }
     @Override
-    public int updateReport(ReportMng reportMng) {
+    public int updateReport(ReportModelInter reportModelInter,ReportMng reportMng) {
         Integer stationType=reportMng.getStationType();//场站类型
         Integer stationId=reportMng.getStationId();//场站ID
         Integer year=reportMng.getReportYear();//年份
@@ -120,7 +123,8 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         if (StrUtil.isBlank(modelUrl)){
             return 0;
         }
-        List<ReportModelInter> listInter=reportModelInterMapper.selectReReportModelInter(reportMng.getId());
+        //场站模板所有接口
+        List<ReportModelInter> listInter=reportModelInterMapper.selectReReportModelInter(reportMng.getStationType(),reportMng.getStationId());
         for (ReportModelInter obj:listInter ){
 
             //调用接口
