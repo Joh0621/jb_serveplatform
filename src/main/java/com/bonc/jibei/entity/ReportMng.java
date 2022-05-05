@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 /**
  * @Author: dupengling
  * @DateTime: 2022/4/19 12:35
- * @Description: TODO
+ * @Description: 报告管理表
  */
 @Data
 @Table(name="jb_report_mng")

@@ -192,7 +192,7 @@ public class ReportController {
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "idsList", value = "报告id", required = true),
-            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列,3：正在处理 2=重新生成", required = false),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态,0=没发布,1=发布.2:提交到队列(重新生成),3：正在处理 ", required = false),
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportMngList.class),
@@ -218,7 +218,7 @@ public class ReportController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportMng.class),
     })
-    @ApiOperation(value = "重新生成(立刻生成报告,点每行重新生成按钮时用)")
+    @ApiOperation(value = "重新生成(立刻生成报告,点每行重新生成按钮时  测试用)")
     @PostMapping("/report/generate")
     public Result generateReport(Integer id) {
         QueryWrapper<ReportMng> mngq=new QueryWrapper<>();

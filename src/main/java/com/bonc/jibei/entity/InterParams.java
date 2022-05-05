@@ -8,24 +8,27 @@ import lombok.Data;
 
 /**
  * @Author: dupengling
- * @DateTime: 2022/4/19 16:04
- * @Description: 场站类型表
+ * @DateTime: 2022/5/5 16:31
+ * @Description: 模板参数表
  */
 @Data
-@TableName("jb_station_type")
-public class StationType {
+@TableName("jb_inter_params")
+public class InterParams {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty("组织ID")
     private Integer orgId;
 
-    @ApiModelProperty("类型编码")
-    private String typeCode;
+    @ApiModelProperty("接口ID")
+    private Integer interId;
 
-    @ApiModelProperty("类型名称")
-    private String typeName;
+    @ApiModelProperty("参数")
+    private String param;
 
-    @ApiModelProperty("是否显示;1=显示")
-    private Integer isShow;
+    @ApiModelProperty("参数属性")
+    private String paramAttr;
+
+    @ApiModelProperty("参数名")
+    private String paraName;
 }

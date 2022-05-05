@@ -21,16 +21,21 @@ public class ReportAuthLog {
     @TableId(type = IdType.AUTO)
     @ApiModelProperty("场站ID")
     private Integer id;
+
     @ApiModelProperty("报告ID")
     private Integer reportId;
+
     @ApiModelProperty("操作")
     private String operName;
+
     @ApiModelProperty("操作时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime operTime;
+
     @ApiModelProperty("操作人")
     private String operUser;
+
     @ApiModelProperty("意见")
     private String memo;
 }

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 /**
  * @Author: dupengling
  * @DateTime: 2022/4/24 20:06
- * @Description: 报告模板
+ * @Description: 报告模板表
  */
 @Data
 @TableName("jb_report_model")

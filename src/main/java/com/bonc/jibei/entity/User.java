@@ -9,7 +9,7 @@ import lombok.Data;
 /**
  * @Author: dupengling
  * @DateTime: 2022/4/19 17:30
- * @Description: TODO
+ * @Description: 用户表，暂不用
  */
 @Data
 @TableName("jb_user")
