@@ -66,10 +66,10 @@ public class ReportController {
     @GetMapping("/report/list")
     public Result ReportMngList(@ApiIgnore Page<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
         Page<ReportMngList> jpage = new Page<>(page.getCurrent(), page.getSize());
-        long start = (page.getCurrent() - 1) * page.getSize();
-        long size = page.getSize();
+        //long start = (page.getCurrent() - 1) * page.getSize();
+        //long size = page.getSize();
         jpage.setSearchCount(false);
-        List<ReportMngList> list = reportMngService.reportMngList(jpage, stationName, year, quarter, stationType, reportStatus, start, size);
+        List<ReportMngList> list = reportMngService.reportMngList(jpage, stationName, year, quarter, stationType, reportStatus);
         jpage.setRecords(list);
 //        Integer cnt = reportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus);
         jpage.setTotal(reportMngMapper.selectCount(stationName, year, quarter, stationType, reportStatus));
@@ -136,13 +136,8 @@ public class ReportController {
             if (id == null || id <= 0) {
                 continue;
             }
-//            // 记录已复核发布的场站
-//            if (obj.getReportStatus() == 1) {
-//                msglist.add(obj.getReportYear() + "年第" + obj.getReportQuarter() + "季度,场站类型是" + obj.getStationTypeName() + "的" + obj.getStationName());
-//                continue;
-//            }
-//            QueryWrapper<ReportMng> mngQw = new QueryWrapper<>();
-//            mngQw.eq("id", id);
+            // 记录已复核发布的场站
+            reportAuthLogService.insertReportAuth(id, "张章", "复核发布", "");
             // 更新报告状态
             ReportMng mng = reportMngMapper.selectById(id);
             mng.setReportStatus(1);

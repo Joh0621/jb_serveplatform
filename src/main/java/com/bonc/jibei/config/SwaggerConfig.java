@@ -17,8 +17,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 import java.util.ArrayList;
 
 /**
- * fgc-portal
- * Created by renguangli at 2022/04/07 6:54 下午
+ * jibei-serveplatfarm
+ * Created by dupl edit at 2022/04/07 6:54 下午
  * @since JDK1.8
  */
 @Configuration

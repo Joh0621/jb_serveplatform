@@ -53,9 +53,9 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
     private StationModelRelMapper stationModelRelMapper;
 
     @Override
-    public List<ReportMngList> reportMngList(IPage<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus, Long start, Long size) {
+    public List<ReportMngList> reportMngList(IPage<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
 
-        return reportMngMapper.selectReportMngList(page,stationName,year,quarter,stationType,reportStatus, start, size);
+        return reportMngMapper.selectReportMngList(page,stationName,year,quarter,stationType,reportStatus);
     }
 
     @Override
