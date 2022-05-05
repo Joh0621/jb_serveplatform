@@ -17,6 +17,7 @@ import java.util.List;
 public interface ReportMngService extends IService<ReportMng> {
     List<ReportMngList> reportMngList(IPage<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus, Long start, Long size);
     List<String> urlList(List<Integer> ids);
-    int insertReport(ReportModelInter reportlist);//新生成报告
+
+    void insertReport(ReportModelInter reportlist);//新生成报告
     int updateReport(ReportModelInter reportModelInter,ReportMng reportMng);//重新生成报告
 }
