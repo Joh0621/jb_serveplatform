@@ -12,7 +12,7 @@
         model.model_version AS modelVersion
         FROM
         jb_station_model_rel rel
-        INNER JOIN jb_report_model model ON rel.model_id = model.id
+        INNER JOIN jb_report_model model ON rel.model_id = model.id and model.status=1
         INNER JOIN jb_station station ON rel.station_id = station.station_id AND station.is_show = 1
         where  not EXISTS (select 1 from jb_report_mng mng where mng.station_id=rel.station_id
         <if test="year != null">
@@ -34,8 +34,8 @@
         model.model_version AS modelVersion
         FROM
         jb_station_model_rel rel
-        INNER JOIN jb_report_model model ON rel.model_id = model.id
-        INNER JOIN jb_station station ON rel.station_id = station.station_id 	AND station.is_show = 1
+        INNER JOIN jb_report_model model ON rel.model_id = model.id  and model.status=1
+        INNER JOIN jb_station station ON rel.station_id = station.station_id AND station.is_show = 1
         INNER JOIN jb_report_mng mng ON mng.station_id = rel.station_id
         <if test="reportStatus != null">
             AND mng.report_status = #{reportStatus}
