@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public class JsonUtil {
     public static Map<String,Object> getMap(String urlStr){
-        //JSONObject
         return null;
     }
     public static JSONObject createJson(Integer stationId,Integer typeId,String starttime,String endtime){
@@ -22,6 +21,4 @@ public class JsonUtil {
         jsonObject.put("endTime",endtime);
         return jsonObject;
     }
-
-
 }

@@ -23,12 +23,8 @@
  */
 
 package com.bonc.jibei.util;
-
-
 import com.github.abel533.echarts.json.GsonOption;
 import com.github.abel533.echarts.json.GsonUtil;
-import com.github.abel533.echarts.json.OptionUtil;
-
 /**
  * 增强的Option - 主要用于测试、演示
  *
@@ -43,13 +39,10 @@ public class EnhancedOption extends GsonOption {
     public void print() {
         GsonUtil.print(this);
     }
-
     /**
      * 输出到控制台
      */
     public void printPretty() {
         GsonUtil.printPretty(this);
     }
-
-
 }

@@ -13,24 +13,14 @@ import com.bonc.jibei.mapper.ReportModelMapper;
 import com.bonc.jibei.mapper.StationModelRelMapper;
 import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.util.DateUtil;
-import com.bonc.jibei.util.HttpUtil;
-import com.bonc.jibei.util.JsonUtil;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportModelInter;
-import com.deepoove.poi.config.Configure;
-import com.deepoove.poi.policy.HackLoopTableRenderPolicy;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
-import org.apache.commons.compress.utils.Lists;
-import org.apache.poi.util.StringUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 /**
  * @Author: dupengling
  * @DateTime: 2022/4/19 16:17
