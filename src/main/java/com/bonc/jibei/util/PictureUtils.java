@@ -1,9 +1,9 @@
 package com.bonc.jibei.util;
 
+import cn.hutool.core.codec.Base64;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.BASE64Encoder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -130,7 +130,6 @@ public final class PictureUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BASE64Encoder encoder = new BASE64Encoder();
-        return encoder.encode(data);
+        return Base64.encode(data);
     }
 }
