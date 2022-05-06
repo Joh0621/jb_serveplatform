@@ -17,7 +17,6 @@ import java.io.IOException;
  */
 @SpringBootTest(classes = RunApplication.class)
 @RunWith(SpringRunner.class)
-@SpringBootConfiguration
 public class ApplicationTest {
 
     @Resource

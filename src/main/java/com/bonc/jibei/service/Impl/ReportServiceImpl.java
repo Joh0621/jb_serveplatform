@@ -8,12 +8,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bonc.jibei.api.ValueType;
 import com.bonc.jibei.entity.ReportInterface;
+import com.bonc.jibei.entity.User;
 import com.bonc.jibei.mapper.ReportInterfaceMapper;
 import com.bonc.jibei.service.ReportService;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +28,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * jb_serveplatform
@@ -33,13 +38,23 @@ import java.util.*;
  * @author renguangli
  * @date 2022/4/29 11:06
  */
-@Service("reportService")
+@Slf4j
+@Service
 public class ReportServiceImpl implements ReportService {
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    public static void main(String[] args) {
+        List<User> users = new ArrayList<>();
+        users.stream()
+                .collect(Collectors.groupingBy((Function<User, Object>) User::getUserName))
+                .forEach((key, val) -> {
+                    List<User> collect = val.stream().sorted().limit(10).collect(Collectors.toList());
+                });
+    }
 
     @Resource
     private ReportInterfaceMapper reportInterfaceMapper;
-    @Resource
-    private RestTemplate restTemplate;
     @Value("${spring.cfg.interfaceUrl}")
     private String apiBaseUrl;
 
@@ -76,7 +91,16 @@ public class ReportServiceImpl implements ReportService {
         // 发电量后十名机组统计
         ftlData.put("bottom10UnitImg", pic(imgPath + "3.png"));
 
+        // 风电场运行小时数分析图
+        ftlData.put("runTimeHourImg", pic(imgPath + "4.png"));
+        // 季度各月损失运行时间、并网发电时间、待机时间的统计如下图所示。
+        ftlData.put("ssBwDjImg",  pic(imgPath + "5.png"));
+
+        ftlData.put("faultCountImg", pic(imgPath + "6.png")); // 故障次数统计图
+        ftlData.put("faultTimeImg", pic(imgPath + "7.png")); // 故障累积时长图
+
         reportInterfaces.forEach((api -> {
+            log.info("interfaceURL:{}", api.getInterUrl());
             JSONArray jsonArray = this.getArray(api.getInterUrl(), paramsStr);
             for (int i = 0; i < jsonArray.size(); i++) {
                 if (Objects.equals(api.getPlaceTag(), "arr")) {
