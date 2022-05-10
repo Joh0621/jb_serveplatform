@@ -36,23 +36,28 @@ public class ReGenerateReporter {
     public void createReport() throws TemplateException, IOException {
         //先取 场站模板
         Integer reportStatus=2;
-        List<ReportModelInter> StationModellist=reportModelInterMapper.selectReReportModel(reportStatus);
+        List<ReportMng> StationModellist=reportModelInterMapper.selectReReportModel(reportStatus);
         System.out.println(StationModellist);
         //处理场站模板 接口 生成报告
         if (StationModellist!=null && StationModellist.size()>0) {
-            for (ReportModelInter obj : StationModellist) {
+            for (ReportMng obj : StationModellist) {
                 //更新报告管理的状态为 在处理
                 if (obj == null) {
                     continue;
                 }
+                /*
+                int jj=obj.getId();
+                System.out.println("jj="+jj);
                 QueryWrapper<ReportMng> qw=new QueryWrapper<>();
                 qw.eq("id",obj.getId());
                 ReportMng mng=reportMngMapper.selectOne(qw);
+                */
+
                 //ReportMng mng = new ReportMng();
                // mng.setId(obj.getId());
-                mng.setReportStatus(3);
-                reportMngMapper.updateById(mng);
-                int i = reportMngService.updateReport(obj, mng);
+                obj.setReportStatus(3);
+                reportMngMapper.updateById(obj);
+                int i = reportMngService.updateReport(obj);
             }
         }
 

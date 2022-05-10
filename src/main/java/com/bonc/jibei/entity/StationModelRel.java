@@ -23,9 +23,6 @@ public class StationModelRel {
     @ApiModelProperty("场站ID")
     private Integer stationId;
 
-    @ApiModelProperty("场站类型")
-    private Integer stationType;
-
     @ApiModelProperty("模板ID")
     private Integer modelId;
 }
