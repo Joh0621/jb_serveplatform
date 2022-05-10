@@ -11,6 +11,7 @@ import com.bonc.jibei.api.ValueType;
 import com.bonc.jibei.entity.ImgData;
 import com.bonc.jibei.entity.ReportInterface;
 import com.bonc.jibei.mapper.ReportInterfaceMapper;
+import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.util.EchartsToPicUtil;
 import freemarker.template.Configuration;
@@ -45,6 +46,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Resource
     private ReportInterfaceMapper reportInterfaceMapper;
+    @Resource
+    private ReportModelInterMapper reportModelInterMapper;
+
     @Value("${spring.cfg.interfaceUrl}")
     private String apiBaseUrl;
 
@@ -54,9 +58,11 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public String generate(JSONObject params) throws IOException, TemplateException {
         // 报告接口列表
-        QueryWrapper<ReportInterface> qw = new QueryWrapper<>();
-        qw.eq("model_id", params.getString("reportId"));
-        List<ReportInterface> reportInterfaces = reportInterfaceMapper.selectList(null);
+        //QueryWrapper<ReportInterface> qw = new QueryWrapper<>();
+       // qw.eq("model_id", params.getString("reportId"));
+       // List<ReportInterface> reportInterfaces = reportInterfaceMapper.selectList(null);
+       //取得场站模板接口列表
+        List<ReportInterface> reportInterfaces =reportModelInterMapper.selectReportInter(params.getInteger("modelId"));
         // 请求参数
         String paramsStr = JSON.toJSONString(params);
 

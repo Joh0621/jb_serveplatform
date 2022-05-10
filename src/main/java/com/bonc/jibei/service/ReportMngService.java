@@ -21,5 +21,5 @@ public interface ReportMngService extends IService<ReportMng> {
     List<String> urlList(List<Integer> ids);
 
     void insertReport(ReportModelInter reportlist) throws TemplateException, IOException;//新生成报告
-    int updateReport(ReportModelInter reportModelInter,ReportMng reportMng);//重新生成报告
+    int updateReport(ReportModelInter reportModelInter,ReportMng reportMng) throws TemplateException, IOException;//重新生成报告
 }

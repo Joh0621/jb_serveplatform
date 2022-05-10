@@ -12,7 +12,5 @@ import java.io.IOException;
  * @date 2022/4/29 11:06
  */
 public interface ReportService {
-
     String generate(JSONObject params) throws IOException, TemplateException;
-
 }

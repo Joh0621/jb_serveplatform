@@ -73,4 +73,22 @@
             AND inter_rel.model_id = #{modelId}
         </if>
     </select>
+
+    <select id="selectReportInter" resultType="com.bonc.jibei.entity.ReportInterface">
+        SELECT
+        inter.id,
+        inter.org_id AS orgId,
+        inter.inter_type AS interType,
+        inter.inter_name AS interName,
+        inter.inter_desc AS interDesc,
+        inter.inter_url AS interUrl,
+        inter.place_tag AS placeTag,
+        inter.pid
+        FROM
+        jb_model_interface_rel rel
+        INNER JOIN jb_report_interface inter ON rel.inter_id = inter.id
+        <if test="modelId != null">
+            AND rel.model_id =  #{modelId}
+        </if>
+    </select>
 </mapper>

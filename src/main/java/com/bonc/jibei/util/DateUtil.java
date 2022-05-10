@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: dupengling
@@ -86,11 +88,7 @@ public class DateUtil {
          *         Month month = now.getMonth().firstMonthOfQuarter();
          *         LocalDate endTime = LocalDate.of(now.getYear(), month.getValue(), 1);
          *         LocalDate startTime = endTime.minusMonths(3);
-         *         System.out.println(startTime);
-         *         System.out.println(endTime);
          */
-
-
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.set(Calendar.MONTH, ((int) startCalendar.get(Calendar.MONTH) / 3 - 1) * 3);
@@ -135,11 +133,49 @@ public class DateUtil {
         calendar.set(Calendar.MILLISECOND, calendar.getActualMaximum(Calendar.MILLISECOND));
     }
 
+    /**
+     * @param year:指定年
+     * @param qrt：指定季度
+     *  desc: 取指定年和季度的开始和结束时间
+     */
+
+    public static Map<String,String> getStartByYearQrt(int year,int qrt) {
+        Map<String,String> dateMap=new HashMap<>();
+        String startDateTime="";
+        String endDateTime="";
+        switch (qrt){
+            case 1:
+                startDateTime=year+"-01-01 00:00:00";
+                endDateTime=year+"-03-31 23:59:59";
+                break;
+            case 2:
+                startDateTime=year+"-04-01 00:00:00";
+                endDateTime=year+"-06-30 23:59:59";
+                break;
+            case 3:
+                startDateTime=year+"-07-01 00:00:00";
+                endDateTime=year+"-09-30 23:59:59";
+                break;
+            case 4:
+                startDateTime=year+"-10-01 00:00:00";
+                endDateTime=year+"-12-31 23:59:59";
+                break;
+            default:
+                startDateTime=year+"-10-01 00:00:00";
+                endDateTime=year+"-12-31 23:59:59";
+        }
+        dateMap.put("startDate",startDateTime);
+        dateMap.put("endDate",endDateTime);
+        return dateMap;
+    }
     public static void main(String[] args) {
        ;// System.out.println(getDateQrt(true));
        // System.out.println(DateUtil.getDateQrt(true).toString());
-        System.out.println(lastQrtStart());
-        System.out.println(lastQrtEnd());
-//        System.out.println(curQuarter());
+        //System.out.println(lastQrtStart());
+       //System.out.println(lastQrtEnd());
+
+        //Map<String,String> dateMap=DateUtil.getStartByYear(2021,1);
+       // System.out.println(dateMap.get("startDate"));
+       // System.out.println(dateMap.get("endDate"));
     }
 }
