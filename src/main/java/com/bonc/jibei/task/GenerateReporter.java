@@ -28,10 +28,15 @@ public class GenerateReporter {
     @Scheduled(cron = "0 0 0 * * ?")
     public void createReport() throws TemplateException, IOException {
         //先取场站模板
-        List<ReportModelInter> StationModellist=reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(),DateUtil.lastQrt());
+        List<ReportModelInter> stationModellist=reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(),DateUtil.lastQrt());
         //场站模板接口，生成报告
-        for (ReportModelInter obj:StationModellist){
-            reportMngService.insertReport(obj);
+        if (stationModellist.size()>0) {
+            for (ReportModelInter obj : stationModellist) {
+                if (obj == null) {
+                    continue;
+                }
+                reportMngService.insertReport(obj);
+            }
         }
        /*
         for (int i=1;i<=50;i++){

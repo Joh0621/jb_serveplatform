@@ -26,6 +26,8 @@
     <select id="selectReReportModel" resultType="com.bonc.jibei.vo.ReportModelInter">
         SELECT
         mng.id,
+        mng.report_year as reportYear,
+        mng.report_quarter as reportQuarty,
         station.station_id AS stationId,
         station.station_type AS stationType,
         model.id AS modelId,
@@ -40,6 +42,7 @@
         <if test="reportStatus != null">
             AND mng.report_status = #{reportStatus}
         </if>
+        order by status_time asc
     </select>
     <!-- 取模板接口 -->
     <select id="selectReportModelInter" resultType="com.bonc.jibei.vo.ReportModelInter">

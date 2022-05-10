@@ -88,56 +88,21 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         reportMngMapper.insert(mng);
     }
     @Override
-    @Async("threadPoolTaskExecutor")
+    //@Async("threadPoolTaskExecutor")
     public int updateReport(ReportModelInter reportModelInter,ReportMng reportMng) throws TemplateException, IOException {
-        /*
-        Integer stationType=reportMng.getStationType();//场站类型
-        Integer stationId=reportMng.getStationId();//场站ID
-        Integer year=reportMng.getReportYear();//年份
-        Integer quarty=reportMng.getReportQuarter();//季度
-
-        QueryWrapper<StationModelRel> qw=new QueryWrapper<>();
-        qw.eq("station_id",reportMng.getStationId());
-        qw.eq("station_type",reportMng.getStationType());
-        StationModelRel rel=stationModelRelMapper.selectOne(qw);
-        Integer modelId=null;
-        if (rel==null){
-            return 0;
-        }
-        modelId=rel.getModelId();
-        QueryWrapper<ReportModel> reportqw=new QueryWrapper<>();
-        reportqw.eq("id",modelId);
-        ReportModel reportModel=reportModelMapper.selectById(reportqw);
-        if (reportModel==null){
-            return 0;
-        }
-        String modelUrl=reportModel.getModelFileUrl();//模板
-        if (StrUtil.isBlank(modelUrl)){
-            return 0;
-        }
-
-
-        //获得季度的 开始时间和结束时间
-        String startdate= DateUtil.lastQrtStart();
-        String enddate=DateUtil.lastQrtEnd();
-        //JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),obj.getModelId(),startdate+" 00:00:00",enddate+" 23:59:59");
-       //场站模板所有接口
-        List<ReportModelInter> listInter=reportModelInterMapper.selectReReportModelInter(reportMng.getStationType(),reportMng.getStationId());
-        */
-
         //取得场站类型的模板
         QueryWrapper<StationModelRel> qw=new QueryWrapper<>();
-        qw.eq("station_id",reportMng.getStationId());
-        qw.eq("station_type",reportMng.getStationType());
+        qw.eq("station_id",reportModelInter.getStationId());
+        //qw.eq("station_type",reportModelInter.getStationType());
         List<StationModelRel> rell=stationModelRelMapper.selectList(qw);
         Integer modelId=null;
-        if (rell==null){
+        if (rell==null || rell.get(0)==null){
             return 0;
         }
         modelId=rell.get(0).getModelId();
         //获得已知季度的 开始时间和结束时间
-        Map<String,String> d=DateUtil.getStartByYearQrt(reportMng.getReportYear(),reportMng.getReportQuarter());
-        JSONObject jsonstr= JsonUtil.createJson(reportMng.getStationId(),reportMng.getStationType(),modelId,d.get("startDate"),d.get("endDate"));
+        Map<String,String> d=DateUtil.getStartByYearQrt(reportModelInter.getReportYear(),reportModelInter.getReportQuarty());
+        JSONObject jsonstr= JsonUtil.createJson(reportModelInter.getStationId(),reportModelInter.getStationType(),modelId,d.get("startDate"),d.get("endDate"));
         //调用接口 生成报告文件
         String reportUrl=reportService.generate(jsonstr);
         reportMng.setReportUrl(reportUrl);
