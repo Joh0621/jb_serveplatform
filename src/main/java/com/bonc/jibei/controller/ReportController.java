@@ -14,12 +14,14 @@ import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.util.FileDownloadUtil;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportMngPatchPub;
+import freemarker.template.TemplateException;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -215,7 +217,7 @@ public class ReportController {
     })
     @ApiOperation(value = "重新生成(立刻生成报告,点每行重新生成按钮时  测试用)")
     @PostMapping("/report/generate")
-    public Result generateReport(Integer id) {
+    public Result generateReport(Integer id) throws TemplateException, IOException {
         QueryWrapper<ReportMng> mngq=new QueryWrapper<>();
         mngq.eq("id",id);
         ReportMng mng=reportMngMapper.selectById(mngq);

@@ -5,10 +5,12 @@ import com.bonc.jibei.mapper.ReportMngMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.vo.ReportModelInter;
+import freemarker.template.TemplateException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,8 +29,8 @@ public class ReGenerateReporter {
     @Resource
     private ReportMngService reportMngService;
     //5分钟执行一次
-    @Scheduled(cron = "0 0/5 * * * ?")
-    public void createReport() {
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void createReport() throws TemplateException, IOException {
         //先取 场站模板
         Integer reportStatus=2;
         List<ReportModelInter> StationModellist=reportModelInterMapper.selectReReportModel(reportStatus);
@@ -40,9 +42,7 @@ public class ReGenerateReporter {
             mng.setId(obj.getId());
             mng.setReportStatus(3);
             reportMngMapper.updateById(mng);
-            reportMngService.updateReport(obj,mng);
-
-
+            int i=reportMngService.updateReport(obj,mng);
         }
 
     }
