@@ -31,7 +31,7 @@ public class ReGenerateReporter {
     @Resource
     private ReportMngService reportMngService;
     //5分钟执行一次
-    @Scheduled(cron = "0 0/59 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
    // @Async("threadPoolTaskExecutor")
     public void reCreateReport() throws TemplateException, IOException {
         //先取 场站模板

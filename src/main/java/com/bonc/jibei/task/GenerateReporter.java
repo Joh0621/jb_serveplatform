@@ -24,19 +24,20 @@ public class GenerateReporter {
     @Resource
     private ReportMngService reportMngService;
     //1分钟执行一次
-    @Scheduled(cron = "0 0/1 * * * ?")
+    //@Scheduled(cron = "0 0/1 * * * ?")
     //每天0点执行一次
-    //@Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void createReport() throws TemplateException, IOException {
         //先取场站模板
-        List<ReportMng> stationModellist=reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(),DateUtil.lastQrt());
+        List<ReportModelInter> stationModellist=reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(),DateUtil.lastQrt());
         //场站模板接口，生成报告
         if (stationModellist!=null && stationModellist.size()>0) {
-            for (ReportMng obj : stationModellist) {
+            for (ReportModelInter obj : stationModellist) {
                 if (obj == null) {
                     continue;
                 }
-                reportMngService.insertReport(obj);
+                //obj.setId(0);
+                int r=reportMngService.insertReport(obj);
             }
         }
 
