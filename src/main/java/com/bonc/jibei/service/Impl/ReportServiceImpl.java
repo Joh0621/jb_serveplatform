@@ -6,7 +6,6 @@ import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bonc.jibei.api.ValueType;
 import com.bonc.jibei.config.WordCfgProperties;
 import com.bonc.jibei.entity.ImgData;
@@ -18,7 +17,6 @@ import com.bonc.jibei.util.EchartsToPicUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.Version;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +28,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -54,18 +51,22 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public String generate(JSONObject params) throws IOException, TemplateException {
+        //取得场站模板接口列表
+        Integer modelId = params.getInteger("modelId");
         // 报告接口列表
-       //取得场站模板接口列表
-        List<ReportInterface> reportInterfaces =reportModelInterMapper.selectReportInter(params.getInteger("modelId"));
+        List<ReportInterface> reportInterfaces =reportModelInterMapper.selectReportInter(modelId);
+
+        // 接口请求参数
+        params.put("reportId", modelId);
+        params.remove("modelId"); // 删除该参数
+
         // 模版数据
         Map<String, Object> ftlData = new HashMap<>();
 
-        // todo 临时替换图片
-        ftlData.put("staticDeviationSchematicImg", pic(wordCfgProperties.getPngPath() + "img.png")); // 偏航静态偏差示意图
-        ftlData.put("staticDeviationImg", pic(wordCfgProperties.getPngPath() + "13.png")); // 风电机组偏航静态偏差情况统计
-        ftlData.put("staticDeviationEmImg", pic(wordCfgProperties.getPngPath() + "14.png")); // 风电机组偏航缺陷情况
-
-        // todo 查接口，临时代替（偏航）
+        // todo 临时
+        ftlData.put("staticDeviationSchematicImg", ""); // 偏航静态偏差示意图
+        ftlData.put("staticDeviationImg", ""); // 风电机组偏航静态偏差情况统计
+        ftlData.put("staticDeviationEmImg", ""); // 风电机组偏航缺陷情况
         this.setYawEvaluation(ftlData);
 
         reportInterfaces.forEach((api -> {
@@ -139,11 +140,11 @@ public class ReportServiceImpl implements ReportService {
         }));
 
         // Configuration 用于读取ftl文件
-        Configuration configuration = new Configuration(new Version("2.3.9"));
-        configuration.setDefaultEncoding("utf-8");
+        Configuration configuration = new Configuration(Configuration.getVersion());
+        configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
         configuration.setDirectoryForTemplateLoading(new File(wordCfgProperties.getModelPath()));
         // 以 utf-8 的编码读取ftl文件
-        Template template = configuration.getTemplate("1.ftl", "utf-8");
+        Template template = configuration.getTemplate("1.ftl", StandardCharsets.UTF_8.name());
         String fileName = wordCfgProperties.getWordPath() + params.getString("stationId") + ".docx";
         template.process(ftlData, new FileWriter(fileName));
         return fileName;
