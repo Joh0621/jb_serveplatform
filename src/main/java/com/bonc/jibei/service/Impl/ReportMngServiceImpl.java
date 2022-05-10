@@ -88,11 +88,10 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
     }
     @Override
     //@Async("threadPoolTaskExecutor")
-    public int updateReport(ReportModelInter reportModelInter,ReportMng reportMng) throws TemplateException, IOException {
+    public int updateReport(ReportMng reportMng) throws TemplateException, IOException {
         //取得场站类型的模板
         QueryWrapper<StationModelRel> qw=new QueryWrapper<>();
         qw.eq("station_id",reportMng.getStationId());
-        //qw.eq("station_type",reportModelInter.getStationType());
         List<StationModelRel> rell=stationModelRelMapper.selectList(qw);
         Integer modelId=null;
         if (rell==null || rell.get(0)==null){

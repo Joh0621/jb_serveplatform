@@ -139,7 +139,7 @@ public class DateUtil {
      *  desc: 取指定年和季度的开始和结束时间
      */
 
-    public static Map<String,String> getStartByYearQrt(int year,int qrt) {
+    public static Map<String,String> getStartByYearQrt(Integer year,Integer qrt) {
         Map<String,String> dateMap=new HashMap<>();
         String startDateTime="";
         String endDateTime="";

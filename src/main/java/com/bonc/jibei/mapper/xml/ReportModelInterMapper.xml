@@ -23,17 +23,13 @@
         </if>
         )
     </select>
-    <select id="selectReReportModel" resultType="com.bonc.jibei.vo.ReportModelInter">
+    <select id="selectReReportModel" resultType="com.bonc.jibei.entity.ReportMng">
         SELECT
         mng.id,
         mng.report_year as reportYear,
-        mng.report_quarter as reportQuarty,
-        station.station_id AS stationId,
-        station.station_type AS stationType,
-        model.id AS modelId,
-        model.report_name AS reportName,
-        model.model_file_url AS modelFileUrl,
-        model.model_version AS modelVersion
+        mng.report_quarter as reportQuarter,
+        mng.station_id AS stationId,
+        mng.station_type AS stationType
         FROM
         jb_station_model_rel rel
         INNER JOIN jb_report_model model ON rel.model_id = model.id  and model.status=1

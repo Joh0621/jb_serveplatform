@@ -1,6 +1,7 @@
 package com.bonc.jibei.mapper;
 
 import com.bonc.jibei.entity.ReportInterface;
+import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.vo.ReportModelInter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,7 +20,7 @@ public interface ReportModelInterMapper extends  RootMapper<ReportModelInter>{
     /**
      * 重新生成报告得模板
      */
-    List<ReportModelInter> selectReReportModel(@Param("reportStatus") Integer reportStatus);
+    List<ReportMng> selectReReportModel(@Param("reportStatus") Integer reportStatus);
 
     /**
      * 当前时间的上一个季度的数据
