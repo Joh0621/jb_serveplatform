@@ -1,5 +1,4 @@
 package com.bonc.jibei.service.Impl;
-
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -92,7 +91,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
     public int updateReport(ReportModelInter reportModelInter,ReportMng reportMng) throws TemplateException, IOException {
         //取得场站类型的模板
         QueryWrapper<StationModelRel> qw=new QueryWrapper<>();
-        qw.eq("station_id",reportModelInter.getStationId());
+        qw.eq("station_id",reportMng.getStationId());
         //qw.eq("station_type",reportModelInter.getStationType());
         List<StationModelRel> rell=stationModelRelMapper.selectList(qw);
         Integer modelId=null;
@@ -101,8 +100,8 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         }
         modelId=rell.get(0).getModelId();
         //获得已知季度的 开始时间和结束时间
-        Map<String,String> d=DateUtil.getStartByYearQrt(reportModelInter.getReportYear(),reportModelInter.getReportQuarty());
-        JSONObject jsonstr= JsonUtil.createJson(reportModelInter.getStationId(),reportModelInter.getStationType(),modelId,d.get("startDate"),d.get("endDate"));
+        Map<String,String> d=DateUtil.getStartByYearQrt(reportMng.getReportYear(),reportMng.getReportQuarter());
+        JSONObject jsonstr= JsonUtil.createJson(reportMng.getStationId(),reportMng.getStationType(),modelId,d.get("startDate"),d.get("endDate"));
         //调用接口 生成报告文件
         String reportUrl=reportService.generate(jsonstr);
         reportMng.setReportUrl(reportUrl);

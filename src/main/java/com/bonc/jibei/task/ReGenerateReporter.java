@@ -45,9 +45,11 @@ public class ReGenerateReporter {
                 if (obj == null) {
                     continue;
                 }
-                //QueryWrapper<ReportMng> qw=new QueryWrapper<>();
-                ReportMng mng = new ReportMng();
-                mng.setId(obj.getId());
+                QueryWrapper<ReportMng> qw=new QueryWrapper<>();
+                qw.eq("id",obj.getId());
+                ReportMng mng=reportMngMapper.selectById(qw);
+                //ReportMng mng = new ReportMng();
+               // mng.setId(obj.getId());
                 mng.setReportStatus(3);
                 reportMngMapper.updateById(mng);
                 int i = reportMngService.updateReport(obj, mng);
