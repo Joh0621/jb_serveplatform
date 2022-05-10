@@ -59,7 +59,7 @@ public class EchartsToPicUtil {
      * @param yData y轴数据
      * @return
      */
-    public static String echartBar(boolean isHorizontal,String title,String[] xData,double[] yData) {
+    public static String echartBar(boolean isHorizontal,String title,String[] xData,Double[] yData) {
        /**
 		String[] colors = { "rgb(2,111,230)", "rgb(186,73,46)",
 				"rgb(78,154,97)", "rgb(2,111,230)", "rgb(186,73,46)",
@@ -81,7 +81,7 @@ public class EchartsToPicUtil {
         category.data(xData);// 轴数据类别
         // 循环数据
         for (int i = 0; i < xData.length; i++) {
-            double data = yData[i];
+            Double data = yData[i];
 //			String color = colors[i];
             // 类目对应的柱状图
             HashMap<String, Object> map = new HashMap<String, Object>(2);
@@ -208,7 +208,7 @@ public class EchartsToPicUtil {
      * 	 *@param title 图表名
      * @return
      */
-    public static String echartPie(boolean isHorizontal,String title,String[] names,double[] datas){
+    public static String echartPie(boolean isHorizontal,String title,String[] names,Double[] datas){
         //names = new String[]{"Search Engine", "Direct", "Email", "Union Ad", "Video Ads"};
        // datas = new double[]{1048, 735, 580, 484, 300};
         List<Map> list= Lists.newArrayList();
@@ -240,7 +240,7 @@ public class EchartsToPicUtil {
      * 	 *@param title[] 标题 包括主标题和子标题
      * @return
      */
-    public static String echartBarGroup(Boolean isHorizontal,String[] title,String[] yBarName,String[] xData ,double[][] yData){
+    public static String echartBarGroup(Boolean isHorizontal,String[] title,String[] yBarName,String[] xData ,Double[][] yData){
         EnhancedOption option = new EnhancedOption();
         if (title.length>1) {
             Title t=option.title().text(title[0]);
@@ -274,7 +274,7 @@ public class EchartsToPicUtil {
      * 	 * 	 *@param yData y轴显示的多个柱状图数据
      * @return
      */
-    public static String echartStackedBare(Boolean isHorizontal,String title,String[] xData ,String[] yName,double[][] yData){
+    public static String echartStackedBare(Boolean isHorizontal,String title,String[] xData ,String[] yName,Double[][] yData){
         EnhancedOption option = new EnhancedOption();
         option.tooltip().trigger(Trigger.axis).axisPointer().type(PointerType.shadow);
         option.legend(yName);
@@ -287,6 +287,9 @@ public class EchartsToPicUtil {
             Bar bar = new Bar(yName[i]);
             bar.stack("总量");
             bar.itemStyle().normal().label().show(true).position("insideRight");
+            if (i >= yData.length) {
+                break;
+            }
             for (int j = 0; j < yData[i].length; j++) {
                 bar.data(yData[i][j]);
             }

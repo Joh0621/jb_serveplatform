@@ -1,6 +1,7 @@
 package com.bonc.jibei.util;
 
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.io.FileUtil;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,32 +105,11 @@ public final class PictureUtils {
     }
 
     public static BufferedImage newBufferImage(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, 5);
-        return image;
+        return new BufferedImage(width, height, 5);
     }
-    @SuppressWarnings("deprecation")
+
     public static String getImageBase(String filePath) {
-        if(filePath==null||filePath==""){
-            return "";
-        }
-        File file = new File(filePath);
-        if(!file.exists()) {
-            return "";
-        }
-        InputStream in = null;
-        byte[] data = null;
-        try {
-            in = new FileInputStream(file);
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-        }
-        try {
-            data = new byte[in.available()];
-            in.read(data);
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Base64.encode(data);
+        byte[] bytes = FileUtil.readBytes(filePath);
+        return Base64.encode(bytes);
     }
 }

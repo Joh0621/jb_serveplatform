@@ -10,5 +10,10 @@ public interface ValueType {
 
     String NORMAL = "normal";
     String TABLE = "table";
+    String MIX = "mix";
+    String PIE = "pie";
+    String BAR_GROUP = "barGroup";
+    String BAR = "bar";
+    String STACKED_BARE = "stackedBare";
 
 }
