@@ -52,24 +52,21 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
     }
 
     @Override
-   // @Async("threadPoolTaskExecutor")
-    public void insertReport(ReportModelInter obj) throws TemplateException, IOException {
-        //System.out.println("线程" + Thread.currentThread().getName() + " 执行异步任务：" + obj.getModelId());
-       // String interUrl=wordCfgProperties.getInterfaceUrl();
-       // HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
-      //  Configure config = Configure.builder().bind("list", policy).build();
-      //  List<Map> list= Lists.newArrayList();
-      //  Map data = new HashMap<>();
-        //Map data1 = new HashMap<>();
-        //JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),startdate+" 00:00:00",enddate+" 23:59:59");
-        //JSONObject json1= HttpUtil.httpPost(interUrl+obj.getInterUrl(),jsonstr);
-        //场站模板所有接口
-        //List<ReportModelInter> listInter=reportModelInterMapper.selectReportModelInter(obj.getStationType(),obj.getStationId());
-
+    @Async("threadPoolTaskExecutor")
+    public int insertReport(ReportMng reportMng) throws TemplateException, IOException {
+        //取得场站类型的模板
+        QueryWrapper<StationModelRel> qw=new QueryWrapper<>();
+        qw.eq("station_id",reportMng.getStationId());
+        List<StationModelRel> rell=stationModelRelMapper.selectList(qw);
+        Integer modelId=null;
+        if (rell==null || rell.get(0)==null){
+            return 0;
+        }
+        modelId=rell.get(0).getModelId();
         //上季度 开始时间和结束时间
         String startdate= DateUtil.lastQrtStart();
         String enddate=DateUtil.lastQrtEnd();
-        JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),obj.getModelId(),startdate+" 00:00:00",enddate+" 23:59:59");
+        JSONObject jsonstr= JsonUtil.createJson(reportMng.getStationId(),reportMng.getStationType(),modelId,startdate+" 00:00:00",enddate+" 23:59:59");
         //调用接口 生成报告文件
         String reportUrl=reportService.generate(jsonstr);
 
@@ -78,16 +75,16 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         mng.setReportStatus(0);//待审核
         mng.setReportUrl(reportUrl);//生成的报告文件
         mng.setCreateTime(LocalDateTime.now());
-        mng.setModelVersion(obj.getModelVersion());
-        mng.setReportName(obj.getReportName());
-        mng.setStationId(obj.getStationId());
-        mng.setStationType(obj.getStationType());
+        mng.setModelVersion(reportMng.getModelVersion());
+        mng.setReportName(reportMng.getReportName());
+        mng.setStationId(reportMng.getStationId());
+        mng.setStationType(reportMng.getStationType());
         mng.setReportYear(DateUtil.lastQrtYear());//年份
         mng.setReportQuarter(DateUtil.lastQrt());// 上一季度
-        reportMngMapper.insert(mng);
+        return reportMngMapper.insert(mng);
     }
     @Override
-    //@Async("threadPoolTaskExecutor")
+    @Async("threadPoolTaskExecutor")
     public int updateReport(ReportMng reportMng) throws TemplateException, IOException {
         //取得场站类型的模板
         QueryWrapper<StationModelRel> qw=new QueryWrapper<>();

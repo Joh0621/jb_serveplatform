@@ -16,7 +16,7 @@ public interface ReportModelInterMapper extends  RootMapper<ReportModelInter>{
     /**
      * 新生成报告得模板
      */
-    List<ReportModelInter> selectReportModel(@Param("year") Integer year,@Param("quarter") Integer quarter);
+    List<ReportMng> selectReportModel(@Param("year") Integer year,@Param("quarter") Integer quarter);
     /**
      * 重新生成报告得模板
      */

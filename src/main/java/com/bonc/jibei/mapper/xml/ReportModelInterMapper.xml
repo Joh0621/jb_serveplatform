@@ -2,14 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bonc.jibei.mapper.ReportModelInterMapper">
     <!-- 取模板 -->
-    <select id="selectReportModel" resultType="com.bonc.jibei.vo.ReportModelInter">
+    <select id="selectReportModel" resultType="com.bonc.jibei.entity.ReportMng">
         SELECT
         station.station_id AS stationId,
-        station.station_type AS stationType,
-        model.id AS modelId,
-        model.report_name AS reportName,
-        model.model_file_url AS modelFileUrl,
-        model.model_version AS modelVersion
+        station.station_type AS stationType
         FROM
         jb_station_model_rel rel
         INNER JOIN jb_report_model model ON rel.model_id = model.id and model.status=1

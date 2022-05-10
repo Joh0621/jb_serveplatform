@@ -31,9 +31,9 @@ public class ReGenerateReporter {
     @Resource
     private ReportMngService reportMngService;
     //5分钟执行一次
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/59 * * * ?")
    // @Async("threadPoolTaskExecutor")
-    public void createReport() throws TemplateException, IOException {
+    public void reCreateReport() throws TemplateException, IOException {
         //先取 场站模板
         Integer reportStatus=2;
         List<ReportMng> StationModellist=reportModelInterMapper.selectReReportModel(reportStatus);
@@ -45,16 +45,6 @@ public class ReGenerateReporter {
                 if (obj == null) {
                     continue;
                 }
-                /*
-                int jj=obj.getId();
-                System.out.println("jj="+jj);
-                QueryWrapper<ReportMng> qw=new QueryWrapper<>();
-                qw.eq("id",obj.getId());
-                ReportMng mng=reportMngMapper.selectOne(qw);
-                */
-
-                //ReportMng mng = new ReportMng();
-               // mng.setId(obj.getId());
                 obj.setReportStatus(3);
                 reportMngMapper.updateById(obj);
                 int i = reportMngService.updateReport(obj);
