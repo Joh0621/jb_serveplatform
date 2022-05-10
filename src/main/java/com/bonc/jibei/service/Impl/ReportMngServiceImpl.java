@@ -52,7 +52,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
     }
 
     @Override
-    @Async("threadPoolTaskExecutor")
+   // @Async("threadPoolTaskExecutor")
     public void insertReport(ReportModelInter obj) throws TemplateException, IOException {
         //System.out.println("线程" + Thread.currentThread().getName() + " 执行异步任务：" + obj.getModelId());
        // String interUrl=wordCfgProperties.getInterfaceUrl();

@@ -30,7 +30,7 @@ public class GenerateReporter {
         //先取场站模板
         List<ReportModelInter> stationModellist=reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(),DateUtil.lastQrt());
         //场站模板接口，生成报告
-        if (stationModellist.size()>0) {
+        if (stationModellist!=null && stationModellist.size()>0) {
             for (ReportModelInter obj : stationModellist) {
                 if (obj == null) {
                     continue;
