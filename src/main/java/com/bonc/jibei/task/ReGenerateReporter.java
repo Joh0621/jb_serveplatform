@@ -5,9 +5,9 @@ import com.bonc.jibei.mapper.ReportMngMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.vo.ReportModelInter;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.Resource;
 import java.util.List;
 
@@ -17,7 +17,6 @@ import java.util.List;
  * @Description: 重新生成报告
  */
 @Component
-@EnableScheduling
 public class ReGenerateReporter {
     @Resource
     private ReportModelInterMapper reportModelInterMapper;
@@ -26,7 +25,7 @@ public class ReGenerateReporter {
     private ReportMngMapper reportMngMapper;
 
     @Resource
-    private ReportMngService reportService;
+    private ReportMngService reportMngService;
     //1分钟执行一次
     @Scheduled(cron = "0 0/1 * * * ?")
     public void createReport() {
@@ -40,7 +39,7 @@ public class ReGenerateReporter {
             mng.setId(obj.getId());
             mng.setReportStatus(3);
             reportMngMapper.updateById(mng);
-            reportService.updateReport(obj,mng);
+            reportMngService.updateReport(obj,mng);
         }
     }
 }
