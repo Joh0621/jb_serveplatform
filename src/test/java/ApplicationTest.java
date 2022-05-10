@@ -31,6 +31,8 @@ public class ApplicationTest {
         params.put("typeId", 1);
         params.put("startTime", "2022-01-01");
         params.put("endTime", "2022-04-01");
+//        String modelFileName = "1.ftl";
+//        String reportFileName = "风电场运行性能评估分析报告模板V1版本.docx";
         reportService.generate(params);
     }
 

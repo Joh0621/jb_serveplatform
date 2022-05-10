@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bonc.jibei.api.ValueType;
+import com.bonc.jibei.config.WordCfgProperties;
 import com.bonc.jibei.entity.ImgData;
 import com.bonc.jibei.entity.ReportInterface;
 import com.bonc.jibei.mapper.ReportInterfaceMapper;
@@ -19,7 +20,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -45,52 +46,31 @@ public class ReportServiceImpl implements ReportService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Resource
+    private WordCfgProperties wordCfgProperties;
+    @Resource
     private ReportInterfaceMapper reportInterfaceMapper;
     @Resource
     private ReportModelInterMapper reportModelInterMapper;
 
-    @Value("${spring.cfg.interfaceUrl}")
-    private String apiBaseUrl;
-
-    @Value("${spring.cfg.pngPath}")
-    private String imgPath;
-
     @Override
     public String generate(JSONObject params) throws IOException, TemplateException {
         // 报告接口列表
-        //QueryWrapper<ReportInterface> qw = new QueryWrapper<>();
-       // qw.eq("model_id", params.getString("reportId"));
-       // List<ReportInterface> reportInterfaces = reportInterfaceMapper.selectList(null);
        //取得场站模板接口列表
         List<ReportInterface> reportInterfaces =reportModelInterMapper.selectReportInter(params.getInteger("modelId"));
-        // 请求参数
-        String paramsStr = JSON.toJSONString(params);
-
         // 模版数据
         Map<String, Object> ftlData = new HashMap<>();
-        String startTime = params.getString("startTime");
-        String endTime = params.getString("endTime");
-        LocalDate startDate = LocalDate.parse(startTime);
-        LocalDate endDate = LocalDate.parse(endTime);
-
-        // 报告周期
-        ftlData.put("sYear", startDate.getYear());
-        ftlData.put("sMonth", startDate.getMonthValue());
-        ftlData.put("sDay", startDate.getDayOfMonth());
-        ftlData.put("eYear", endDate.getYear());
-        ftlData.put("eMonth", endDate.getMonthValue());
-        ftlData.put("eDay", endDate.getDayOfMonth());
 
         // todo 临时替换图片
-        ftlData.put("staticDeviationSchematicImg", pic(imgPath + "img.png")); // 偏航静态偏差示意图
-        ftlData.put("staticDeviationImg", pic(imgPath + "13.png")); // 风电机组偏航静态偏差情况统计
-        ftlData.put("staticDeviationEmImg", pic(imgPath + "14.png")); // 风电机组偏航缺陷情况
+        ftlData.put("staticDeviationSchematicImg", pic(wordCfgProperties.getPngPath() + "img.png")); // 偏航静态偏差示意图
+        ftlData.put("staticDeviationImg", pic(wordCfgProperties.getPngPath() + "13.png")); // 风电机组偏航静态偏差情况统计
+        ftlData.put("staticDeviationEmImg", pic(wordCfgProperties.getPngPath() + "14.png")); // 风电机组偏航缺陷情况
+
         // todo 查接口，临时代替（偏航）
         this.setYawEvaluation(ftlData);
 
         reportInterfaces.forEach((api -> {
             log.info("interfaceURL:{}", api.getInterUrl());
-            JSONArray jsonArray = this.getArray(api.getInterUrl(), paramsStr);
+            JSONArray jsonArray = this.getArray(api.getInterUrl(), params);
             for (int i = 0; i < jsonArray.size(); i++) {
                 if (Objects.equals(api.getPlaceTag(), "arr")) {
                     this.handleDoubleList(i, jsonArray, ftlData);
@@ -161,11 +141,12 @@ public class ReportServiceImpl implements ReportService {
         // Configuration 用于读取ftl文件
         Configuration configuration = new Configuration(new Version("2.3.9"));
         configuration.setDefaultEncoding("utf-8");
-        configuration.setDirectoryForTemplateLoading(new File("/opt/data/ftl"));
+        configuration.setDirectoryForTemplateLoading(new File(wordCfgProperties.getModelPath()));
         // 以 utf-8 的编码读取ftl文件
         Template template = configuration.getTemplate("1.ftl", "utf-8");
-        template.process(ftlData, new FileWriter("/opt/data/ftl/1.docx"));
-        return "/opt/data/ftl/1.docx";
+        String fileName = wordCfgProperties.getWordPath() + params.getString("stationId") + ".docx";
+        template.process(ftlData, new FileWriter(fileName));
+        return fileName;
     }
 
     private void handleDoubleList(int i, JSONArray jsonArray, Map<String, Object> ftlData) {
@@ -227,15 +208,15 @@ public class ReportServiceImpl implements ReportService {
         ftlData.put(name, value);
     }
 
-    private JSONArray getArray(String url, String jsonParam){
-        return getJSONObject(url,jsonParam).getJSONArray("data");
+    private JSONArray getArray(String url, JSONObject jsonParam){
+        return getJSONObject(url,JSON.toJSONString(jsonParam)).getJSONArray("data");
     }
 
     private JSONObject getJSONObject(String url, String jsonParam){
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=utf-8");
         HttpEntity<String> request = new HttpEntity<>(jsonParam, headers);
-        return restTemplate.postForObject(apiBaseUrl + url, request, JSONObject.class);
+        return restTemplate.postForObject(wordCfgProperties.getInterfaceUrl() + url, request, JSONObject.class);
     }
 
     private void setYawEvaluation(Map<String, Object> data) {

@@ -22,6 +22,11 @@ public class WordCfgProperties {
     private String pngPath;
 
     /**
+     * 生成的模版存放路径
+     */
+    private String modelPath;
+
+    /**
      * 生成的word存放路径
      */
     private String wordPath;
