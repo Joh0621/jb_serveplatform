@@ -7,6 +7,7 @@ import com.bonc.jibei.vo.ReportModelInter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
+import javax.validation.constraints.AssertFalse;
 import java.util.List;
 /**
  * @Author: dupengling

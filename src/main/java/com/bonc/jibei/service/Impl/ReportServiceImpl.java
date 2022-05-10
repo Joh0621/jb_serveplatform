@@ -52,7 +52,7 @@ public class ReportServiceImpl implements ReportService {
     private String imgPath;
 
     @Override
-    public void generate(JSONObject params) throws IOException, TemplateException {
+    public String generate(JSONObject params) throws IOException, TemplateException {
         // 报告接口列表
         QueryWrapper<ReportInterface> qw = new QueryWrapper<>();
         qw.eq("model_id", params.getString("reportId"));
@@ -159,6 +159,7 @@ public class ReportServiceImpl implements ReportService {
         // 以 utf-8 的编码读取ftl文件
         Template template = configuration.getTemplate("1.ftl", "utf-8");
         template.process(ftlData, new FileWriter("/opt/data/ftl/1.docx"));
+        return "/opt/data/ftl/1.docx";
     }
 
     private void handleDoubleList(int i, JSONArray jsonArray, Map<String, Object> ftlData) {

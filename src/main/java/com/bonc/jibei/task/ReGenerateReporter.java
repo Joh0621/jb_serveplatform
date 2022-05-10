@@ -26,13 +26,14 @@ public class ReGenerateReporter {
 
     @Resource
     private ReportMngService reportMngService;
-    //1分钟执行一次
-    @Scheduled(cron = "0 0/1 * * * ?")
+    //5分钟执行一次
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void createReport() {
         //先取 场站模板
         Integer reportStatus=2;
         List<ReportModelInter> StationModellist=reportModelInterMapper.selectReReportModel(reportStatus);
-        //场站模板 接口
+
+        //处理场站模板 接口 生成报告
         for (ReportModelInter obj:StationModellist){
             //更新报告管理的状态为 在处理
             ReportMng mng=new ReportMng();
@@ -40,6 +41,9 @@ public class ReGenerateReporter {
             mng.setReportStatus(3);
             reportMngMapper.updateById(mng);
             reportMngService.updateReport(obj,mng);
+
+
         }
+
     }
 }

@@ -1,5 +1,6 @@
 package com.bonc.jibei.service.Impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,13 +13,17 @@ import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.mapper.ReportModelMapper;
 import com.bonc.jibei.mapper.StationModelRelMapper;
 import com.bonc.jibei.service.ReportMngService;
+import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.util.DateUtil;
+import com.bonc.jibei.util.JsonUtil;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportModelInter;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
+import freemarker.template.TemplateException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 /**
@@ -42,6 +47,9 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
     @Resource
     private StationModelRelMapper stationModelRelMapper;
 
+    @Resource
+    private ReportService reportService;
+
     @Override
     public List<ReportMngList> reportMngList(IPage<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus) {
 
@@ -55,7 +63,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
 
     @Override
     @Async("threadPoolTaskExecutor")
-    public void insertReport(ReportModelInter obj) {
+    public void insertReport(ReportModelInter obj) throws TemplateException, IOException {
         //System.out.println("线程" + Thread.currentThread().getName() + " 执行异步任务：" + obj.getModelId());
        // String interUrl=wordCfgProperties.getInterfaceUrl();
        // HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
@@ -65,16 +73,19 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         //Map data1 = new HashMap<>();
         //JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),startdate+" 00:00:00",enddate+" 23:59:59");
         //JSONObject json1= HttpUtil.httpPost(interUrl+obj.getInterUrl(),jsonstr);
+        //场站模板所有接口
+        //List<ReportModelInter> listInter=reportModelInterMapper.selectReportModelInter(obj.getStationType(),obj.getStationId());
 
         //本季度 开始时间和结束时间
         String startdate= DateUtil.getDateQrt(true).toString();
         String enddate=DateUtil.getDateQrt(false).toString();
-        //场站模板所有接口
-        List<ReportModelInter> listInter=reportModelInterMapper.selectReportModelInter(obj.getStationType(),obj.getStationId());
+        JSONObject jsonstr= JsonUtil.createJson(obj.getStationId(),obj.getStationType(),obj.getModelId(),startdate+" 00:00:00",enddate+" 23:59:59");
         //调用接口 生成报告文件
+        String filex=reportService.generate(jsonstr);
         //生成报告
         ReportMng mng=new ReportMng();
         mng.setReportStatus(0);//待审核
+        mng.setReportUrl(filex);//生成的报告文件
         mng.setCreateTime(LocalDateTime.now());
         mng.setModelVersion(obj.getModelVersion());
         mng.setReportName(obj.getReportName());

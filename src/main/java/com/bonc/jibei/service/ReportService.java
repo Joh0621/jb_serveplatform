@@ -13,6 +13,6 @@ import java.io.IOException;
  */
 public interface ReportService {
 
-    void generate(JSONObject params) throws IOException, TemplateException;
+    String generate(JSONObject params) throws IOException, TemplateException;
 
 }
