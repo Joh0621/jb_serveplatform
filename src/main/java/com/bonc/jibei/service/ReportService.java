@@ -1,5 +1,6 @@
 package com.bonc.jibei.service;
 
+import com.alibaba.fastjson.JSONObject;
 import freemarker.template.TemplateException;
 
 import java.io.IOException;
@@ -12,6 +13,6 @@ import java.io.IOException;
  */
 public interface ReportService {
 
-    public void generate(int reportId) throws IOException, TemplateException;
+    void generate(JSONObject params) throws IOException, TemplateException;
 
 }

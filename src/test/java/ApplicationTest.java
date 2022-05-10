@@ -1,3 +1,4 @@
+import com.alibaba.fastjson.JSONObject;
 import com.bonc.jibei.RunApplication;
 import com.bonc.jibei.service.ReportService;
 import freemarker.template.TemplateException;
@@ -24,7 +25,13 @@ public class ApplicationTest {
 
     @org.junit.Test
     public void testReport() throws TemplateException, IOException {
-        reportService.generate(3);
+        JSONObject params = new JSONObject();
+        params.put("reportId", 3);
+        params.put("stationId", 934);
+        params.put("typeId", 1);
+        params.put("startTime", "2022-01-01");
+        params.put("endTime", "2022-04-01");
+        reportService.generate(params);
     }
 
 }

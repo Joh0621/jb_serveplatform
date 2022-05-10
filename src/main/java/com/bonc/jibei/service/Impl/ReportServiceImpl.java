@@ -48,15 +48,6 @@ public class ReportServiceImpl implements ReportService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public static void main(String[] args) {
-        List<User> users = new ArrayList<>();
-        users.stream()
-                .collect(Collectors.groupingBy((Function<User, Object>) User::getUserName))
-                .forEach((key, val) -> {
-                    List<User> collect = val.stream().sorted().limit(10).collect(Collectors.toList());
-                });
-    }
-
     @Resource
     private ReportInterfaceMapper reportInterfaceMapper;
     @Value("${spring.cfg.interfaceUrl}")
@@ -65,37 +56,36 @@ public class ReportServiceImpl implements ReportService {
     private String imgPath = "/opt/data/ftl/img/";
 
     @Override
-    public void generate(int reportId) throws IOException, TemplateException {
+    public void generate(JSONObject params) throws IOException, TemplateException {
         // 报告接口列表
         QueryWrapper<ReportInterface> qw = new QueryWrapper<>();
-        qw.eq("report_id", reportId);
+        qw.eq("report_id", params.getString("reportId"));
         List<ReportInterface> reportInterfaces = reportInterfaceMapper.selectList(null);
         // 请求参数
-        JSONObject params = new JSONObject();
-        params.put("reportId", reportId);
-        params.put("stationId", 934);
-        params.put("typeId", 1);
-        params.put("startTime", "2022-01-01");
-        params.put("endTime", "2022-04-01");
         String paramsStr = JSON.toJSONString(params);
 
         // 模版数据
         Map<String, Object> ftlData = new HashMap<>();
-        // 报告周期
-        ftlData.put("sYear", "2022");
-        ftlData.put("sMonth", 1);
-        ftlData.put("sDay", 1);
-        ftlData.put("eYear", "2022");
-        ftlData.put("eMonth", 4);
-        ftlData.put("eDay", 1);
+        String startTime = params.getString("startTime");
+        String endTime = params.getString("endTime");
+        LocalDate startDate = LocalDate.parse(startTime);
+        LocalDate endDate = LocalDate.parse(endTime);
 
+        // 报告周期
+        ftlData.put("sYear", startDate.getYear());
+        ftlData.put("sMonth", startDate.getMonthValue());
+        ftlData.put("sDay", startDate.getDayOfMonth());
+        ftlData.put("eYear", endDate.getYear());
+        ftlData.put("eMonth", endDate.getMonthValue());
+        ftlData.put("eDay", endDate.getDayOfMonth());
+
+        // todo 临时替换图片
         ftlData.put("staticDeviationSchematicImg", pic(imgPath + "img.png")); // 偏航静态偏差示意图
         ftlData.put("staticDeviationImg", pic(imgPath + "13.png")); // 风电机组偏航静态偏差情况统计
         ftlData.put("staticDeviationEmImg", pic(imgPath + "14.png")); // 风电机组偏航缺陷情况
-
-        // todo 查接口，临时代替
-
+        // todo 查接口，临时代替（偏航）
         this.setYawEvaluation(ftlData);
+
         reportInterfaces.forEach((api -> {
             log.info("interfaceURL:{}", api.getInterUrl());
             JSONArray jsonArray = this.getArray(api.getInterUrl(), paramsStr);
