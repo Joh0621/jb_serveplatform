@@ -3,7 +3,6 @@ package com.bonc.jibei.service.Impl;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bonc.jibei.api.ValueType;
@@ -32,6 +31,7 @@ import java.util.*;
 
 /**
  * jb_serveplatform
+ *
  * @author renguangli
  * @date 2022/4/29 11:06
  */
@@ -39,7 +39,7 @@ import java.util.*;
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+//    private final RestTemplate restTemplate = new RestTemplate();
 
     @Resource
     private WordCfgProperties wordCfgProperties;
@@ -53,7 +53,7 @@ public class ReportServiceImpl implements ReportService {
         //取得场站模板接口列表
         Integer modelId = params.getInteger("modelId");
         // 报告接口列表
-        List<ReportInterface> reportInterfaces =reportModelInterMapper.selectReportInter(modelId);
+        List<ReportInterface> reportInterfaces = reportModelInterMapper.selectReportInter(modelId);
 
         // 接口请求参数
         params.put("reportId", modelId);
@@ -61,6 +61,8 @@ public class ReportServiceImpl implements ReportService {
 
         // 模版数据
         Map<String, Object> ftlData = new HashMap<>();
+
+        ftlData.put("defaultValue", "--");
 
         // todo 临时
         ftlData.put("staticDeviationSchematicImg", ""); // 偏航静态偏差示意图
@@ -70,6 +72,9 @@ public class ReportServiceImpl implements ReportService {
 
         reportInterfaces.forEach((api -> {
             log.info("interfaceURL:{}", api.getInterUrl());
+            if ("/api/getStationFGAnalysis".equals(api.getInterUrl())) {
+                System.out.println(api);
+            }
             JSONArray jsonArray = this.getArray(api.getInterUrl(), params);
             for (int i = 0; i < jsonArray.size(); i++) {
                 if (Objects.equals(api.getPlaceTag(), "arr")) {
@@ -81,11 +86,21 @@ public class ReportServiceImpl implements ReportService {
                 String name = jsonObject.getString("name");
                 // normal
                 if (ValueType.NORMAL.equals(type)) {
-                    this.handleNormal(jsonObject, ftlData);
+                    Object value = jsonObject.get("value");
+                    this.handleNormal(name, value, ftlData);
                 }
                 // table
                 if (ValueType.TABLE.equals(type)) {
-                   this.handleTable(jsonObject, ftlData);
+                    if ("/api/getStationBreakDownAnalysisList".equals(api.getInterUrl())) {
+                        System.out.println();
+                    }
+                    JSONArray value = jsonObject.getJSONArray("value");
+                    this.handleTable(name, value, ftlData);
+                }
+                // BAR
+                if (ValueType.BAR.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.handleBar(name, value, ftlData);
                 }
                 // barGroup
                 if (ValueType.BAR_GROUP.equals(type)) {
@@ -99,14 +114,6 @@ public class ReportServiceImpl implements ReportService {
                         y[j] = data;
                     }
                     String base64Img = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y);
-                    ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
-                }
-                // barGroup
-                if (ValueType.BAR.equals(type)) {
-                    JSONObject value = jsonObject.getJSONObject("value");
-                    String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
-                    Double[] yData = Convert.toDoubleArray(value.getJSONArray("yData"));
-                    String base64Img = EchartsToPicUtil.echartBar(true, "", xData, yData);
                     ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
                 }
                 // PIE
@@ -128,12 +135,13 @@ public class ReportServiceImpl implements ReportService {
                         Double[] data = Convert.toDoubleArray(yData.getJSONArray(i));
                         y[j] = data;
                     }
-                    String base64Img = EchartsToPicUtil.echartStackedBare(true, "",xData, yName, y);
+                    String base64Img = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y);
                     ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
                 }
                 // mix
                 if (ValueType.MIX.equals(type)) {
-                    handleMix(jsonObject, ftlData);
+                    JSONArray value = jsonObject.getJSONArray("value");
+                    handleMix(name, value, ftlData);
                 }
             }
         }));
@@ -149,8 +157,15 @@ public class ReportServiceImpl implements ReportService {
         return fileName;
     }
 
+    private void handleBar(String name, JSONObject value, Map<String, Object> ftlData) {
+        String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
+        Double[] yData = Convert.toDoubleArray(value.getJSONArray("yData"));
+        String base64Img = EchartsToPicUtil.echartBar(true, "", xData, yData);
+        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+    }
+
     private void handleDoubleList(int i, JSONArray jsonArray, Map<String, Object> ftlData) {
-        List<Map<String, Object>> list =new ArrayList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         JSONArray jsonArray1 = jsonArray.getJSONArray(i);
         Map<String, Object> map = new HashMap<>();
         for (int i1 = 0; i1 < jsonArray1.size(); i1++) {
@@ -169,53 +184,59 @@ public class ReportServiceImpl implements ReportService {
         ftlData.put("list", list);
     }
 
-
-    private void handleMix(JSONObject jsonObject, Map<String, Object> ftlData) {
+    private void handleMix(String rootName, JSONArray rootValue, Map<String, Object> ftlData) {
         List<Map<String, Object>> dataList = new ArrayList<>();
-        String type = jsonObject.getString("type");
-        String name = jsonObject.getString("name");
-        Map<String, Object> data = new HashMap<>();
-        JSONArray jsonArray = jsonObject.getJSONArray("value");
+        for (int i = 0; i < rootValue.size(); i++) {
+            JSONArray jsonArray = rootValue.getJSONArray(i);
+            Map<String, Object> data = new HashMap<>();
+            for (int j = 0; j < jsonArray.size(); j++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(j);
+                String type = jsonObject.getString("type");
+                String name = jsonObject.getString("name");
 
-        for (int i = 0; i < jsonArray.size(); i++) {
-            JSONObject obj = jsonArray.getJSONObject(i);
-            data.put(obj.getString("name"), obj.get("value"));
+                if (ValueType.NORMAL.equals(type)) {
+                    Object value = jsonObject.get("value");
+                    this.handleNormal(name, value, data);
+                }
+
+                if (ValueType.TABLE.equals(type)) {
+                    JSONArray value = jsonObject.getJSONArray("value");
+                    this.handleTable(name, value, data);
+                }
+
+                if (ValueType.BAR.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.handleBar(name, value, data);
+                }
+            }
+            dataList.add(data);
         }
-        if (ValueType.NORMAL.equals(type)) {
-
-            Object value = jsonObject.get("value");
-            ftlData.put(name, value);
-        }
-
-        ftlData.put(name, dataList);
+        ftlData.put(rootName, dataList);
     }
 
-    private void handleTable(JSONObject jsonObject, Map<String, Object> ftlData) {
-        String name = jsonObject.getString("name");
-        Object value = jsonObject.get("value");
+    private void handleTable(String name, JSONArray value, Map<String, Object> ftlData) {
         if (value == null) {
-            value = new ArrayList<>();
+            value = new JSONArray();
         }
         ftlData.put(name, value);
     }
 
-    private void handleNormal(JSONObject jsonObject, Map<String, Object> ftlData) {
-        String name = jsonObject.getString("name");
-        Object value = jsonObject.get("value");
+    private void handleNormal(String name, Object value, Map<String, Object> ftlData) {
         if (value == null) {
             value = "";
         }
         ftlData.put(name, value);
     }
 
-    private JSONArray getArray(String url, JSONObject jsonParam){
-        return getJSONObject(url,JSON.toJSONString(jsonParam)).getJSONArray("data");
+    private JSONArray getArray(String url, JSONObject jsonParam) {
+        return getJSONObject(url, jsonParam).getJSONArray("data");
     }
 
-    private JSONObject getJSONObject(String url, String jsonParam){
+    private JSONObject getJSONObject(String url, JSONObject jsonParam) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json;charset=utf-8");
-        HttpEntity<String> request = new HttpEntity<>(jsonParam, headers);
+        HttpEntity<JSONObject> request = new HttpEntity<>(jsonParam, headers);
+        RestTemplate restTemplate = new RestTemplate();
         return restTemplate.postForObject(wordCfgProperties.getInterfaceUrl() + url, request, JSONObject.class);
     }
 
@@ -237,7 +258,7 @@ public class ReportServiceImpl implements ReportService {
         data.put("xjWarnYawRate", 10);
     }
 
-    public static String pic(String path)  {
+    public static String pic(String path) {
         byte[] bytes = FileUtil.readBytes(new File(path));
         return Base64.encode(bytes);
     }

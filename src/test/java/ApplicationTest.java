@@ -26,9 +26,10 @@ public class ApplicationTest {
     @org.junit.Test
     public void testReport() throws TemplateException, IOException {
         JSONObject params = new JSONObject();
-        params.put("reportId", 3);
-        params.put("stationId", 934);
-        params.put("typeId", 1);
+        params.put("modelId", 1);
+//        params.put("reportId", 1);
+        params.put("stationId", "610");
+        params.put("typeId", "1");
         params.put("startTime", "2022-01-01");
         params.put("endTime", "2022-04-01");
 //        String modelFileName = "1.ftl";

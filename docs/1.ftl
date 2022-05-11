@@ -7362,7 +7362,7 @@
                                 w:val="28"/>
                         <w:sz-cs w:val="28"/>
                     </w:rPr>
-                    <w:t>如表2-3所示，结合日常巡检结果，建议在下一维护周期内对通过专项技改、或综合分析等手段对该类的故障进行处理，提升机组的可利用率。其中发生故障次数最多的故障代码为“${mustCntCode}”，发生次数为${mustCnt}次；故障时长最长的故障代码为“${mustTimeCode}”，累计故障时长为${mustTime}小时，在例行维护与日常巡检过程中应重点关注。</w:t>
+                    <w:t>如表2-3所示，结合日常巡检结果，建议在下一维护周期内对通过专项技改、或综合分析等手段对该类的故障进行处理，提升机组的可利用率。其中发生故障次数最多的故障代码为“${mustCntCode!defaultValue}”，发生次数为${mustCnt!defaultValue}次；故障时长最长的故障代码为“${mustTimeCode!defaultValue}”，累计故障时长为${mustTime!defaultValue}小时，在例行维护与日常巡检过程中应重点关注。</w:t>
                 </w:r>
             </w:p>
             <w:p>
@@ -9628,7 +9628,7 @@
                 </w:r>
                 <aml:annotation aml:id="1" w:type="Word.Bookmark.End"/>
             </w:p>
-            <w:p>
+       <w:p>
                 <w:pPr>
                     <w:spacing w:line="360" w:line-rule="auto"/>
                     <w:ind w:first-line="560" w:first-line-chars="200"/>
@@ -9682,6 +9682,399 @@
                 </w:r>
                 <aml:annotation aml:id="0" w:type="Word.Bookmark.End"/>
             </w:p>
+            <w:p>
+                    <w:pPr>
+                        <w:spacing w:line="360" w:line-rule="auto"/>
+                        <w:ind w:first-line="560" w:first-line-chars="200"/>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="default"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                        </w:rPr>
+                    </w:pPr>
+                    <w:r>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="fareast"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                        </w:rPr>
+                        <w:t>风力发电机组发电能力指标Fg表示风力发电机组实际发电功率与最优发电功率的比值，代表了各台风电机组与场内发电能力最优机组的差异程度。</w:t>
+                    </w:r>
+                </w:p>
+                <#list StationFGAnalysisMix as record>
+                <w:p>
+                    <w:pPr>
+                        <w:spacing w:line="360" w:line-rule="auto"/>
+                        <w:ind w:first-line="560" w:first-line-chars="200"/>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="default"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                            <w:shd w:val="clear" w:color="auto" w:fill="FFFF00"/>
+                        </w:rPr>
+                    </w:pPr>
+                    <w:r>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="fareast"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                            <w:shd w:val="clear" w:color="auto" w:fill="FFFF00"/>
+                        </w:rPr>
+                        <w:t>（${record.serialNumber}）${record.fgDeviceXh}型号</w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:pPr>
+                        <w:spacing w:line="360" w:line-rule="auto"/>
+                        <w:ind w:first-line="560" w:first-line-chars="200"/>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="default"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                        </w:rPr>
+                    </w:pPr>
+                    <w:r>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="default"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                        </w:rPr>
+                        <w:t>${record.fgDeviceXh}型号风电机组的发电能力指标统计如下图所示。</w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:pPr>
+                        <w:spacing w:line="360" w:line-rule="auto"/>
+                        <w:jc w:val="center"/>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="default"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                        </w:rPr>
+                    </w:pPr>
+                    <w:r>
+                        <w:pict>
+                            <w:binData w:name="wordml://${record.fgEchartsBar.name}.png">
+                                ${record.fgEchartsBar.data}
+                            </w:binData>
+                            <v:shape id="图表 152" o:spid="_x0000_s1026" o:spt="75" alt="" type="#_x0000_t75"
+                                     style="height:206pt;width:398pt;" filled="f" o:preferrelative="t" stroked="f"
+                                     coordsize="21600,21600">
+                                <v:fill on="f" focussize="0,0"/>
+                                <v:stroke on="f"/>
+                                <v:imagedata src="wordml://${record.fgEchartsBar.name}.png" o:title=""/>
+                                <o:lock v:ext="edit" aspectratio="f"/>
+                                <w10:wrap type="none"/>
+                                <w10:anchorlock/>
+                            </v:shape>
+                        </w:pict>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:pPr>
+                        <w:spacing w:line="360" w:line-rule="auto"/>
+                        <w:jc w:val="center"/>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:hint="default"/>
+                        </w:rPr>
+                    </w:pPr>
+                    <w:r>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="fareast"/>
+                            <w:sz w:val="24"/>
+                            <w:sz-cs w:val="24"/>
+                        </w:rPr>
+                        <w:t>图3-3 ${record.fgDeviceXh} 型号风电机组的发电能力指标统计</w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:pPr>
+                        <w:spacing w:line="360" w:line-rule="auto"/>
+                        <w:ind w:first-line="560" w:first-line-chars="200"/>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="default"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                        </w:rPr>
+                    </w:pPr>
+                    <w:r>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="fareast"/>
+                            <w:sz w:val="28"/>
+                            <w:sz-cs w:val="28"/>
+                        </w:rPr>
+                        <w:t>通过发电能力指标分析，${stationName}风电场本季度发电能力最优的机组为${record.fgTopDeviceName}，最差的的机组为${record.fgBottomDeviceName}，各机组风电场发电能力指标Fg计算结果如下图所示
+                        </w:t>
+                    </w:r>
+                </w:p>
+                <w:p>
+                    <w:pPr>
+                        <w:spacing w:line="360" w:line-rule="auto"/>
+                        <w:ind w:first-line="480" w:first-line-chars="200"/>
+                        <w:jc w:val="center"/>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="default"/>
+                            <w:sz w:val="24"/>
+                            <w:sz-cs w:val="24"/>
+                        </w:rPr>
+                    </w:pPr>
+                    <w:r>
+                        <w:rPr>
+                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman"
+                                      w:hint="fareast"/>
+                            <w:sz w:val="24"/>
+                            <w:sz-cs w:val="24"/>
+                        </w:rPr>
+                        <w:t>表3-2${stationName}风电场的2.5MW机组发电能力指标Fg（正序）</w:t>
+                    </w:r>
+                </w:p>
+                <w:tbl>
+                    <w:tblPr>
+                        <w:tblStyle w:val="a5"/>
+                        <w:tblW w:w="0" w:type="auto"/>
+                        <w:jc w:val="center"/>
+                        <w:tblInd w:w="1150" w:type="dxa"/>
+                        <w:tblBorders>
+                            <w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                        </w:tblBorders>
+                        <w:tblCellMar>
+                            <w:top w:w="0" w:type="dxa"/>
+                            <w:left w:w="108" w:type="dxa"/>
+                            <w:bottom w:w="0" w:type="dxa"/>
+                            <w:right w:w="108" w:type="dxa"/>
+                        </w:tblCellMar>
+                    </w:tblPr>
+                    <w:tblGrid>
+                        <w:gridCol w:w="2074"/>
+                        <w:gridCol w:w="2074"/>
+                        <w:gridCol w:w="2074"/>
+                    </w:tblGrid>
+                    <w:tr>
+                        <w:tblPrEx>
+                            <w:tblBorders>
+                                <w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            </w:tblBorders>
+                            <w:tblCellMar>
+                                <w:top w:w="0" w:type="dxa"/>
+                                <w:left w:w="108" w:type="dxa"/>
+                                <w:bottom w:w="0" w:type="dxa"/>
+                                <w:right w:w="108" w:type="dxa"/>
+                            </w:tblCellMar>
+                        </w:tblPrEx>
+                        <w:trPr>
+                            <w:jc w:val="center"/>
+                        </w:trPr>
+                        <w:tc>
+                            <w:tcPr>
+                                <w:tcW w:w="2074" w:type="dxa"/>
+                                <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                            </w:tcPr>
+                            <w:p>
+                                <w:pPr>
+                                    <w:spacing w:line="360" w:line-rule="auto"/>
+                                    <w:jc w:val="center"/>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体" w:hint="default"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                </w:pPr>
+                                <w:r>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体" w:hint="fareast"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                    <w:t>机组编号</w:t>
+                                </w:r>
+                            </w:p>
+                        </w:tc>
+                        <w:tc>
+                            <w:tcPr>
+                                <w:tcW w:w="2074" w:type="dxa"/>
+                                <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                            </w:tcPr>
+                            <w:p>
+                                <w:pPr>
+                                    <w:spacing w:line="360" w:line-rule="auto"/>
+                                    <w:jc w:val="center"/>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体" w:hint="default"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                </w:pPr>
+                                <w:r>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体" w:hint="fareast"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                    <w:t>Fg</w:t>
+                                </w:r>
+                            </w:p>
+                        </w:tc>
+                        <w:tc>
+                            <w:tcPr>
+                                <w:tcW w:w="2074" w:type="dxa"/>
+                                <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                            </w:tcPr>
+                            <w:p>
+                                <w:pPr>
+                                    <w:spacing w:line="360" w:line-rule="auto"/>
+                                    <w:jc w:val="center"/>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体" w:hint="default"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                </w:pPr>
+                                <w:r>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体" w:hint="fareast"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                    <w:t>排序</w:t>
+                                </w:r>
+                            </w:p>
+                        </w:tc>
+                    </w:tr>
+                    <#list record.fgDeviceTable as record2>
+                        <w:tr>
+                            <w:tblPrEx>
+                                <w:tblBorders>
+                                    <w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                    <w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                    <w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                    <w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                    <w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                    <w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                </w:tblBorders>
+                                <w:tblCellMar>
+                                    <w:top w:w="0" w:type="dxa"/>
+                                    <w:left w:w="108" w:type="dxa"/>
+                                    <w:bottom w:w="0" w:type="dxa"/>
+                                    <w:right w:w="108" w:type="dxa"/>
+                                </w:tblCellMar>
+                            </w:tblPrEx>
+                            <w:trPr>
+                                <w:jc w:val="center"/>
+                            </w:trPr>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="2074" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:vAlign w:val="center"/>
+                                </w:tcPr>
+                                <w:p>
+                                    <w:pPr>
+                                        <w:widowControl/>
+                                        <w:jc w:val="center"/>
+                                        <w:textAlignment w:val="center"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体"
+                                                      w:hint="default"/>
+                                            <w:sz w:val="24"/>
+                                            <w:sz-cs w:val="24"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体"
+                                                      w:hint="default"/>
+                                            <w:sz w:val="24"/>
+                                            <w:sz-cs w:val="24"/>
+                                        </w:rPr>
+                                        <w:t>${record2.bottomDeviceName}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="2074" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:vAlign w:val="center"/>
+                                </w:tcPr>
+                                <w:p>
+                                    <w:pPr>
+                                        <w:widowControl/>
+                                        <w:jc w:val="center"/>
+                                        <w:textAlignment w:val="center"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体"
+                                                      w:hint="default"/>
+                                            <w:sz w:val="24"/>
+                                            <w:sz-cs w:val="24"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体"
+                                                      w:hint="default"/>
+                                            <w:sz w:val="24"/>
+                                            <w:sz-cs w:val="24"/>
+                                        </w:rPr>
+                                        <w:t>${record2.topFg}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="2074" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:vAlign w:val="center"/>
+                                </w:tcPr>
+                                <w:p>
+                                    <w:pPr>
+                                        <w:widowControl/>
+                                        <w:jc w:val="center"/>
+                                        <w:textAlignment w:val="center"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体"
+                                                      w:hint="default"/>
+                                            <w:sz w:val="24"/>
+                                            <w:sz-cs w:val="24"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="宋体"
+                                                      w:hint="default"/>
+                                            <w:sz w:val="24"/>
+                                            <w:sz-cs w:val="24"/>
+                                        </w:rPr>
+                                        <w:t>${record2.sortNo}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                        </w:tr>
+                    </#list>
+                </w:tbl>
+                <w:p/>
+                <w:p/>
+            </#list>
             <w:p>
                 <w:pPr>
                     <w:keepNext/>
