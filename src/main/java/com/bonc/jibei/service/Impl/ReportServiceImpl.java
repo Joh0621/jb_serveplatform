@@ -70,10 +70,10 @@ public class ReportServiceImpl implements ReportService {
 
         reportInterfaces.forEach((api -> {
             log.info("interfaceURL:{}", api.getInterUrl());
-            if ("/api/getStationDeviceSyntheticalSummary".equals(api.getInterUrl())) {
-                ftlData.put("deviceAppendixMix", new ArrayList<>());
-                return;
-            }
+//            if ("/api/getStationDeviceSyntheticalSummary".equals(api.getInterUrl())) {
+//                ftlData.put("deviceAppendixMix", new ArrayList<>());
+//                return;
+//            }
             JSONArray jsonArray = this.getArray(api.getInterUrl(), params);
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -130,9 +130,9 @@ public class ReportServiceImpl implements ReportService {
         // 以 utf-8 的编码读取ftl文件
         Template template = configuration.getTemplate("1.ftl", StandardCharsets.UTF_8.name());
         String fileName = wordCfgProperties.getWordPath() + params.getString("stationId") + ".docx";
-        FileUtil.writeString(JSON.toJSONString(ftlData), new File("/data/gb3q/data.json"), StandardCharsets.UTF_8.name());
+//        FileUtil.writeString(JSON.toJSONString(ftlData), new File("D:/data.json"), StandardCharsets.UTF_8.name());
         template.process(ftlData, new FileWriter(fileName));
-        return fileName;
+        return params.getString("stationId") + ".docx";
     }
 
     private void handlePie(String name, JSONObject value, Map<String, Object> ftlData) {

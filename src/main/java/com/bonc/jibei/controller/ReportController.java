@@ -23,6 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -208,6 +209,7 @@ public class ReportController {
             // 更新报告状态
             ReportMng mng = reportMngMapper.selectById(id);
             mng.setReportStatus(2);//放到队列
+            mng.setStatusTime(LocalDateTime.now());
             reportMngMapper.updateById(mng);
         }
         return Result.of(msglist);
