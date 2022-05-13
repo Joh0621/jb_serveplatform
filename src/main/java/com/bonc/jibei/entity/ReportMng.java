@@ -54,11 +54,16 @@ public class ReportMng {
     private Integer releaseUserId;
     @ApiModelProperty("模板版本号")
     private String modelVersion;
-    @ApiModelProperty("报告状态;0=待复核;1=发布")
+    @ApiModelProperty("报告状态;0=待复核;1=发布;2=提交队列;3=正在生成")
     private Integer reportStatus;
 
-    @ApiModelProperty("状态改变时间")
+    @ApiModelProperty("提交队列时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime statusTime;
+
+    @ApiModelProperty("报告生成时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime reportTime;
 }

@@ -37,14 +37,14 @@ public class ReGenerateReporter {
         //先取 场站模板
         Integer reportStatus=2;
         List<ReportMng> StationModellist=reportModelInterMapper.selectReReportModel(reportStatus);
-        System.out.println(StationModellist);
-        //处理场站模板 接口 生成报告
+        // System.out.println(StationModellist);
+        //处理场站模板 接口 生成报告 每次任务处理5个报告
         if (StationModellist!=null && StationModellist.size()>0) {
             for (ReportMng obj : StationModellist) {
-                //更新报告管理的状态为 在处理
                 if (obj == null) {
                     continue;
                 }
+                //更新报告管理的状态为 在处理
                 obj.setReportStatus(3);
                 reportMngMapper.updateById(obj);
                 int i = reportMngService.updateReport(obj);

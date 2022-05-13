@@ -75,6 +75,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         mng.setReportStatus(0);//待审核
         mng.setReportUrl(reportUrl);//生成的报告文件
         mng.setCreateTime(LocalDateTime.now());
+        mng.setReportTime(LocalDateTime.now());//报告生成时间
         mng.setModelVersion(reportMng.getModelVersion());
         mng.setReportName(reportMng.getReportName());
         mng.setStationId(reportMng.getStationId());
@@ -102,6 +103,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper,ReportMng>
         String reportUrl=reportService.generate(jsonstr);
         reportMng.setReportUrl(reportUrl);
         reportMng.setReportStatus(0);//重置待审核状态
+        reportMng.setReportTime(LocalDateTime.now());//报告生成时间
         return reportMngMapper.updateById(reportMng);
     }
 }
