@@ -17,6 +17,8 @@ import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportMngPatchPub;
 import freemarker.template.TemplateException;
 import io.swagger.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -35,6 +37,8 @@ import java.util.List;
 @Api(tags = "报告管理接口")
 @RestController
 public class ReportController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
 
     @Resource
     private ReportMngService reportMngService;
@@ -250,7 +254,7 @@ public class ReportController {
                 }
                 obj.setReportStatus(3);
                 reportMngMapper.updateById(obj);
-                int i = reportMngService.updateReport(obj);
+                reportMngService.updateReport(obj);
             }
         }
         return Result.of("");

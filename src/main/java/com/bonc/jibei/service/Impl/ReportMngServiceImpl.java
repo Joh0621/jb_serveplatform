@@ -92,14 +92,14 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
 
     @Override
     @Async("threadPoolTaskExecutor")
-    public int updateReport(ReportMng reportMng) throws TemplateException, IOException {
+    public void updateReport(ReportMng reportMng) throws TemplateException, IOException {
         //取得场站类型的模板
         QueryWrapper<StationModelRel> qw = new QueryWrapper<>();
         qw.eq("station_id", reportMng.getStationId());
         List<StationModelRel> rell = stationModelRelMapper.selectList(qw);
         Integer modelId = null;
         if (rell == null || rell.get(0) == null) {
-            return 0;
+            return;
         }
         modelId = rell.get(0).getModelId();
         //获得已知季度的 开始时间和结束时间
@@ -111,6 +111,6 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
         String reportUrl = reportService.generate(jsonstr);
         reportMng.setReportUrl(reportUrl);
         reportMng.setReportStatus(0);//重置待审核状态
-        return reportMngMapper.updateById(reportMng);
+        reportMngMapper.updateById(reportMng);
     }
 }

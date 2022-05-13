@@ -50,7 +50,7 @@ public class ReGenerateReporter {
                 }
                 obj.setReportStatus(3);
                 reportMngMapper.updateById(obj);
-                int i = reportMngService.updateReport(obj);
+                reportMngService.updateReport(obj);
             }
         }
 
