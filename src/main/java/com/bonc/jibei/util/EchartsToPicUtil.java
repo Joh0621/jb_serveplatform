@@ -34,6 +34,7 @@ public class EchartsToPicUtil {
 
     private static String pngPathV;
     private static String OSTypeV;
+    private static String rootPathV;
 
     private static Log log = LogFactory.getLog(EchartsToPicUtil.class);
 
@@ -41,14 +42,20 @@ public class EchartsToPicUtil {
     private String  pngPath;
     @Value("${spring.cfg.OSType}")
     private String  OSType;
+    @Value("${spring.cfg.resourcePath}")
+    private String  rootPath;
 
     @PostConstruct
     public void getMngPath(){
-        pngPathV=pngPath;
+        pngPathV = pngPath;
     }
     @PostConstruct
     public void getOSType(){
-        OSTypeV=OSType;
+        OSTypeV = OSType;
+    }
+    @PostConstruct
+    public void getRootPathV(){
+        rootPathV = rootPath;
     }
 
     /**
@@ -345,14 +352,14 @@ public class EchartsToPicUtil {
     public static String generateEChart(String options) {
         //String OSTypeV="windows";
         //String pngPathV="d:/test/png/png/";
-        String rootPath="";
-        if ("windows".equals(OSTypeV)) {
-            rootPath = EchartsToPicUtil.class.getResource("/").toString().replace("file:/", "");
-        }
-        else {
-            rootPath = EchartsToPicUtil.class.getResource("/").toString().replace("file:", "");
-        }
-        String echartJsPath = rootPath + "echarts-convert" + File.separator + "echarts-convert1.js";
+//        String rootPath="";
+//        if ("windows".equals(OSTypeV)) {
+//            rootPath = EchartsToPicUtil.class.getResource("/").toString().replace("file:/", "");
+//        }
+//        else {
+//            rootPath = EchartsToPicUtil.class.getResource("/").toString().replace("file:", "");
+//        }
+        String echartJsPath = rootPathV + "echarts-convert" + File.separator + "echarts-convert1.js";
         String OSPath = switchOS(OSTypeV);
         String dataPath = writeFile(options, pngPathV);
         String fileName = UUID.randomUUID().toString().substring(0, 8) + ".png";
@@ -364,7 +371,7 @@ public class EchartsToPicUtil {
                 dir.mkdirs();
                 file.createNewFile();
             }
-            String cmd = rootPath + "phantomjs" + File.separator + OSPath + File.separator + "phantomjs " + echartJsPath + " -infile " + dataPath
+            String cmd = rootPathV + "phantomjs" + File.separator + OSPath + File.separator + "phantomjs " + echartJsPath + " -infile " + dataPath
                     + " -outfile " + path;
             log.info("shell " + cmd);
             Process process = Runtime.getRuntime().exec(cmd);

@@ -14,7 +14,6 @@ import com.bonc.jibei.mapper.ReportInterfaceMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.util.EchartsToPicUtil;
-import com.bonc.jibei.util.JsonUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -131,7 +130,7 @@ public class ReportServiceImpl implements ReportService {
         // 以 utf-8 的编码读取ftl文件
         Template template = configuration.getTemplate("1.ftl", StandardCharsets.UTF_8.name());
         String fileName = wordCfgProperties.getWordPath() + params.getString("stationId") + ".docx";
-        FileUtil.writeString(JSON.toJSONString(ftlData), new File("D:/data.json"), StandardCharsets.UTF_8.name());
+        FileUtil.writeString(JSON.toJSONString(ftlData), new File("/data/gb3q/data.json"), StandardCharsets.UTF_8.name());
         template.process(ftlData, new FileWriter(fileName));
         return fileName;
     }

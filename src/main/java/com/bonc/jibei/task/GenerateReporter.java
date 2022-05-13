@@ -1,6 +1,5 @@
 package com.bonc.jibei.task;
 
-import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.util.DateUtil;
@@ -8,10 +7,11 @@ import com.bonc.jibei.vo.ReportModelInter;
 import freemarker.template.TemplateException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.Resource;
-import javax.validation.constraints.AssertFalse;
 import java.io.IOException;
 import java.util.List;
+
 /**
  * @Author: dupengling
  * @DateTime: 2022/4/24 22:17
@@ -23,21 +23,22 @@ public class GenerateReporter {
     private ReportModelInterMapper reportModelInterMapper;
     @Resource
     private ReportMngService reportMngService;
+
     //1分钟执行一次
     //@Scheduled(cron = "0 0/1 * * * ?")
     //每天0点执行一次
     @Scheduled(cron = "0 0 0 * * ?")
     public void createReport() throws TemplateException, IOException {
         //先取场站模板
-        List<ReportModelInter> stationModellist=reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(),DateUtil.lastQrt());
+        List<ReportModelInter> stationModellist = reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(), DateUtil.lastQrt());
         //场站模板接口，生成报告
-        if (stationModellist!=null && stationModellist.size()>0) {
+        if (stationModellist != null && stationModellist.size() > 0) {
             for (ReportModelInter obj : stationModellist) {
                 if (obj == null) {
                     continue;
                 }
                 //obj.setId(0);
-                int r=reportMngService.insertReport(obj);
+                int r = reportMngService.insertReport(obj);
             }
         }
 

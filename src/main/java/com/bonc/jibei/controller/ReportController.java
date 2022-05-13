@@ -9,6 +9,7 @@ import com.bonc.jibei.entity.ReportAuthLog;
 import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.mapper.ReportAuthLogMapper;
 import com.bonc.jibei.mapper.ReportMngMapper;
+import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportAuthLogService;
 import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.util.FileDownloadUtil;
@@ -51,6 +52,9 @@ public class ReportController {
 
     @Resource
     private WordCfgProperties wordCfgProperties;
+
+    @Resource
+    private ReportModelInterMapper reportModelInterMapper;
 
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -174,7 +178,7 @@ public class ReportController {
     @ResponseBody
     @CrossOrigin
 //    public Result reportDownload(@RequestBody(required = false) reportMngPatchPub params, HttpServletResponse response) {
-    public Result reportDownload(@RequestParam(required = false) Integer[] idsList, HttpServletResponse response) {
+    public void reportDownload(@RequestParam(required = false) Integer[] idsList, HttpServletResponse response) {
         // 获取所有url
         List<Integer> idList = Arrays.asList(idsList);
         List<String> fileSrcPaths = reportMngService.urlList(idList);
@@ -184,7 +188,6 @@ public class ReportController {
 //        QueryWrapper<ReportAuthLog> qw = new QueryWrapper<>();
 //        qw.eq("report_id", id);
 //        List<ReportAuthLog> list = reportAuthLogMapper.selectList(qw);
-        return Result.of("");
     }
 
     @ApiImplicitParams({
@@ -220,7 +223,7 @@ public class ReportController {
     public Result generateReport(Integer id) throws TemplateException, IOException {
         QueryWrapper<ReportMng> mngq=new QueryWrapper<>();
         mngq.eq("id",id);
-        ReportMng mng=reportMngMapper.selectById(mngq);
+        ReportMng mng = reportMngMapper.selectById(mngq);
         reportMngService.updateReport(mng);
         return Result.ok();
     }
@@ -231,4 +234,25 @@ public class ReportController {
        // EchartsToPicUtil.generateEChart(EchartsToPicUtil.echartBar(true), wordCfgProperties.getPngPath(), wordCfgProperties.getOSType(), wordCfgProperties.getResourcePath());
         return Result.of("");
     }
+
+    @ApiOperation(value = "报告生成手动生成")
+    @PostMapping("/report/reportcreate")
+    public Result reportCreate() throws IOException, TemplateException {
+        List<ReportMng> stationModellist = reportModelInterMapper.selectReReportModel(2);
+        //处理场站模板 接口 生成报告
+        if (stationModellist.size() > 0) {
+            for (ReportMng obj : stationModellist) {
+                //更新报告管理的状态为 在处理
+                if (obj == null) {
+                    continue;
+                }
+                obj.setReportStatus(3);
+                reportMngMapper.updateById(obj);
+                int i = reportMngService.updateReport(obj);
+            }
+        }
+        return Result.of("");
+    }
+
+
 }
