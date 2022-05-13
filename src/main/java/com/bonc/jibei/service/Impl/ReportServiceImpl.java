@@ -3,6 +3,7 @@ package com.bonc.jibei.service.Impl;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bonc.jibei.api.ValueType;
@@ -13,6 +14,7 @@ import com.bonc.jibei.mapper.ReportInterfaceMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.util.EchartsToPicUtil;
+import com.bonc.jibei.util.JsonUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -64,23 +66,17 @@ public class ReportServiceImpl implements ReportService {
 
         ftlData.put("defaultValue", "--");
 
-        // todo 临时
-        ftlData.put("staticDeviationSchematicImg", ""); // 偏航静态偏差示意图
         ftlData.put("staticDeviationImg", ""); // 风电机组偏航静态偏差情况统计
         ftlData.put("staticDeviationEmImg", ""); // 风电机组偏航缺陷情况
-        this.setYawEvaluation(ftlData);
 
         reportInterfaces.forEach((api -> {
             log.info("interfaceURL:{}", api.getInterUrl());
-            if ("/api/getStationFGAnalysis".equals(api.getInterUrl())) {
-                System.out.println(api);
+            if ("/api/getStationDeviceSyntheticalSummary".equals(api.getInterUrl())) {
+                ftlData.put("deviceAppendixMix", new ArrayList<>());
+                return;
             }
             JSONArray jsonArray = this.getArray(api.getInterUrl(), params);
             for (int i = 0; i < jsonArray.size(); i++) {
-                if (Objects.equals(api.getPlaceTag(), "arr")) {
-                    this.handleDoubleList(i, jsonArray, ftlData);
-                    continue;
-                }
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String type = jsonObject.getString("type");
                 String name = jsonObject.getString("name");
@@ -91,9 +87,6 @@ public class ReportServiceImpl implements ReportService {
                 }
                 // table
                 if (ValueType.TABLE.equals(type)) {
-                    if ("/api/getStationBreakDownAnalysisList".equals(api.getInterUrl())) {
-                        System.out.println();
-                    }
                     JSONArray value = jsonObject.getJSONArray("value");
                     this.handleTable(name, value, ftlData);
                 }
@@ -105,38 +98,21 @@ public class ReportServiceImpl implements ReportService {
                 // barGroup
                 if (ValueType.BAR_GROUP.equals(type)) {
                     JSONObject value = jsonObject.getJSONObject("value");
-                    String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
-                    String[] yBarName = Convert.toStrArray(value.getJSONArray("yBarName"));
-                    JSONArray yData = value.getJSONArray("yData");
-                    Double[][] y = new Double[yData.size()][];
-                    for (int j = 0; j < yData.size(); j++) {
-                        Double[] data = Convert.toDoubleArray(yData.getJSONArray(i));
-                        y[j] = data;
-                    }
-                    String base64Img = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y);
-                    ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+                    this.handleBarGroup(name, value, ftlData);
                 }
                 // PIE
                 if (ValueType.PIE.equals(type)) {
                     JSONObject value = jsonObject.getJSONObject("value");
-                    String[] names = Convert.toStrArray(value.getJSONArray("names"));
-                    Double[] datas = Convert.toDoubleArray(value.getJSONArray("datas"));
-                    String base64Img = EchartsToPicUtil.echartPie(true, "", names, datas);
-                    ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+                    this.handlePie(name, value, ftlData);
                 }
                 // STACKED_BARE
                 if (ValueType.STACKED_BARE.equals(type)) {
                     JSONObject value = jsonObject.getJSONObject("value");
-                    String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
-                    String[] yName = Convert.toStrArray(value.getJSONArray("yName"));
-                    JSONArray yData = value.getJSONArray("yData");
-                    Double[][] y = new Double[yData.size()][];
-                    for (int j = 0; j < yData.size(); j++) {
-                        Double[] data = Convert.toDoubleArray(yData.getJSONArray(i));
-                        y[j] = data;
-                    }
-                    String base64Img = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y);
-                    ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+                    this.HandleStackedBare(name, value, ftlData);
+                }
+                if (ValueType.LINE.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.handleLine(name, value, ftlData);
                 }
                 // mix
                 if (ValueType.MIX.equals(type)) {
@@ -145,16 +121,26 @@ public class ReportServiceImpl implements ReportService {
                 }
             }
         }));
-
+//        String s = FileUtil.readString("D:/data.json", StandardCharsets.UTF_8);
+//        ftlData = JSON.parseObject(s);
         // Configuration 用于读取ftl文件
+
         Configuration configuration = new Configuration(Configuration.getVersion());
         configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
         configuration.setDirectoryForTemplateLoading(new File(wordCfgProperties.getModelPath()));
         // 以 utf-8 的编码读取ftl文件
         Template template = configuration.getTemplate("1.ftl", StandardCharsets.UTF_8.name());
         String fileName = wordCfgProperties.getWordPath() + params.getString("stationId") + ".docx";
+        FileUtil.writeString(JSON.toJSONString(ftlData), new File("D:/data.json"), StandardCharsets.UTF_8.name());
         template.process(ftlData, new FileWriter(fileName));
         return fileName;
+    }
+
+    private void handlePie(String name, JSONObject value, Map<String, Object> ftlData) {
+        String[] names = Convert.toStrArray(value.getJSONArray("names"));
+        Double[] datas = Convert.toDoubleArray(value.getJSONArray("datas"));
+        String base64Img = EchartsToPicUtil.echartPie(true, "", names, datas);
+        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
     }
 
     private void handleBar(String name, JSONObject value, Map<String, Object> ftlData) {
@@ -164,24 +150,17 @@ public class ReportServiceImpl implements ReportService {
         ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
     }
 
-    private void handleDoubleList(int i, JSONArray jsonArray, Map<String, Object> ftlData) {
-        List<Map<String, Object>> list = new ArrayList<>();
-        JSONArray jsonArray1 = jsonArray.getJSONArray(i);
-        Map<String, Object> map = new HashMap<>();
-        for (int i1 = 0; i1 < jsonArray1.size(); i1++) {
-            JSONObject jsonObject = jsonArray1.getJSONObject(i1);
-            String type = jsonObject.getString("type");
-            String name = jsonObject.getString("name");
-            Object value = jsonObject.get("value");
-            if (ValueType.NORMAL.equals(type)) {
-                map.put(name, value);
-            }
-            if (ValueType.TABLE.equals(type)) {
-                map.put(name, value);
-            }
+    private void handleBarGroup(String name, JSONObject value, Map<String, Object> ftlData) {
+        String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
+        String[] yBarName = Convert.toStrArray(value.getJSONArray("yBarName"));
+        JSONArray yData = value.getJSONArray("yData");
+        Double[][] y = new Double[yData.size()][];
+        for (int j = 0; j < yData.size(); j++) {
+            Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
+            y[j] = data;
         }
-        list.add(map);
-        ftlData.put("list", list);
+        String base64Img = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y);
+        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
     }
 
     private void handleMix(String rootName, JSONArray rootValue, Map<String, Object> ftlData) {
@@ -204,14 +183,71 @@ public class ReportServiceImpl implements ReportService {
                     this.handleTable(name, value, data);
                 }
 
+                if (ValueType.PIE.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.handlePie(name, value, data);
+                }
+
                 if (ValueType.BAR.equals(type)) {
                     JSONObject value = jsonObject.getJSONObject("value");
                     this.handleBar(name, value, data);
+                }
+                // barGroup
+                if (ValueType.BAR_GROUP.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.handleBarGroup(name, value, data);
+                }
+                if (ValueType.LINE.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.handleLine(name, value, data);
+                }
+                if (ValueType.RADAR.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.handleRadar(name, value, data);
+                }   // STACKED_BARE
+                if (ValueType.STACKED_BARE.equals(type)) {
+                    JSONObject value = jsonObject.getJSONObject("value");
+                    this.HandleStackedBare(name, value, data);
                 }
             }
             dataList.add(data);
         }
         ftlData.put(rootName, dataList);
+    }
+
+    private void HandleStackedBare(String name, JSONObject value, Map<String, Object> ftlData) {
+        String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
+        String[] yName = Convert.toStrArray(value.getJSONArray("yName"));
+        JSONArray yData = value.getJSONArray("yData");
+        Double[][] y = new Double[yData.size()][];
+        for (int j = 0; j < yData.size(); j++) {
+            Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
+            y[j] = data;
+        }
+        String base64Img = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y);
+        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+    }
+
+    private void handleRadar(String name, JSONObject value, Map<String, Object> ftlData) {
+        String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
+        String[] yNames = Convert.toStrArray(value.getJSONArray("yName"));
+        Double[] yData =  Convert.toDoubleArray(value.getJSONArray("yData"));
+        String[] titles = {};
+        String base64Img = EchartsToPicUtil.echartRadar(true, titles, xData, yData, yNames);
+        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+    }
+
+    private void handleLine(String name, JSONObject value, Map<String, Object> ftlData) {
+        String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
+        String[] yNames = Convert.toStrArray(value.getJSONArray("yName"));
+        JSONArray yData = value.getJSONArray("yData");
+        Double[][] y = new Double[yData.size()][];
+        for (int j = 0; j < yData.size(); j++) {
+            Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
+            y[j] = data;
+        }
+        String base64Img = EchartsToPicUtil.echartLine(true, "", yNames, xData, y);
+        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
     }
 
     private void handleTable(String name, JSONArray value, Map<String, Object> ftlData) {
@@ -238,24 +274,6 @@ public class ReportServiceImpl implements ReportService {
         HttpEntity<JSONObject> request = new HttpEntity<>(jsonParam, headers);
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.postForObject(wordCfgProperties.getInterfaceUrl() + url, request, JSONObject.class);
-    }
-
-    private void setYawEvaluation(Map<String, Object> data) {
-        // 风电场各风电机组偏航角度及偏航评价列表
-        List<Map<String, Object>> dataList = new ArrayList<>();
-        Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("jzbh", "fj001");
-        dataMap.put("phjd", 10);
-        dataMap.put("phpj", 234);
-        dataList.add(dataMap);
-        data.put("yawEvaluationList", dataList);
-        // 小节
-        data.put("xjBestPerfJzbh", "fj001");
-        data.put("xjWorstPerfJzbh", "fj002");
-        data.put("xjNormalYawCount", 12);
-        data.put("xjNormalYawRate", 10);
-        data.put("xjWarnYawCount", 11);
-        data.put("xjWarnYawRate", 10);
     }
 
     public static String pic(String path) {

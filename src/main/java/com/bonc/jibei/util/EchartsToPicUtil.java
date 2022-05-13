@@ -106,7 +106,7 @@ public class EchartsToPicUtil {
      *@param xData x轴数据
      *@param yData y轴数据
      */
-    public static String echartLine(boolean isHorizontal,String title,String[] yBarName,String[] xData ,double[][] yData) {
+    public static String echartLine(boolean isHorizontal,String title,String[] yBarName,String[] xData ,Double[][] yData) {
        // yBarName = new String[]{"邮件营销", "联盟广告", "视频广告"};
         /**
         yData = new double[][]{{120, 132, 101, 134, 90, 230, 210},
@@ -306,7 +306,7 @@ public class EchartsToPicUtil {
      * 	 *@param title 主标题 和子标题
      * @return
      */
-    public static String echartRadar(Boolean isHorizontal,String title[],String[] xData,double[][] yData ,String[] yName){
+    public static String echartRadar(Boolean isHorizontal,String title[],String[] xData,Double[] yData ,String[] yName){
         //此图可理解为平铺的柱状图，x轴为统计的类别，y轴为具体数据和名称
         EnhancedOption option = new EnhancedOption();
         if (title!=null && title.length>1){
@@ -330,8 +330,8 @@ public class EchartsToPicUtil {
             radar1.data(radarData1);
             for (int j = 0; j < xData.length; j++) {
                 //此处的边界最大次是否需要作为入参，可讨论
-                double max = yData[0][j];
-                max= yData[i][j]>max?yData[i][j]:max;
+                double max = yData[j];
+                max= yData[j]>max?yData[j]:max;
                 if (i==yName.length-1) {
                     radar.indicator(new Radar.Indicator().name(xData[j]).max(max*1.2));
                 }
@@ -339,7 +339,6 @@ public class EchartsToPicUtil {
         }
         option.radar(radar);
         option.series(radar1);
-        String gson=new Gson().toJson(option);
         return generateEChart(new Gson().toJson(option));
     }
     @SuppressWarnings("finally")

@@ -1,14 +1,19 @@
 import com.alibaba.fastjson.JSONObject;
 import com.bonc.jibei.RunApplication;
 import com.bonc.jibei.service.ReportService;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * jb_serveplatform
@@ -23,7 +28,7 @@ public class ApplicationTest {
     @Resource
     private ReportService reportService;
 
-    @org.junit.Test
+    @Test
     public void testReport() throws TemplateException, IOException {
         JSONObject params = new JSONObject();
         params.put("modelId", 1);
@@ -35,6 +40,14 @@ public class ApplicationTest {
 //        String modelFileName = "1.ftl";
 //        String reportFileName = "风电场运行性能评估分析报告模板V1版本.docx";
         reportService.generate(params);
+    }
+
+
+    public static void main(String[] args) throws IOException {
+        Configuration configuration = new Configuration(Configuration.getVersion());
+        configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
+        configuration.setDirectoryForTemplateLoading(new File("d:/data/template"));
+        Template template = configuration.getTemplate("1.ftl", StandardCharsets.UTF_8.name());
     }
 
 }
