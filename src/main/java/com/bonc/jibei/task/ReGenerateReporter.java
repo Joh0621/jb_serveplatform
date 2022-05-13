@@ -1,13 +1,12 @@
 package com.bonc.jibei.task;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.mapper.ReportMngMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportMngService;
-import com.bonc.jibei.vo.ReportModelInter;
 import freemarker.template.TemplateException;
-import org.springframework.scheduling.annotation.Async;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +21,9 @@ import java.util.List;
  */
 @Component
 public class ReGenerateReporter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReGenerateReporter.class);
+
     @Resource
     private ReportModelInterMapper reportModelInterMapper;
 
@@ -30,21 +32,22 @@ public class ReGenerateReporter {
 
     @Resource
     private ReportMngService reportMngService;
+
     //5分钟执行一次
     @Scheduled(cron = "0 0/5 * * * ?")
-   // @Async("threadPoolTaskExecutor")
+    // @Async("threadPoolTaskExecutor")
     public void reCreateReport() throws TemplateException, IOException {
         //先取 场站模板
-        Integer reportStatus=2;
-        List<ReportMng> StationModellist=reportModelInterMapper.selectReReportModel(reportStatus);
-        // System.out.println(StationModellist);
-        //处理场站模板 接口 生成报告 每次任务处理5个报告
-        if (StationModellist!=null && StationModellist.size()>0) {
-            for (ReportMng obj : StationModellist) {
+        Integer reportStatus = 2;
+        List<ReportMng> stationModellist = reportModelInterMapper.selectReReportModel(reportStatus);
+        LOGGER.info(stationModellist.toString());
+        //处理场站模板 接口 生成报告
+        if (stationModellist.size() > 0) {
+            for (ReportMng obj : stationModellist) {
+                //更新报告管理的状态为 在处理
                 if (obj == null) {
                     continue;
                 }
-                //更新报告管理的状态为 在处理
                 obj.setReportStatus(3);
                 reportMngMapper.updateById(obj);
                 int i = reportMngService.updateReport(obj);

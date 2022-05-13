@@ -14,7 +14,6 @@ import com.bonc.jibei.mapper.ReportInterfaceMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.util.EchartsToPicUtil;
-import com.bonc.jibei.util.JsonUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
