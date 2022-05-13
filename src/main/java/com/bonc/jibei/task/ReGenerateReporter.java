@@ -44,10 +44,10 @@ public class ReGenerateReporter {
         //处理场站模板 接口 生成报告
         if (stationModellist.size() > 0) {
             for (ReportMng obj : stationModellist) {
-                //更新报告管理的状态为 在处理
                 if (obj == null) {
                     continue;
                 }
+                //更新报告管理的状态为 在处理
                 obj.setReportStatus(3);
                 reportMngMapper.updateById(obj);
                 int i = reportMngService.updateReport(obj);
