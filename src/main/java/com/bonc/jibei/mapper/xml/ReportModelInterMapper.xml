@@ -35,6 +35,7 @@
             AND mng.report_status = #{reportStatus}
         </if>
         order by status_time asc
+        limit 5
     </select>
     <!-- 取模板接口 -->
     <select id="selectReportModelInter" resultType="com.bonc.jibei.vo.ReportModelInter">
