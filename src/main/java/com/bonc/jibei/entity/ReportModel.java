@@ -1,12 +1,14 @@
 package com.bonc.jibei.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -33,7 +35,7 @@ public class ReportModel {
     @ApiModelProperty("模板名称")
     private String  modelName;
 
-    @ApiModelProperty("模板描述")
+    @ApiModelProperty("模板描述|说明")
     private String  modelDesc;
 
     @ApiModelProperty("模板版本号")
@@ -55,4 +57,8 @@ public class ReportModel {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime operStatusDate;
+
+    @ApiModelProperty("模板文件，上传文件时用，其它情况时空null")
+    @TableField(exist = false)
+    private MultipartFile modelFile;
 }

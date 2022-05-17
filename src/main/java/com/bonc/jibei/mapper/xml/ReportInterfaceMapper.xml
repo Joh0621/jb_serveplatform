@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.ReportInterfaceMapper">
+    <select id="selectReportInterList" resultType="com.bonc.jibei.entity.ReportInterface">
+        select
+        inter.id as id,
+        inter.inter_type as interType,
+        inter.inter_name as interName,
+        inter.inter_desc as interDesc,
+        inter.inter_url as interUrl,
+        from jb_model_interface_rel rel
+        inner join jb_report_interface inter on inter.id=rel.inter_id
+        inner join jb_report_model model on model.id=rel.model_id
+        where 1=1
+        <if test="type != null and type != ''">
+            and inter.inter_type=#{interType}
+        </if>
+        <if test="modelName != null and modelName != ''">
+            and model.model_name like concat('%', #{modelName}, '%')
+        </if>
+    </select>
+    <select id="selectCount" resultType="int">
+        select
+        count(*) as cnt
+        where 1=1
+        <if test="type != null and type != ''">
+            and inter.inter_type=#{interType}
+        </if>
+        <if test="modelName != null and modelName != ''">
+            and model.model_name like concat('%', #{modelName}, '%')
+        </if>
+    </select>
+
+</mapper>

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 /**
  * @Author: dupengling
  * @DateTime: 2022/4/20 16:26
- * @Description: TODO
+ * @Description: 报告操作日志
  */
 @Service
 public class ReportAuthLogServiceImpl extends ServiceImpl<ReportAuthLogMapper, ReportAuthLog> implements ReportAuthLogService {
