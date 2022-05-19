@@ -2,7 +2,9 @@ package com.bonc.jibei.service.Impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.UUID;
+import cn.hutool.extra.ftp.Ftp;
 import cn.hutool.extra.ftp.FtpException;
+import cn.hutool.extra.ftp.FtpMode;
 import com.bonc.jibei.config.WordCfgProperties;
 import com.bonc.jibei.service.FileService;
 import org.springframework.stereotype.Service;
@@ -49,5 +51,19 @@ public class FileServiceImpl implements FileService {
         }
 
         return fileName;
+    }
+    @Override
+    public boolean delete(String fileName) {
+        String path=wordCfgProperties.getModelPath();
+        File p=new File(path);
+        if(!p.isDirectory()){
+            return false;
+        }
+        fileName =  path+ "/" +fileName;
+        File f=new File(path);
+        if(!f.isDirectory()){
+            return false;
+        }
+        return f.delete();
     }
 }

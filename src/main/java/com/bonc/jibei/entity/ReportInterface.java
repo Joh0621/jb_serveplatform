@@ -20,6 +20,9 @@ public class ReportInterface {
     @ApiModelProperty("组织ID")
     private Integer orgId;
 
+    @ApiModelProperty("接口编码")
+    private String code;
+
     @ApiModelProperty("接口类型,1:数据，占位；2：列表；3：柱状图，4：折线图，5：雷达图")
     private Integer interType;
 

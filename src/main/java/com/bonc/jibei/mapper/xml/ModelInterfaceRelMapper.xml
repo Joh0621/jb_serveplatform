@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.bonc.jibei.mapper.ReportInterfaceMapper">
-    <select id="selectReportInterList" resultType="com.bonc.jibei.entity.ReportInterface">
+<mapper namespace="com.bonc.jibei.mapper.ModelInterfaceRelMapper">
+    <select id="selectInterParamRelList" resultType="com.bonc.jibei.vo.ModelInterfaceRelListVo">
         select
         inter.id as id,
         inter.code as code,
@@ -9,7 +9,8 @@
         inter.inter_name as interName,
         inter.inter_desc as interDesc,
         inter.inter_url as interUrl,
-        from jb_model_interface_rel rel
+        from jb_model_params_map rel
+        inner join
         inner join jb_report_interface inter on inter.id=rel.inter_id
         <if test="modelId != null ">
             and rel.model_id=#{modelId}

@@ -8,5 +8,17 @@ import java.io.InputStream;
  * @Description: TODO
  */
 public interface FileService {
+    /**
+     * 上传文件
+     * @param fileName：文件名
+     * @param is：文件流
+     * @return 返回文件路径和名
+     */
     String upload(String fileName, InputStream is);
+
+    /**
+     * 删除文件
+     * @param filePath：文件名
+     */
+    boolean delete(String filePath);
 }

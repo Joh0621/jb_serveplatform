@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.InterParamsMapper">
+    <select id="selectInterParamList" resultType="com.bonc.jibei.entity.InterParams">
+        select
+        param.id,
+        inter.id as interId,
+        inter.code as code,
+        inter.inter_type as interType,
+        inter.inter_name as interName,
+        param.param as param,
+        param.param_attr as paramAttr,
+        param.para_name as paraName
+        from jb_inter_params param
+        inner join jb_report_interface inter on inter.id=param.inter_id
+        <if test="interId != null ">
+            and param.inter_id=#{interId}
+        </if>
+        where 1=1
+        <if test="paramName != null and paramName != ''">
+            and (param.param_name like concat('%', #{paramName}, '%') or param.param like concat('%', #{paramName}, '%'))
+        </if>
+        <if test="interName != null and interName != ''">
+            and inter.inter_name like concat('%', #{interName}, '%')
+        </if>
+
+    </select>
+    <select id="selectCount" resultType="int">
+        select
+        count(*) as cnt
+        from jb_inter_params param
+        inner join jb_report_interface inter on inter.id=param.inter_id
+        <if test="interId != null ">
+            and param.inter_id=#{interId}
+        </if>
+        where 1=1
+        <if test="paramName != null and paramName != ''">
+            and (param.param_name like concat('%', #{paramName}, '%') or param.param like concat('%', #{paramName}, '%'))
+        </if>
+        <if test="interName != null and interName != ''">
+            and inter.inter_name like concat('%', #{interName}, '%')
+        </if>
+    </select>
+</mapper>

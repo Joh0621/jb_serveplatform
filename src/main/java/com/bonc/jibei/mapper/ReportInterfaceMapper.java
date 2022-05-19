@@ -15,7 +15,6 @@ import java.util.List;
  * @date 2022/4/29 11:32
  */
 public interface ReportInterfaceMapper extends RootMapper<ReportInterface> {
-    List<ReportInterface> selectReportInterList(IPage<?> page, @Param("name") String name, @Param("type") String type);
-    Integer selectCount(@Param("name") String name, @Param("type") String type);
-
+    List<ReportInterface> selectReportInterList(IPage<?> page, @Param("name") String name,@Param("type") String type,@Param("modelId") Integer modelId);
+    Integer selectCount(@Param("name") String name, @Param("type") String type,@Param("modelId") Integer modelId);
 }
