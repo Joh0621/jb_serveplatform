@@ -15517,6 +15517,367 @@
             </#list>
             <w:p>
                 <w:pPr>
+                    <w:pStyle w:val="4"/>
+                    <w:listPr>
+                        <w:ilvl w:val="0"/>
+                        <w:ilfo w:val="0"/>
+                    </w:listPr>
+                    <w:ind w:left="720" w:hanging="720"/>
+                </w:pPr>
+                <aml:annotation aml:id="0" w:type="Word.Bookmark.Start" w:name="_Toc93481875"/>
+                <w:r>
+                    <w:t>5.1.2 典型日综合分析</w:t>
+                </w:r>
+                <aml:annotation aml:id="0" w:type="Word.Bookmark.End"/>
+            </w:p>
+            <w:p>
+                <w:pPr>
+                    <w:ind w:first-line="560" w:first-line-chars="200"/>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="default"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="28"/>
+                    </w:rPr>
+                </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="fareast"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="28"/>
+                    </w:rPr>
+                    <w:t>${stationName}风电场第${reportQuarter}季度运行期间，${powerPredictionPricisionBottomDay}预测精度最低，为${powerPredictionPricisionBottomDayRate}%，</w:t>
+                </w:r>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="default"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="28"/>
+                    </w:rPr>
+                    <w:t>当日预测值与实际值的对比分析如下图。</w:t>
+                </w:r>
+            </w:p>
+            <w:p>
+                <w:pPr>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="default"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="28"/>
+                    </w:rPr>
+                </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="default"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="28"/>
+                    </w:rPr>
+                    <w:pict>
+                        <w:binData w:name="wordml://${powerPredictionPricisionBottomDayLine.name}.png">
+                            ${powerPredictionPricisionBottomDayLine.data}
+                        </w:binData>
+                        <v:shape id="图片 15" o:spid="_x0000_s1026" o:spt="75" alt="" type="#_x0000_t75"
+                                 style="height:124.15pt;width:415.3pt;" filled="f" o:preferrelative="t" stroked="f"
+                                 coordsize="21600,21600">
+                            <v:path/>
+                            <v:fill on="f" focussize="0,0"/>
+                            <v:stroke on="f"/>
+                            <v:imagedata src="wordml://${powerPredictionPricisionBottomDayLine.name}.png" o:title=""/>
+                            <o:lock v:ext="edit" aspectratio="t"/>
+                            <w10:wrap type="none"/>
+                            <w10:anchorlock/>
+                        </v:shape>
+                    </w:pict>
+                </w:r>
+            </w:p>
+            <w:p>
+                <w:pPr>
+                    <w:spacing w:line="360" w:line-rule="auto"/>
+                    <w:ind w:first-line="480" w:first-line-chars="200"/>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="default"/>
+                        <w:sz w:val="24"/>
+                        <w:sz-cs w:val="24"/>
+                    </w:rPr>
+                </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="default"/>
+                        <w:sz w:val="24"/>
+                        <w:sz-cs w:val="24"/>
+                    </w:rPr>
+                    <w:t>图5-3 ${stationName}风电场${powerPredictionPricisionBottomDay}功率预测精度分析</w:t>
+                </w:r>
+            </w:p>
+            <w:p>
+                <w:pPr>
+                    <w:spacing w:line="360" w:line-rule="auto"/>
+                    <w:ind w:first-line="560" w:first-line-chars="200"/>
+                    <w:rPr>
+                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman" w:hint="default"/>
+                        <w:color w:val="auto"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="24"/>
+                    </w:rPr>
+                </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman" w:hint="fareast"/>
+                        <w:color w:val="auto"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="24"/>
+                    </w:rPr>
+                    <w:t>${stationName}风电场本季度功率预测调度实际考核电量如表5-1所示（未考虑免考等情况），其中${powerPredictionPricisionTopMonth}考核电量最高，为${powerPredictionPricisionTopMonthRate}MW；</w:t>
+                </w:r>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="宋体" w:h-ansi="宋体" w:fareast="宋体" w:cs="Times New Roman" w:hint="default"/>
+                        <w:color w:val="auto"/>
+                        <w:sz w:val="28"/>
+                        <w:sz-cs w:val="24"/>
+                    </w:rPr>
+                    <w:t>${powerPredictionPricisionBottomMonth}考核电量最低，为${powerPredictionPricisionBottomMonthRate}MW。</w:t>
+                </w:r>
+            </w:p>
+            <w:p>
+                <w:pPr>
+                    <w:spacing w:line="360" w:line-rule="auto"/>
+                    <w:jc w:val="center"/>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="default"/>
+                        <w:color w:val="auto"/>
+                        <w:sz w:val="24"/>
+                        <w:sz-cs w:val="24"/>
+                    </w:rPr>
+                </w:pPr>
+                <w:r>
+                    <w:rPr>
+                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                  w:cs="Times New Roman" w:hint="fareast"/>
+                        <w:color w:val="auto"/>
+                        <w:sz w:val="24"/>
+                        <w:sz-cs w:val="24"/>
+                    </w:rPr>
+                    <w:t>表5-1 月度考核电量统计</w:t>
+                </w:r>
+            </w:p>
+            <w:tbl>
+                <w:tblPr>
+                    <w:tblW w:w="2740" w:type="dxa"/>
+                    <w:jc w:val="center"/>
+                    <w:tblInd w:w="0" w:type="dxa"/>
+                    <w:tblBorders>
+                        <w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                        <w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                        <w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                        <w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                        <w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                        <w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                    </w:tblBorders>
+                    <w:tblLayout w:type="Fixed"/>
+                    <w:tblCellMar>
+                        <w:top w:w="0" w:type="dxa"/>
+                        <w:left w:w="108" w:type="dxa"/>
+                        <w:bottom w:w="0" w:type="dxa"/>
+                        <w:right w:w="108" w:type="dxa"/>
+                    </w:tblCellMar>
+                </w:tblPr>
+                <w:tblGrid>
+                    <w:gridCol w:w="1370"/>
+                    <w:gridCol w:w="1370"/>
+                </w:tblGrid>
+                <w:tr>
+                    <w:tblPrEx>
+                        <w:tblBorders>
+                            <w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            <w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                        </w:tblBorders>
+                        <w:tblCellMar>
+                            <w:top w:w="0" w:type="dxa"/>
+                            <w:left w:w="108" w:type="dxa"/>
+                            <w:bottom w:w="0" w:type="dxa"/>
+                            <w:right w:w="108" w:type="dxa"/>
+                        </w:tblCellMar>
+                    </w:tblPrEx>
+                    <w:trPr>
+                        <w:trHeight w:val="831" w:h-rule="atLeast"/>
+                        <w:jc w:val="center"/>
+                    </w:trPr>
+                    <w:tc>
+                        <w:tcPr>
+                            <w:tcW w:w="1370" w:type="dxa"/>
+                            <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                            <w:vAlign w:val="center"/>
+                        </w:tcPr>
+                        <w:p>
+                            <w:pPr>
+                                <w:widowControl/>
+                                <w:jc w:val="center"/>
+                                <w:rPr>
+                                    <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                              w:cs="Times New Roman" w:hint="default"/>
+                                    <w:color w:val="auto"/>
+                                    <w:sz w:val="24"/>
+                                    <w:sz-cs w:val="24"/>
+                                </w:rPr>
+                            </w:pPr>
+                            <w:r>
+                                <w:rPr>
+                                    <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                              w:cs="Times New Roman" w:hint="fareast"/>
+                                    <w:color w:val="auto"/>
+                                    <w:sz w:val="24"/>
+                                    <w:sz-cs w:val="24"/>
+                                </w:rPr>
+                                <w:t>月份</w:t>
+                            </w:r>
+                        </w:p>
+                    </w:tc>
+                    <w:tc>
+                        <w:tcPr>
+                            <w:tcW w:w="1370" w:type="dxa"/>
+                            <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                            <w:vAlign w:val="center"/>
+                        </w:tcPr>
+                        <w:p>
+                            <w:pPr>
+                                <w:widowControl/>
+                                <w:jc w:val="center"/>
+                                <w:rPr>
+                                    <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                              w:cs="Times New Roman" w:hint="default"/>
+                                    <w:color w:val="auto"/>
+                                    <w:sz w:val="24"/>
+                                    <w:sz-cs w:val="24"/>
+                                </w:rPr>
+                            </w:pPr>
+                            <w:r>
+                                <w:rPr>
+                                    <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                              w:cs="Times New Roman" w:hint="fareast"/>
+                                    <w:color w:val="auto"/>
+                                    <w:sz w:val="24"/>
+                                    <w:sz-cs w:val="24"/>
+                                </w:rPr>
+                                <w:t>调度实际考核电量（</w:t>
+                            </w:r>
+                            <w:r>
+                                <w:rPr>
+                                    <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                              w:cs="Times New Roman" w:hint="default"/>
+                                    <w:color w:val="auto"/>
+                                    <w:sz w:val="24"/>
+                                    <w:sz-cs w:val="24"/>
+                                </w:rPr>
+                                <w:t>MW</w:t>
+                            </w:r>
+                            <w:r>
+                                <w:rPr>
+                                    <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                              w:cs="Times New Roman" w:hint="fareast"/>
+                                    <w:color w:val="auto"/>
+                                    <w:sz w:val="24"/>
+                                    <w:sz-cs w:val="24"/>
+                                </w:rPr>
+                                <w:t>）</w:t>
+                            </w:r>
+                        </w:p>
+                    </w:tc>
+                </w:tr>
+                <#list powerPredictionPricisionMonthRateTable as record>
+                    <w:tr>
+                        <w:tblPrEx>
+                            <w:tblBorders>
+                                <w:top w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:left w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:bottom w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:right w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:insideH w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                                <w:insideV w:val="single" w:sz="4" wx:bdrwidth="10" w:space="0" w:color="auto"/>
+                            </w:tblBorders>
+                            <w:tblCellMar>
+                                <w:top w:w="0" w:type="dxa"/>
+                                <w:left w:w="108" w:type="dxa"/>
+                                <w:bottom w:w="0" w:type="dxa"/>
+                                <w:right w:w="108" w:type="dxa"/>
+                            </w:tblCellMar>
+                        </w:tblPrEx>
+                        <w:trPr>
+                            <w:trHeight w:val="859" w:h-rule="atLeast"/>
+                            <w:jc w:val="center"/>
+                        </w:trPr>
+                        <w:tc>
+                            <w:tcPr>
+                                <w:tcW w:w="1370" w:type="dxa"/>
+                                <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                <w:vAlign w:val="center"/>
+                            </w:tcPr>
+                            <w:p>
+                                <w:pPr>
+                                    <w:widowControl/>
+                                    <w:jc w:val="center"/>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                                  w:cs="Times New Roman" w:hint="default"/>
+                                        <w:color w:val="auto"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                </w:pPr>
+                                <w:r>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="Calibri" w:h-ansi="Calibri" w:hint="default"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                    <w:t>${record.month}</w:t>
+                                </w:r>
+                            </w:p>
+                        </w:tc>
+                        <w:tc>
+                            <w:tcPr>
+                                <w:tcW w:w="1370" w:type="dxa"/>
+                                <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                <w:vAlign w:val="center"/>
+                            </w:tcPr>
+                            <w:p>
+                                <w:pPr>
+                                    <w:widowControl/>
+                                    <w:jc w:val="center"/>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="Times New Roman" w:h-ansi="Times New Roman" w:fareast="宋体"
+                                                  w:cs="Times New Roman" w:hint="default"/>
+                                        <w:color w:val="auto"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                </w:pPr>
+                                <w:r>
+                                    <w:rPr>
+                                        <w:rFonts w:ascii="Calibri" w:h-ansi="Calibri" w:hint="default"/>
+                                        <w:sz w:val="24"/>
+                                        <w:sz-cs w:val="24"/>
+                                    </w:rPr>
+                                    <w:t>${record.checkingPower}</w:t>
+                                </w:r>
+                            </w:p>
+                        </w:tc>
+                    </w:tr>
+                </#list>
+            </w:tbl>
+            <w:p/>
+            <w:p>
+                <w:pPr>
                     <w:keepNext/>
                     <w:keepLines/>
                     <w:tabs>
