@@ -18,4 +18,11 @@ public class EnumValue {
         }
         return keyValueVOS;
     }
+    public static List<Object> getReportStatus(){
+        List<Object> keyValueVOS=new ArrayList<>();
+        for (StatusEnum e: StatusEnum.values()) {
+            keyValueVOS.add(new KeyValueVO(e.getCode(),e.getName()));
+        }
+        return keyValueVOS;
+    }
 }

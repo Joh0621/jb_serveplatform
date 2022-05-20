@@ -109,7 +109,13 @@ public class ReportCfgController {
         if (code==null || "".equals(code)) {
             return Result.error(ResultCode.NOT_FOUND);
         }
-        return Result.of(EnumValue.getUserTypeName());
+        QueryWrapper<ReportInterface> qw=new QueryWrapper();
+        qw.eq("code",code);
+        List<ReportInterface> l=reportInterfaceMapper.selectList(qw);
+        if (l!=null && l.size()>0){
+            return Result.of(l.get(0));
+        }
+        return Result.of(l);
     }
 
     @ApiOperation(value = "报告脚本定义_接口类型下拉框")
@@ -179,6 +185,13 @@ public class ReportCfgController {
         });
         return Result.of(vo);
     }
+
+    @ApiOperation(value = "报告模板配置_模板|报告状态下拉框")
+    @PostMapping("/model/statuslist")
+    public Result statuslist() {
+        return Result.of(EnumValue.getReportStatus());
+    }
+
     @ApiOperation(value = "报告模板配置_删除报告模板")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "报告模板ID", required = true),
