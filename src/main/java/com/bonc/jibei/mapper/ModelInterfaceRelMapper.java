@@ -17,7 +17,7 @@ import java.util.List;
 @Mapper
 public interface ModelInterfaceRelMapper extends  RootMapper<ModelInterfaceRel>{
     /**
-     *  接口参数映射列表
+     *  接口参数列表
      * @param page：页码
      * @param interCode:接口编码
      * @param paramCode:参数编码

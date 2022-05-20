@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.ReportParamsMapMapper">
+    <select id="selectReportParamsMapList" resultType="com.bonc.jibei.vo.ModelInterParamMapVo">
+        select
+        rel.id,
+        model.model_name as modelName,
+        inter.code as InterCode,
+        rel.map_param as code,
+        inter.inter_type as interType,
+        inter.inter_name as interName,
+        rel.param as param,
+        rel.param_name as paramName
+        from jb_model_params_map rel
+        inner join jb_report_model model on rel.model_id=model.id
+        inner join jb_report_interface inter on inter.id=rel.inter_id
+        inner join jb_report_model model on model.id=rel.model_id
+        where 1=1
+        <if test="interCode != null and interCode != ''">
+            and inter.code=#{interCode}
+        </if>
+        <if test="paramCode != null and paramCode != ''">
+            and rel.map_param =#{interCode}
+        </if>
+        <if test="paramName != null and paramName != ''">
+            and rel.param_name like concat('%', #{paramName}, '%')
+        </if>
+
+    </select>
+    <select id="selectCount" resultType="int">
+        select
+        count(*) as cnt
+        from jb_model_params_map rel
+        inner join jb_report_model model on rel.model_id=model.id
+        inner join jb_report_interface inter on inter.id=rel.inter_id
+        inner join jb_report_model model on model.id=rel.model_id
+        where 1=1
+        <if test="interCode != null and interCode != ''">
+            and inter.code=#{interCode}
+        </if>
+        <if test="paramCode != null and paramCode != ''">
+            and rel.map_param =#{interCode}
+        </if>
+        <if test="paramName != null and paramName != ''">
+            and rel.param_name like concat('%', #{paramName}, '%')
+        </if>
+    </select>
+</mapper>
