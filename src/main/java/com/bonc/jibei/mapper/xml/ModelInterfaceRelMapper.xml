@@ -10,7 +10,7 @@
         inter.inter_desc as interDesc,
         inter.inter_url as interUrl,
         from jb_model_params_map rel
-        inner join
+        inner join jb_report_model model on rel.model_id=model.id
         inner join jb_report_interface inter on inter.id=rel.inter_id
         <if test="modelId != null ">
             and rel.model_id=#{modelId}

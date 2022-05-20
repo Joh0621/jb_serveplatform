@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.ReportModelMapper">
+    <select id="selectModelReportList" resultType="com.bonc.jibei.entity.ReportModel">
+        select
+        model.id as id,
+        model.report_code as reportCode,
+        model.model_code as modelCode,
+        model.model_type as modelType,
+        model.model_name as modelName,
+        model.model_desc as modelDesc,
+        model.model_version as modelVersion,
+        model.report_name as reportName,
+        model.report_status as reportStatus,
+        model.report_status_date as reportStatusDate
+        from jb_report_model model
+        where exists (select 1 from jb_station_model_rel where model_id=model.id)
+        <if test="modelType != null ">
+            and model.model_type=#{modemodelTypelId}
+        </if>
+        <if test="reportStatus != null ">
+            and model.report_status=#{reportStatus}
+        </if>
+        <if test="name != null and name != ''">
+            and (model.model_name like concat('%', #{name}, '%') or model.report_name like concat('%', #{name}, '%') )
+        </if>
+
+    </select>
+    <select id="reportSelectCount" resultType="int">
+        select
+        count(*) as cnt
+        from jb_report_model model
+        where exists (select 1 from jb_station_model_rel where model_id=model.id)
+        <if test="modelType != null ">
+            and model.model_type=#{modemodelTypelId}
+        </if>
+        <if test="reportStatus != null ">
+            and model.report_status=#{reportStatus}
+        </if>
+        <if test="name != null and name != ''">
+            and (model.model_name like concat('%', #{name}, '%') or model.report_name like concat('%', #{name}, '%') )
+        </if>
+    </select>
+</mapper>

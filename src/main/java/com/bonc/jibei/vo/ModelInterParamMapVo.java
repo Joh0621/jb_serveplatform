@@ -5,11 +5,11 @@ import lombok.Data;
 
 /**
  * @Author: dupengling
- * @DateTime: 2022/5/19 10:03
- * @Description: 模板参数映射列表
+ * @DateTime: 2022/5/19 15:55
+ * @Description: TODO
  */
 @Data
-public class ModelInterfaceRelListVo {
+public class ModelInterParamMapVo {
     @ApiModelProperty("映射id")
     private Integer id;
 

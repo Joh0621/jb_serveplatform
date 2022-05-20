@@ -1,6 +1,8 @@
 package com.bonc.jibei.controller;
 
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bonc.jibei.api.EnumValue;
 import com.bonc.jibei.api.Result;
@@ -9,10 +11,10 @@ import com.bonc.jibei.entity.*;
 import com.bonc.jibei.mapper.*;
 import com.bonc.jibei.service.FileService;
 
-import com.bonc.jibei.vo.IdlistVo;
-import com.bonc.jibei.vo.KeyValueVO;
-import com.bonc.jibei.vo.ModelInterfaceRelListVo;
+import com.bonc.jibei.vo.*;
+
 import io.swagger.annotations.*;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,9 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.annotation.Resource;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,10 +52,19 @@ public class ReportCfgController {
     ReportParamsMapMapper reportParamsMapMapper;
 
     @Resource
+    StationTypeMapper stationTypeMapper;
+
+    @Resource
+    StationMapper stationMapper;
+
+    @Resource
+    StationModelRelMapper stationModelRelMapper;
+
+    @Resource
     FileService ftpFileService;
 
 
-    @ApiOperation(value = "i增加接口")
+    @ApiOperation(value = "报告脚本定义_增加接口")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportInterface.class),
     })
@@ -59,7 +73,7 @@ public class ReportCfgController {
         return Result.of(reportInterfaceMapper.insert(reportInterface));
     }
 
-    @ApiOperation(value = "i删除接口")
+    @ApiOperation(value = "报告脚本定义_删除接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "接口ID", required = true),
     })
@@ -68,7 +82,7 @@ public class ReportCfgController {
         return Result.of(reportInterfaceMapper.deleteById(id));
     }
 
-    @ApiOperation(value = "i接口列表")
+    @ApiOperation(value = "报告脚本定义_接口列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
             @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
@@ -86,7 +100,7 @@ public class ReportCfgController {
         return Result.of(jpage);
     }
 
-    @ApiOperation(value = "i根据接口编码取接口数据")
+    @ApiOperation(value = "报告脚本定义_根据接口编码取接口数据")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportInterface.class),
     })
@@ -95,10 +109,16 @@ public class ReportCfgController {
         if (code==null || "".equals(code)) {
             return Result.error(ResultCode.NOT_FOUND);
         }
-        return Result.of(EnumValue.getUserTypeName());
+        QueryWrapper<ReportInterface> qw=new QueryWrapper();
+        qw.eq("code",code);
+        List<ReportInterface> l=reportInterfaceMapper.selectList(qw);
+        if (l!=null && l.size()>0){
+            return Result.of(l.get(0));
+        }
+        return Result.of(l);
     }
 
-    @ApiOperation(value = "i接口类型下拉框")
+    @ApiOperation(value = "报告脚本定义_接口类型下拉框")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
     })
@@ -107,7 +127,7 @@ public class ReportCfgController {
         return Result.of(EnumValue.getUserTypeName());
     }
 
-    @ApiOperation(value = "p增加接口参数")
+    @ApiOperation(value = "报告脚本定义_增加接口参数")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportInterface.class),
     })
@@ -119,7 +139,7 @@ public class ReportCfgController {
         return Result.of(interParamsMapper.insert(interParams));
     }
 
-    @ApiOperation(value = "p删除接口参数")
+    @ApiOperation(value = "报告脚本定义_删除接口参数")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "参数ID", required = true),
     })
@@ -128,7 +148,7 @@ public class ReportCfgController {
         return Result.of(interParamsMapper.deleteById(id));
     }
 
-    @ApiOperation(value = "p接口参数列表")
+    @ApiOperation(value = "报告脚本定义_接口参数列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
             @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
@@ -146,22 +166,33 @@ public class ReportCfgController {
         return Result.of(jpage);
     }
 
-    @ApiOperation(value = "r增加报告模板")
+    @ApiOperation(value = "报告模板配置_模板类型下拉框")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK", response = ReportModel.class),
+            @ApiResponse(code = 200, message = "OK", response = StationType.class),
     })
-    @PostMapping("/model/add")
-    public Result addModelInfo(ReportModel reportModel) {
-        String pathFile= null;
-        try {
-            pathFile = ftpFileService.upload(reportModel.getModelFile().getOriginalFilename(),reportModel.getModelFile().getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        reportModel.setModelFileUrl(pathFile);
-        return Result.of(reportModelMapper.insert(reportModel));
+    @PostMapping("/model/typelist")
+    public Result typelist() {
+        QueryWrapper<StationType> qw=new QueryWrapper<>();
+        qw.eq("is_show",1);
+        List<StationType> list=stationTypeMapper.selectList(qw);
+
+        List<KeyValueVO> vo= new ArrayList<>();
+        list.forEach(p->{
+            KeyValueVO v=new KeyValueVO();
+            v.setKey(p.getId().toString());
+            v.setValue(p.getTypeName());
+            vo.add(v);
+        });
+        return Result.of(vo);
     }
-    @ApiOperation(value = "r删除报告模板")
+
+    @ApiOperation(value = "报告模板配置_模板|报告状态下拉框")
+    @PostMapping("/model/statuslist")
+    public Result statuslist() {
+        return Result.of(EnumValue.getReportStatus());
+    }
+
+    @ApiOperation(value = "报告模板配置_删除报告模板")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "报告模板ID", required = true),
     })
@@ -169,7 +200,7 @@ public class ReportCfgController {
     public Result delModel(Integer id) {
         return Result.of(reportModelMapper.deleteById(id));
     }
-    @ApiOperation(value = "r编辑报告模板")
+    @ApiOperation(value = "报告模板配置_编辑报告模板")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportModel.class),
     })
@@ -192,7 +223,7 @@ public class ReportCfgController {
         return Result.ok();
     }
 
-    @ApiOperation(value = "p增加模板接口")
+    @ApiOperation(value = "报告模板配置_参数配置_增加模板接口")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = IdlistVo.class),
     })
@@ -221,7 +252,7 @@ public class ReportCfgController {
         }
         return Result.ok();
     }
-    @ApiOperation(value = "pm增加模板接口参数映射")
+    @ApiOperation(value = "报告模板配置_参数配置_增加模板接口参数映射")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportParamsMap.class),
     })
@@ -230,7 +261,7 @@ public class ReportCfgController {
         return Result.of(reportParamsMapMapper.insert(reportParamsMap));
     }
 
-    @ApiOperation(value = "pm删除模板接口参数映射")
+    @ApiOperation(value = "报告模板配置_参数配置_删除模板接口参数映射")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "映射id", required = true),
     })
@@ -239,7 +270,7 @@ public class ReportCfgController {
         return Result.of(reportParamsMapMapper.deleteById(id));
     }
 
-    @ApiOperation(value = "pm修改模板接口参数映射")
+    @ApiOperation(value = "报告模板配置_参数配置_修改模板接口参数映射")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportParamsMap.class),
     })
@@ -248,7 +279,7 @@ public class ReportCfgController {
         return Result.of(reportParamsMapMapper.updateById(reportParamsMap));
     }
 
-    @ApiOperation(value = "pm批量删除模板接口参数映射")
+    @ApiOperation(value = "报告模板配置_参数配置_批量删除模板接口参数映射")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = IdlistVo.class),
     })
@@ -266,21 +297,291 @@ public class ReportCfgController {
         }
         return Result.ok();
     }
-    @ApiOperation(value = "pm模板接口参数映射列表")
+    @ApiOperation(value = "报告模板配置_参数配置_模板接口参数映射列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
             @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
-            @ApiImplicitParam(name = "interId", value = "接口Id", required = true),
-            @ApiImplicitParam(name = "interName", value = "接口名称", required = false),
-            @ApiImplicitParam(name = "paramName", value = "参数类型", required = false),
+            @ApiImplicitParam(name = "interCode", value = "接口编码", required = false),
+            @ApiImplicitParam(name = "paramCode", value = "参数编码", required = false),
+            @ApiImplicitParam(name = "paramName", value = "参数名称", required = false),
     })
     @PostMapping("/interparammap/list")
-    public Result selectInterParamMap(@ApiIgnore Page<ModelInterfaceRelListVo> page, Integer interId, String interName, String paramName) {
-        Page<InterParams> jpage = new Page<>(page.getCurrent(), page.getSize());
+    public Result selectInterParamMap(@ApiIgnore Page<ModelInterParamMapVo> page, String interCode, String paramCode, String paramName) {
+        Page<ModelInterParamMapVo> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<InterParams>  list=interParamsMapper.selectInterParamList(jpage,interId,interName,paramName);
+        List<ModelInterParamMapVo>  list=reportParamsMapMapper.selectReportParamsMapList(jpage,interCode,paramCode,paramName);
         jpage.setRecords(list);
-        jpage.setTotal(interParamsMapper.selectCount(interId,interName,paramName));
+        jpage.setTotal(reportParamsMapMapper.selectCount(interCode,paramCode,paramName));
         return Result.of(jpage);
+    }
+
+    @ApiOperation(value = "报告配置_场站列表")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = IdlistVo.class),
+    })
+    @PostMapping("/reportcfg/stationlist")
+    public Result stationlist() {
+        QueryWrapper<Station> qw=new QueryWrapper<>();
+        List<Station> list=stationMapper.selectList(qw);
+        return Result.of(list);
+    }
+
+    @ApiOperation(value = "报告配置_报告名称下拉框")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "modelName", value = "模板名称", required = false),
+            @ApiImplicitParam(name = "modelv", value = "模板版本号", required = false),
+            @ApiImplicitParam(name = "reportType", value = "报告类型", required = false),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
+    })
+    @GetMapping("/reportcfg/reportnamelist")
+    public Result reportNamelist(String modelName,String modelv,String reportType) {
+        //找模板ID
+        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
+        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
+        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
+        List<ReportModel> list=reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo= new ArrayList<>();
+        if (list!=null && list.size()>0){
+            list.forEach(p->{
+                KeyValueVO v=new KeyValueVO();
+                v.setKey(p.getReportName());
+                v.setValue(p.getReportName());
+                vo.add(v);
+            });
+        }
+        //以后判断 key 唯一性
+        return Result.of(vo);
+    }
+
+    @ApiOperation(value = "报告配置_模板名称下拉框")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "reportName", value = "报告名称", required = false),
+            @ApiImplicitParam(name = "modelv", value = "模板版本号", required = false),
+            @ApiImplicitParam(name = "reportType", value = "报告类型", required = false),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
+    })
+    @GetMapping("/reportcfg/modelnamelist")
+    public Result modelNamelist(String reportName,String modelv,String reportType) {
+        //找模板ID
+        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
+        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
+        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
+        List<ReportModel> list=reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo= new ArrayList<>();
+        if (list!=null && list.size()>0){
+            //下拉框
+            list.forEach(p->{
+                KeyValueVO v=new KeyValueVO();
+                v.setKey(p.getModelName());
+                v.setValue(p.getModelName());
+                vo.add(v);
+            });
+        }
+        //以后判断 key 唯一性
+        return Result.of(vo);
+    }
+
+    @ApiOperation(value = "报告配置_模板版本号下拉框")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "reportName", value = "报告名称", required = false),
+            @ApiImplicitParam(name = "modelName", value = "模板名称", required = false),
+            @ApiImplicitParam(name = "reportType", value = "报告类型", required = false),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
+    })
+    @GetMapping("/reportcfg/modelvlist")
+    public Result reportTypelist(String reportName,String modelName,String reportType) {
+        //找模板ID
+        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
+        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
+        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
+        List<ReportModel> list=reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo= new ArrayList<>();
+        if (list!=null && list.size()>0){
+            //下拉框
+            list.forEach(p->{
+                KeyValueVO v=new KeyValueVO();
+                v.setKey(p.getModelName());
+                v.setValue(p.getModelName());
+                vo.add(v);
+            });
+        }
+        return Result.of(vo);
+    }
+
+    @ApiOperation(value = "报告配置_报告类型下拉框")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "reportName", value = "报告名称", required = false),
+            @ApiImplicitParam(name = "modelName", value = "模板名称", required = false),
+            @ApiImplicitParam(name = "modelv", value = "模板版本号", required = false),
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
+    })
+    @GetMapping("/reportcfg/modelvreportTypelist")
+    public Result modelVersionlist(String reportName,String modelv,String modelName) {
+        //找模板ID
+        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
+        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
+        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
+        List<ReportModel> list=reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo= new ArrayList<>();
+        if (list!=null && list.size()>0){
+            //下拉框
+            list.forEach(p->{
+                KeyValueVO v=new KeyValueVO();
+                v.setKey(p.getModelName());
+                v.setValue(p.getModelName());
+                vo.add(v);
+            });
+        }
+        //以后判断 key 唯一性
+        return Result.of(vo);
+    }
+
+    @ApiOperation(value = "报告配置_新建场站报告_添加场站")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = ModelStationIdsVo.class),
+    })
+    @PostMapping("/reportcfg/addstation")
+    public Result addStationReport(ModelStationIdsVo modelStationIdsVo) {
+        //找模板ID
+        String reportName=modelStationIdsVo.getReportName();
+        String reportType=modelStationIdsVo.getReportType();
+        String modelv=modelStationIdsVo.getModelv();
+        String modelName=modelStationIdsVo.getModelName();
+        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
+        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
+        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
+        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
+        List<ReportModel> list=reportModelMapper.selectList(qw);
+        if (list!=null && list.size()>0){
+            Integer mid=list.get(0).getId();
+            Integer[] ids=modelStationIdsVo.getIdList();
+            if (ids!=null){
+                for (Integer id:ids){
+                    StationModelRel rel=new StationModelRel();
+                    rel.setModelId(mid);
+                    rel.setStationId(id);
+                    rel.setCreateTime(LocalDateTime.now());
+                    stationModelRelMapper.insert(rel);
+                }
+            }
+        }
+        //以后判断 key 唯一性
+        return Result.of(list);
+    }
+
+    @ApiOperation(value = "报告配置_新建场站报告_编辑场站(报告名称、报告类型、选择模板、模板版本号不可编辑)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = ModelStationIdsVo.class),
+    })
+    @PostMapping("/reportcfg/editstation")
+    public Result editStationReport(ModelStationIdsVo modelStationIdsVo) {
+        //找模板ID
+        /*
+        String reportName=modelStationIdsVo.getReportName();
+        String reportType=modelStationIdsVo.getReportType();
+        String modelv=modelStationIdsVo.getModelv();
+        String modelName=modelStationIdsVo.getModelName();
+        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
+        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
+        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
+        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
+        List<ReportModel> list=reportModelMapper.selectList(qw);
+        */
+        //先删除以前的模板场站
+        QueryWrapper<StationModelRel> qw=new QueryWrapper();
+        qw.eq("model_id",modelStationIdsVo.getModelId());
+        stationModelRelMapper.delete(qw);
+
+        Integer[] islist=modelStationIdsVo.getIdList();
+        //再增加新的场站
+        if (islist!=null && islist.length>0){
+            for (Integer id:islist){
+                 StationModelRel rel=new StationModelRel();
+                 rel.setModelId(modelStationIdsVo.getModelId());
+                 rel.setStationId(id);
+                 rel.setCreateTime(LocalDateTime.now());
+                 stationModelRelMapper.insert(rel);
+            }
+        }
+        return Result.ok();
+    }
+
+    @ApiOperation(value = "报告配置_删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "模板ID", required = false),
+    })
+    @PostMapping("/reportcfg/delmodelcfgs")
+    public Result delmodelcfgs(Integer id) {
+        QueryWrapper<StationModelRel> rel=new QueryWrapper<>();
+        rel.eq("model_id",id);
+        return Result.of(stationModelRelMapper.delete(rel));
+    }
+
+    @ApiOperation(value = "报告配置_启用|停用")
+
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", value = "模板ID", required = true),
+        @ApiImplicitParam(name = "status", value = "2=已停用，1= 启用.0=待启用", required = true),
+    })
+    @PostMapping("/reportcfg/reportstatus")
+    public Result statuslmodelcfgs(Integer id,Integer status) {
+        ReportModel m=new ReportModel();
+        m.setId(id);
+        m.setReportStatus(status);
+        m.setReportStatusDate(LocalDate.now());
+        return Result.of(reportModelMapper.insert(m));
+    }
+
+    @ApiOperation(value = "报告配置_列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
+            @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
+            @ApiImplicitParam(name = "modelType", value = "模板类型", required = true),
+            @ApiImplicitParam(name = "reportStatus", value = "报告状态;2=已停用，1= 启用.0=待启用", required = false),
+            @ApiImplicitParam(name = "name", value = "模板名称|报告名称", required = false),
+    })
+    @PostMapping("/reportcfg/list")
+    public Result reportcfgList(@ApiIgnore Page<InterParams> page,Integer modelType, Integer reportStatus, String name) {
+        Page<ReportModel> jpage = new Page<>(page.getCurrent(), page.getSize());
+        jpage.setSearchCount(false);
+        List<ReportModel> list=reportModelMapper.selectModelReportList(jpage,modelType,reportStatus,name);
+        jpage.setRecords(list);
+        jpage.setTotal(reportModelMapper.reportSelectCount(modelType,reportStatus,name));
+        return Result.of(jpage);
+    }
+
+    @ApiOperation(value = "报告配置_详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "模板id", required = true),
+    })
+    @PostMapping("/reportcfg/view")
+    public Result reportcfgView(Integer id) {
+        ReportModel m=reportModelMapper.selectById(id);
+        if (m==null){
+            return Result.error(ResultCode.NOT_FOUND);
+        }
+        ModelReportViewVo vo=new ModelReportViewVo();
+        vo.setReportName(m.getReportName());
+        vo.setModelName(m.getModelName());
+        vo.setModelv(m.getModelVersion());
+        if (m.getModelType()!=null) {
+            vo.setReportType(m.getModelType().toString());
+        }
+        vo.setRel(stationModelRelMapper.selectStationModelRelVoList(id));
+        return Result.of(vo);
     }
 }
