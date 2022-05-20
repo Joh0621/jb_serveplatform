@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -338,6 +339,7 @@ public class ReportCfgController {
                 vo.add(v);
             });
         }
+        //以后判断 key 唯一性
         return Result.of(vo);
     }
 
@@ -368,6 +370,7 @@ public class ReportCfgController {
                 vo.add(v);
             });
         }
+        //以后判断 key 唯一性
         return Result.of(vo);
     }
 
@@ -428,6 +431,7 @@ public class ReportCfgController {
                 vo.add(v);
             });
         }
+        //以后判断 key 唯一性
         return Result.of(vo);
     }
 
@@ -456,12 +460,53 @@ public class ReportCfgController {
                     StationModelRel rel=new StationModelRel();
                     rel.setModelId(mid);
                     rel.setStationId(id);
+                    rel.setCreateTime(LocalDateTime.now());
                     stationModelRelMapper.insert(rel);
                 }
             }
         }
+        //以后判断 key 唯一性
         return Result.of(list);
     }
+
+    @ApiOperation(value = "报告配置_新建场站报告_编辑场站(报告名称、报告类型、选择模板、模板版本号不可编辑)")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = ModelStationIdsVo.class),
+    })
+    @PostMapping("/reportcfg/editstation")
+    public Result editStationReport(ModelStationIdsVo modelStationIdsVo) {
+        //找模板ID
+        /*
+        String reportName=modelStationIdsVo.getReportName();
+        String reportType=modelStationIdsVo.getReportType();
+        String modelv=modelStationIdsVo.getModelv();
+        String modelName=modelStationIdsVo.getModelName();
+        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
+        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
+        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
+        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
+        List<ReportModel> list=reportModelMapper.selectList(qw);
+        */
+        //先删除以前的模板场站
+        QueryWrapper<StationModelRel> qw=new QueryWrapper();
+        qw.eq("model_id",modelStationIdsVo.getModelId());
+        stationModelRelMapper.delete(qw);
+
+        Integer[] islist=modelStationIdsVo.getIdList();
+        //再增加新的场站
+        if (islist!=null && islist.length>0){
+            for (Integer id:islist){
+                 StationModelRel rel=new StationModelRel();
+                 rel.setModelId(modelStationIdsVo.getModelId());
+                 rel.setStationId(id);
+                 rel.setCreateTime(LocalDateTime.now());
+                 stationModelRelMapper.insert(rel);
+            }
+        }
+        return Result.ok();
+    }
+
     @ApiOperation(value = "报告配置_删除")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "模板ID", required = false),
@@ -523,9 +568,7 @@ public class ReportCfgController {
         if (m.getModelType()!=null) {
             vo.setReportType(m.getModelType().toString());
         }
-        QueryWrapper<StationModelRel> mrel=new QueryWrapper<>();
-        mrel.eq("model_id",id);
-        vo.setRel(stationModelRelMapper.selectList(mrel));
+        vo.setRel(stationModelRelMapper.selectStationModelRelVoList(id));
         return Result.of(vo);
     }
 }

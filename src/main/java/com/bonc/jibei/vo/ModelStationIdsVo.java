@@ -10,6 +10,9 @@ import lombok.Data;
  */
 @Data
 public class ModelStationIdsVo {
+    @ApiModelProperty("报告id,编辑用")
+    Integer modelId;
+
     @ApiModelProperty("报告名称")
     String reportName;
 

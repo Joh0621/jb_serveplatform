@@ -16,5 +16,5 @@ public class ModelReportViewVo {
      private String modelv;
      private String  reportType;
      private String modelName;
-     List<StationModelRel> rel;
+     List<StationModelRelVo> rel;
 }
