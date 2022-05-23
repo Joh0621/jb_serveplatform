@@ -1,5 +1,6 @@
 package com.bonc.jibei.util;
 
+import com.alibaba.fastjson.JSON;
 import com.github.abel533.echarts.Radar;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.axis.CategoryAxis;
@@ -16,7 +17,6 @@ import com.github.abel533.echarts.series.Line;
 import com.github.abel533.echarts.series.Pie;
 import com.github.abel533.echarts.series.RadarSeries;
 import com.github.abel533.echarts.style.TextStyle;
-import com.google.gson.Gson;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.logging.Log;
@@ -105,7 +105,7 @@ public class EchartsToPicUtil {
             option.yAxis(category);// y轴
         }
         option.series(bar);
-        return generateEChart(new Gson().toJson(option));
+        return generateEChart(JSON.toJSONString(option));
     }
     /**
      * 折线图
@@ -149,7 +149,7 @@ public class EchartsToPicUtil {
             option.xAxis(new ValueAxis());// x轴
             option.yAxis(category);// y轴
         }
-        return generateEChart(new Gson().toJson(option));
+        return generateEChart(JSON.toJSONString(option));
     }
     /**
      * 柱状|线状图
@@ -203,8 +203,8 @@ public class EchartsToPicUtil {
             option.xAxis(new ValueAxis());// x轴
             option.yAxis(category);// y轴
         }
-        return generateEChart(new Gson().toJson(option));
-       // return new Gson().toJson(option);
+        return generateEChart(JSON.toJSONString(option));
+       // return JSON.toJSONString(option);
     }
 
     /**
@@ -235,7 +235,7 @@ public class EchartsToPicUtil {
         }
         bar.radius("50%");
         option.series(bar);
-        return generateEChart(new Gson().toJson(option));
+        return generateEChart(JSON.toJSONString(option));
     }
 
     /**
@@ -271,7 +271,7 @@ public class EchartsToPicUtil {
             }
             option.series(bar);
         }
-        return generateEChart(new Gson().toJson(option));
+        return generateEChart(JSON.toJSONString(option));
     }
     /**
      * 堆叠图
@@ -302,7 +302,7 @@ public class EchartsToPicUtil {
             }
             option.series(bar);
         }
-        return generateEChart(new Gson().toJson(option));
+        return generateEChart(JSON.toJSONString(option));
     }
     /**
      * 雷达图
@@ -346,7 +346,7 @@ public class EchartsToPicUtil {
         }
         option.radar(radar);
         option.series(radar1);
-        return generateEChart(new Gson().toJson(option));
+        return generateEChart(JSON.toJSONString(option));
     }
     @SuppressWarnings("finally")
     public static String generateEChart(String options) {
