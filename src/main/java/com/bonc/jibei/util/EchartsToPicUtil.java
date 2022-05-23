@@ -136,7 +136,7 @@ public class EchartsToPicUtil {
         for (int i = 0; i < yBarName.length; i++) {
             Line line = new Line();// 三条线，三个对象
             String type = yBarName[i];
-            line.name(type).stack("总量");
+            line.name(type);
             for (int j = 0; j < yData[i].length; j++) {
                 line.data(yData[i][j]);
             }
