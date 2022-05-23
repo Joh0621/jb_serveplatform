@@ -15,7 +15,6 @@ import com.bonc.jibei.util.DateUtil;
 import com.bonc.jibei.util.JsonUtil;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportModelInter;
-import freemarker.template.TemplateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -59,7 +58,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
 
     @Override
     @Async("threadPoolTaskExecutor")
-    public int insertReport(ReportModelInter reportMng) throws TemplateException, IOException {
+    public int insertReport(ReportModelInter reportMng) throws IOException {
         //取得场站类型的模板
         QueryWrapper<StationModelRel> qw = new QueryWrapper<>();
         qw.eq("station_id", reportMng.getStationId());
@@ -93,7 +92,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
 
     @Override
     @Async("threadPoolTaskExecutor")
-    public void updateReport(ReportMng reportMng) throws TemplateException, IOException {
+    public void updateReport(ReportMng reportMng) throws IOException {
         //取得场站类型的模板
         QueryWrapper<StationModelRel> qw = new QueryWrapper<>();
         qw.eq("station_id", reportMng.getStationId());

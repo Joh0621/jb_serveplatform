@@ -15,7 +15,6 @@ import com.bonc.jibei.service.ReportMngService;
 import com.bonc.jibei.util.FileDownloadUtil;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportMngPatchPub;
-import freemarker.template.TemplateException;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,7 +225,7 @@ public class ReportController {
     })
     @ApiOperation(value = "重新生成(立刻生成报告,点每行重新生成按钮时  测试用)")
     @PostMapping("/report/generate")
-    public Result generateReport(Integer id) throws TemplateException, IOException {
+    public Result generateReport(Integer id) throws IOException {
         QueryWrapper<ReportMng> mngq=new QueryWrapper<>();
         mngq.eq("id",id);
         ReportMng mng = reportMngMapper.selectById(mngq);
@@ -243,7 +242,7 @@ public class ReportController {
 
     @ApiOperation(value = "报告生成手动生成")
     @PostMapping("/report/reportcreate")
-    public Result reportCreate() throws IOException, TemplateException {
+    public Result reportCreate() throws IOException {
         List<ReportMng> stationModellist = reportModelInterMapper.selectReReportModel(2);
         //处理场站模板 接口 生成报告
         if (stationModellist.size() > 0) {

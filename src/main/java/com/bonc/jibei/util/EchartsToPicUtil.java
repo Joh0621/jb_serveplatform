@@ -389,10 +389,8 @@ public class EchartsToPicUtil {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            //return path;
-            return PictureUtils.getImageBase(path);
         }
+        return path;
     }
     public static String writeFile(String options, String tmpPath) {
         String dataPath = tmpPath

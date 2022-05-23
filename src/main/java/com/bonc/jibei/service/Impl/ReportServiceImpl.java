@@ -1,22 +1,20 @@
 package com.bonc.jibei.service.Impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.io.FileUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.bonc.jibei.api.ValueType;
 import com.bonc.jibei.config.WordCfgProperties;
-import com.bonc.jibei.entity.ImgData;
 import com.bonc.jibei.entity.ReportInterface;
-import com.bonc.jibei.mapper.ReportInterfaceMapper;
 import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportService;
 import com.bonc.jibei.util.EchartsToPicUtil;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import com.bonc.jibei.util.PoiTLUtils;
+import com.deepoove.poi.XWPFTemplate;
+import com.deepoove.poi.config.Configure;
+import com.deepoove.poi.config.ConfigureBuilder;
+import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
+import com.deepoove.poi.policy.RenderPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,11 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * jb_serveplatform
@@ -45,12 +43,14 @@ public class ReportServiceImpl implements ReportService {
     @Resource
     private WordCfgProperties wordCfgProperties;
     @Resource
-    private ReportInterfaceMapper reportInterfaceMapper;
-    @Resource
     private ReportModelInterMapper reportModelInterMapper;
 
     @Override
-    public String generate(JSONObject params) throws IOException, TemplateException {
+    public String generate(JSONObject params) throws IOException {
+        LoopRowTableRenderPolicy loopRowTableRenderPolicy = new LoopRowTableRenderPolicy();
+        ConfigureBuilder builder = Configure.builder()
+                .useSpringEL(true); // 开启 springEL 表达式
+
         //取得场站模板接口列表
         Integer modelId = params.getInteger("modelId");
         // 报告接口列表
@@ -70,10 +70,6 @@ public class ReportServiceImpl implements ReportService {
 
         reportInterfaces.forEach((api -> {
             log.info("interfaceURL:{}", api.getInterUrl());
-//            if ("/api/getStationDeviceSyntheticalSummary".equals(api.getInterUrl())) {
-//                ftlData.put("deviceAppendixMix", new ArrayList<>());
-//                return;
-//            }
             JSONArray jsonArray = this.getArray(api.getInterUrl(), params);
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -87,6 +83,7 @@ public class ReportServiceImpl implements ReportService {
                 // table
                 if (ValueType.TABLE.equals(type)) {
                     JSONArray value = jsonObject.getJSONArray("value");
+                    bindLoopRowTablePolicy(builder, name, loopRowTableRenderPolicy);
                     this.handleTable(name, value, ftlData);
                 }
                 // BAR
@@ -116,37 +113,29 @@ public class ReportServiceImpl implements ReportService {
                 // mix
                 if (ValueType.MIX.equals(type)) {
                     JSONArray value = jsonObject.getJSONArray("value");
-                    handleMix(name, value, ftlData);
+                    handleMix(name, value, ftlData, builder, loopRowTableRenderPolicy);
                 }
             }
         }));
-//        String s = FileUtil.readString("D:/data.json", StandardCharsets.UTF_8);
-//        ftlData = JSON.parseObject(s);
-        // Configuration 用于读取ftl文件
-
-        Configuration configuration = new Configuration(Configuration.getVersion());
-        configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
-        configuration.setDirectoryForTemplateLoading(new File(wordCfgProperties.getModelPath()));
-        // 以 utf-8 的编码读取ftl文件
-        Template template = configuration.getTemplate("1.ftl", StandardCharsets.UTF_8.name());
-        String fileName = wordCfgProperties.getWordPath() + params.getString("stationId") + ".docx";
-//        FileUtil.writeString(JSON.toJSONString(ftlData), new File("D:/data.json"), StandardCharsets.UTF_8.name());
-        template.process(ftlData, new FileWriter(fileName));
-        return params.getString("stationId") + ".docx";
+        String fileName = params.getString("stationId") + ".docx";
+        XWPFTemplate.compile(wordCfgProperties.getModelPath() + "/XXX风电场运行性能评估分析报告模板V1版本.docx", builder.build())
+                .render(ftlData)
+                .writeToFile(wordCfgProperties.getWordPath() + fileName);
+        return fileName;
     }
 
     private void handlePie(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] names = Convert.toStrArray(value.getJSONArray("names"));
         Double[] datas = Convert.toDoubleArray(value.getJSONArray("datas"));
-        String base64Img = EchartsToPicUtil.echartPie(true, "", names, datas);
-        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+        String path = EchartsToPicUtil.echartPie(true, "", names, datas);
+        ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleBar(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
         Double[] yData = Convert.toDoubleArray(value.getJSONArray("yData"));
-        String base64Img = EchartsToPicUtil.echartBar(true, "", xData, yData);
-        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+        String path = EchartsToPicUtil.echartBar(true, "", xData, yData);
+        ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleBarGroup(String name, JSONObject value, Map<String, Object> ftlData) {
@@ -158,11 +147,11 @@ public class ReportServiceImpl implements ReportService {
             Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
             y[j] = data;
         }
-        String base64Img = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y);
-        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+        String path = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y);
+        ftlData.put(name, PoiTLUtils.picData(path));
     }
 
-    private void handleMix(String rootName, JSONArray rootValue, Map<String, Object> ftlData) {
+    private void handleMix(String rootName, JSONArray rootValue, Map<String, Object> ftlData, ConfigureBuilder builder, RenderPolicy policy) {
         List<Map<String, Object>> dataList = new ArrayList<>();
         for (int i = 0; i < rootValue.size(); i++) {
             JSONArray jsonArray = rootValue.getJSONArray(i);
@@ -179,6 +168,7 @@ public class ReportServiceImpl implements ReportService {
 
                 if (ValueType.TABLE.equals(type)) {
                     JSONArray value = jsonObject.getJSONArray("value");
+                    bindLoopRowTablePolicy(builder, name, policy);
                     this.handleTable(name, value, data);
                 }
 
@@ -223,8 +213,8 @@ public class ReportServiceImpl implements ReportService {
             Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
             y[j] = data;
         }
-        String base64Img = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y);
-        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+        String path = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y);
+        ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleRadar(String name, JSONObject value, Map<String, Object> ftlData) {
@@ -232,8 +222,8 @@ public class ReportServiceImpl implements ReportService {
         String[] yNames = Convert.toStrArray(value.getJSONArray("yName"));
         Double[] yData =  Convert.toDoubleArray(value.getJSONArray("yData"));
         String[] titles = {};
-        String base64Img = EchartsToPicUtil.echartRadar(true, titles, xData, yData, yNames);
-        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+        String path = EchartsToPicUtil.echartRadar(true, titles, xData, yData, yNames);
+        ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleLine(String name, JSONObject value, Map<String, Object> ftlData) {
@@ -245,8 +235,8 @@ public class ReportServiceImpl implements ReportService {
             Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
             y[j] = data;
         }
-        String base64Img = EchartsToPicUtil.echartLine(true, "", yNames, xData, y);
-        ftlData.put(name, new ImgData(UUID.randomUUID().toString(), base64Img));
+        String path = EchartsToPicUtil.echartLine(true, "", yNames, xData, y);
+        ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleTable(String name, JSONArray value, Map<String, Object> ftlData) {
@@ -258,7 +248,7 @@ public class ReportServiceImpl implements ReportService {
 
     private void handleNormal(String name, Object value, Map<String, Object> ftlData) {
         if (value == null) {
-            value = "";
+            value = "--";
         }
         ftlData.put(name, value);
     }
@@ -275,9 +265,13 @@ public class ReportServiceImpl implements ReportService {
         return restTemplate.postForObject(wordCfgProperties.getInterfaceUrl() + url, request, JSONObject.class);
     }
 
-    public static String pic(String path) {
-        byte[] bytes = FileUtil.readBytes(new File(path));
-        return Base64.encode(bytes);
+    /**
+     * 绑定表格行循环插件
+     * @param builder builder
+     * @param tagName tagName
+     */
+    private void bindLoopRowTablePolicy(ConfigureBuilder builder, String tagName, RenderPolicy policy){
+        builder.bind(tagName, policy);
     }
 
 }

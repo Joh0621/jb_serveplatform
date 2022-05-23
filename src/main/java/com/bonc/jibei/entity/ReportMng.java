@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 /**
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
  * @Description: 报告管理表
  */
 @Data
-@Table(name="jb_report_mng")
 @TableName("jb_report_mng")
 public class ReportMng {
     @TableId(type = IdType.AUTO)

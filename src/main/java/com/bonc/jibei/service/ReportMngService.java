@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.bonc.jibei.entity.ReportMng;
 import com.bonc.jibei.vo.ReportMngList;
 import com.bonc.jibei.vo.ReportModelInter;
-import freemarker.template.TemplateException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,6 +21,6 @@ public interface ReportMngService extends IService<ReportMng> {
     List<ReportMngList> reportMngList(IPage<ReportMngList> page, String stationName, Integer year, Integer quarter, Integer stationType, Integer reportStatus);
     List<String> urlList(List<Integer> ids);
 
-    int insertReport(ReportModelInter reportlist) throws TemplateException, IOException;//新生成报告
-    void updateReport(ReportMng reportMng) throws TemplateException, IOException;//重新生成报告
+    int insertReport(ReportModelInter reportlist) throws IOException;//新生成报告
+    void updateReport(ReportMng reportMng) throws IOException;//重新生成报告
 }
