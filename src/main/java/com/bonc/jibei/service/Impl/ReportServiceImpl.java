@@ -63,11 +63,6 @@ public class ReportServiceImpl implements ReportService {
         // 模版数据
         Map<String, Object> ftlData = new HashMap<>();
 
-        ftlData.put("defaultValue", "--");
-
-        ftlData.put("staticDeviationImg", ""); // 风电机组偏航静态偏差情况统计
-        ftlData.put("staticDeviationEmImg", ""); // 风电机组偏航缺陷情况
-
         reportInterfaces.forEach((api -> {
             log.info("interfaceURL:{}", api.getInterUrl());
             JSONArray jsonArray = this.getArray(api.getInterUrl(), params);
