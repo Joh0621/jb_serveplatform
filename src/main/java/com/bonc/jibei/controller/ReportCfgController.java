@@ -466,7 +466,10 @@ public class ReportCfgController {
         qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
         List<ReportModel> list=reportModelMapper.selectList(qw);
         if (list!=null && list.size()>0){
-            Integer mid=list.get(0).getId();
+            Integer mid=list.get(0).getId();//模板ID
+            //添加配置报告
+
+
             Integer[] ids=modelStationIdsVo.getIdList();
             if (ids!=null){
                 for (Integer id:ids){
