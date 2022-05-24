@@ -86,17 +86,17 @@ public class ReportCfgController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
             @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
-            @ApiImplicitParam(name = "name", value = "名称", required = false),
-            @ApiImplicitParam(name = "type", value = "接口类型", required = false),
+            @ApiImplicitParam(name = "modelName", value = "名称", required = false),
+            @ApiImplicitParam(name = "interType", value = "接口类型", required = false),
             @ApiImplicitParam(name = "modelId", value = "模板Id", required = false),
     })
     @PostMapping("/inter/select")
-    public Result selectInter(@ApiIgnore Page<ReportInterface> page, String name, String type,Integer modelId) {
+    public Result selectInter(@ApiIgnore Page<ReportInterface> page, String modelName, String interType,Integer modelId) {
         Page<ReportInterface> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<ReportInterface>  list=reportInterfaceMapper.selectReportInterList(jpage,name,type,modelId);
+        List<ReportInterface>  list=reportInterfaceMapper.selectReportInterList(jpage,modelName,interType,modelId);
         jpage.setRecords(list);
-        jpage.setTotal(reportInterfaceMapper.selectCount(name,type,modelId));
+        jpage.setTotal(reportInterfaceMapper.selectCount(modelName,interType,modelId));
         return Result.of(jpage);
     }
 
