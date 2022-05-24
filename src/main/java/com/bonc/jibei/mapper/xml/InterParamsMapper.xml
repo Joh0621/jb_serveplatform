@@ -5,12 +5,12 @@
         select
         param.id,
         inter.id as interId,
-        inter.code as code,
+        inter.org_id as orgId,
         inter.inter_type as interType,
         inter.inter_name as interName,
         param.param as param,
         param.param_attr as paramAttr,
-        param.para_name as paraName
+        param.param_name as paraName
         from jb_inter_params param
         inner join jb_report_interface inter on inter.id=param.inter_id
         <if test="interId != null ">

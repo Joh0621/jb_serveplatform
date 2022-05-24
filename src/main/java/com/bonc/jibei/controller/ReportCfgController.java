@@ -15,9 +15,7 @@ import com.bonc.jibei.vo.*;
 
 import io.swagger.annotations.*;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
@@ -69,7 +67,7 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = ReportInterface.class),
     })
     @PostMapping("/inter/add")
-    public Result addInter(ReportInterface reportInterface) {
+    public Result addInter(@RequestBody ReportInterface reportInterface) {
         return Result.of(reportInterfaceMapper.insert(reportInterface));
     }
 
@@ -132,7 +130,8 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = ReportInterface.class),
     })
     @PostMapping("/param/add")
-    public Result addInterParam(InterParams interParams) {
+    public Result addInterParam(@RequestBody InterParams interParams) {
+//        interParams.setInterId(1);
         if (interParams==null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
