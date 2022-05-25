@@ -30,5 +30,5 @@ public class InterParams {
     private String paramAttr;
 
     @ApiModelProperty("参数名")
-    private String paraName;
+    private String paramName;
 }
