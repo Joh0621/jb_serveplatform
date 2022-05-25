@@ -1,6 +1,5 @@
 package com.bonc.jibei.util;
 
-import com.alibaba.fastjson.JSON;
 import com.github.abel533.echarts.Radar;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.axis.CategoryAxis;
@@ -24,9 +23,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 /**
  * eachrts  根据数据形成后台出图
  */
@@ -349,6 +352,7 @@ public class EchartsToPicUtil {
         option.series(radar1);
         return generateEChart(new Gson().toJson(option));
     }
+
     @SuppressWarnings("finally")
     public static String generateEChart(String options) {
         //String OSTypeV="windows";

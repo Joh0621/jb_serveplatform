@@ -49,7 +49,8 @@ public class ReportServiceImpl implements ReportService {
     public String generate(JSONObject params) throws IOException {
         LoopRowTableRenderPolicy loopRowTableRenderPolicy = new LoopRowTableRenderPolicy();
         ConfigureBuilder builder = Configure.builder()
-                .useSpringEL(true); // 开启 springEL 表达式
+                .useSpringEL(true) // 开启 springEL 表达式
+                .setValidErrorHandler(new Configure.DiscardHandler()); // 开启 数据不合法 对标签不作任何处理
 
         //取得场站模板接口列表
         Integer modelId = params.getInteger("modelId");
