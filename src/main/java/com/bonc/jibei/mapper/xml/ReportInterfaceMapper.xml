@@ -9,6 +9,32 @@
         inter.inter_name as interName,
         inter.inter_desc as interDesc,
         inter.inter_url as interUrl
+        from  jb_report_interface inter
+        where 1=1
+        <if test="interType != null and interType != ''">
+            and inter.inter_type=#{interType}
+        </if>
+    </select>
+
+
+    <select id="selectCount" resultType="int">
+        select
+        count(*) as cnt
+        from  jb_report_interface inter
+        where 1=1
+        <if test="interType != null and interType != ''">
+            and inter.inter_type=#{interType}
+        </if>
+    </select>
+
+    <select id="selectReportModelInterList" resultType="com.bonc.jibei.vo.ModelInterfaceRelListVo">
+        select
+        inter.id as id,
+        inter.org_id as code,
+        inter.inter_type as interType,
+        inter.inter_name as interName,
+        inter.inter_desc as interDesc,
+        inter.inter_url as interUrl
         from jb_model_interface_rel rel
         inner join jb_report_interface inter on inter.id=rel.inter_id
         <if test="modelId != null ">
@@ -24,7 +50,7 @@
         </if>
 
     </select>
-    <select id="selectCount" resultType="int">
+    <select id="selectModelInterCount"  resultType="int">
         select
         count(*) as cnt
         from jb_model_interface_rel rel
@@ -40,6 +66,6 @@
         <if test="modelName != null and modelName != ''">
             and model.model_name like concat('%', #{modelName}, '%')
         </if>
-    </select>
 
+    </select>
 </mapper>

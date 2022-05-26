@@ -80,7 +80,24 @@ public class ReportCfgController {
         return Result.of(reportInterfaceMapper.deleteById(id));
     }
 
+
     @ApiOperation(value = "报告脚本定义_接口列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
+            @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
+            @ApiImplicitParam(name = "interType", value = "接口类型", required = false),
+    })
+    @PostMapping("/inter/select")
+    public Result selectInter(@ApiIgnore Page<ReportInterface> page,  String interType) {
+        Page<ReportInterface> jpage = new Page<>(page.getCurrent(), page.getSize());
+        jpage.setSearchCount(false);
+        List<ReportInterface>  list=reportInterfaceMapper.selectReportInterList(jpage,interType);
+        jpage.setRecords(list);
+        jpage.setTotal(reportInterfaceMapper.selectCount(interType));
+        return Result.of(jpage);
+    }
+
+    @ApiOperation(value = "报告模板配置_接口列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
             @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
@@ -89,14 +106,15 @@ public class ReportCfgController {
             @ApiImplicitParam(name = "modelId", value = "模板Id", required = false),
     })
     @PostMapping("/inter/select")
-    public Result selectInter(@ApiIgnore Page<ReportInterface> page, String modelName, String interType,Integer modelId) {
-        Page<ReportInterface> jpage = new Page<>(page.getCurrent(), page.getSize());
+    public Result selectModelInter(@ApiIgnore Page<ModelInterfaceRelListVo> page, String modelName, String interType,Integer modelId) {
+        Page<ModelInterfaceRelListVo> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<ReportInterface>  list=reportInterfaceMapper.selectReportInterList(jpage,modelName,interType,modelId);
+        List<ModelInterfaceRelListVo>  list=reportInterfaceMapper.selectReportModelInterList(jpage,modelName,interType,modelId);
         jpage.setRecords(list);
-        jpage.setTotal(reportInterfaceMapper.selectCount(modelName,interType,modelId));
+        jpage.setTotal(reportInterfaceMapper.selectModelInterCount(modelName,interType,modelId));
         return Result.of(jpage);
     }
+
 
     @ApiOperation(value = "报告脚本定义_根据接口编码取接口数据")
     @ApiResponses({
