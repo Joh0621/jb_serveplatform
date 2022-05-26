@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bonc.jibei.api.EnumValue;
+import com.bonc.jibei.api.InterEnum;
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.api.ResultCode;
 import com.bonc.jibei.entity.*;
@@ -80,7 +81,6 @@ public class ReportCfgController {
         return Result.of(reportInterfaceMapper.deleteById(id));
     }
 
-
     @ApiOperation(value = "报告脚本定义_接口列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -92,6 +92,30 @@ public class ReportCfgController {
         Page<ReportInterface> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
         List<ReportInterface>  list=reportInterfaceMapper.selectReportInterList(jpage,interType);
+        for (ReportInterface e: list) {
+            switch (e.getInterType()){
+                case 1:  e.setInterTypeName(InterEnum.INTER_TYPE_NORMAL.getName());
+                    break;
+                case 2:  e.setInterTypeName(InterEnum.INTER_TYPE_TABLE.getName());
+                    break;
+                case 3:  e.setInterTypeName(InterEnum.INTER_TYPE_BAR.getName());
+                    break;
+                case 4:  e.setInterTypeName(InterEnum.INTER_TYPE_PIE.getName());
+                    break;
+                case 5:  e.setInterTypeName(InterEnum.INTER_TYPE_LINE.getName());
+                    break;
+                case 6:  e.setInterTypeName(InterEnum.INTER_TYPE_RADAR.getName());
+                    break;
+                case 7:  e.setInterTypeName(InterEnum.INTER_TYPE_BARS.getName());
+                    break;
+                case 8:  e.setInterTypeName(InterEnum.INTER_TYPE_STACKEDBARE.getName());
+                    break;
+                case 11:  e.setInterTypeName(InterEnum.INTER_TYPE_MIX.getName());
+                    break;
+
+            }
+
+        }
         jpage.setRecords(list);
         jpage.setTotal(reportInterfaceMapper.selectCount(interType));
         return Result.of(jpage);
@@ -105,7 +129,7 @@ public class ReportCfgController {
             @ApiImplicitParam(name = "interType", value = "接口类型", required = false),
             @ApiImplicitParam(name = "modelId", value = "模板Id", required = false),
     })
-    @PostMapping("/inter/select")
+    @PostMapping("/interparammap/select")
     public Result selectModelInter(@ApiIgnore Page<ModelInterfaceRelListVo> page, String modelName, String interType,Integer modelId) {
         Page<ModelInterfaceRelListVo> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
@@ -114,6 +138,7 @@ public class ReportCfgController {
         jpage.setTotal(reportInterfaceMapper.selectModelInterCount(modelName,interType,modelId));
         return Result.of(jpage);
     }
+
 
 
     @ApiOperation(value = "报告脚本定义_根据接口编码取接口数据")
@@ -165,6 +190,24 @@ public class ReportCfgController {
         return Result.of(interParamsMapper.deleteById(id));
     }
 
+
+    @ApiOperation(value = "报告脚本定义批量删除接口参数映射")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = IdlistVo.class),
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "idsList", value = "接口映射参数ID数组", required = true),
+    })
+    @PostMapping("/param/patchdel")
+    public Result patchdelInterParam(@RequestBody IdlistVo idlistVo) {
+        for (Integer id : idlistVo.getIdsList()) {
+            if (id == null || id <= 0) {
+                continue;
+            }
+            interParamsMapper.deleteById(id);
+        }
+        return Result.ok();
+    }
     @ApiOperation(value = "报告脚本定义_接口参数列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
