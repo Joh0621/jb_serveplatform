@@ -16,7 +16,7 @@
         from jb_report_model model
         where exists (select 1 from jb_station_model_rel where model_id=model.id)
         <if test="modelType != null ">
-            and model.model_type=#{modemodelTypelId}
+            and model.model_type=#{modelType}
         </if>
         <if test="reportStatus != null ">
             and model.report_status=#{reportStatus}
@@ -32,7 +32,7 @@
         from jb_report_model model
         where exists (select 1 from jb_station_model_rel where model_id=model.id)
         <if test="modelType != null ">
-            and model.model_type=#{modemodelTypelId}
+            and model.model_type=#{modelType}
         </if>
         <if test="reportStatus != null ">
             and model.report_status=#{reportStatus}
