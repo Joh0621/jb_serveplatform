@@ -88,29 +88,38 @@ public class ReportCfgController {
             @ApiImplicitParam(name = "interType", value = "接口类型", required = false),
     })
     @PostMapping("/inter/select")
-    public Result selectInter(@ApiIgnore Page<ReportInterface> page,  String interType) {
+    public Result selectInter(@ApiIgnore Page<ReportInterface> page, String interType) {
         Page<ReportInterface> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<ReportInterface>  list=reportInterfaceMapper.selectReportInterList(jpage,interType);
-        for (ReportInterface e: list) {
-            switch (e.getInterType()){
-                case 1:  e.setInterTypeName(InterEnum.INTER_TYPE_NORMAL.getName());
+        List<ReportInterface> list = reportInterfaceMapper.selectReportInterList(jpage, interType);
+        for (ReportInterface e : list) {
+            switch (e.getInterType()) {
+                case 1:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_NORMAL.getName());
                     break;
-                case 2:  e.setInterTypeName(InterEnum.INTER_TYPE_TABLE.getName());
+                case 2:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_TABLE.getName());
                     break;
-                case 3:  e.setInterTypeName(InterEnum.INTER_TYPE_BAR.getName());
+                case 3:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_BAR.getName());
                     break;
-                case 4:  e.setInterTypeName(InterEnum.INTER_TYPE_PIE.getName());
+                case 4:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_PIE.getName());
                     break;
-                case 5:  e.setInterTypeName(InterEnum.INTER_TYPE_LINE.getName());
+                case 5:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_LINE.getName());
                     break;
-                case 6:  e.setInterTypeName(InterEnum.INTER_TYPE_RADAR.getName());
+                case 6:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_RADAR.getName());
                     break;
-                case 7:  e.setInterTypeName(InterEnum.INTER_TYPE_BARS.getName());
+                case 7:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_BARS.getName());
                     break;
-                case 8:  e.setInterTypeName(InterEnum.INTER_TYPE_STACKEDBARE.getName());
+                case 8:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_STACKEDBARE.getName());
                     break;
-                case 11:  e.setInterTypeName(InterEnum.INTER_TYPE_MIX.getName());
+                case 11:
+                    e.setInterTypeName(InterEnum.INTER_TYPE_MIX.getName());
                     break;
 
             }
@@ -130,15 +139,14 @@ public class ReportCfgController {
             @ApiImplicitParam(name = "modelId", value = "模板Id", required = false),
     })
     @PostMapping("/interparammap/select")
-    public Result selectModelInter(@ApiIgnore Page<ModelInterfaceRelListVo> page, String modelName, String interType,Integer modelId) {
+    public Result selectModelInter(@ApiIgnore Page<ModelInterfaceRelListVo> page, String modelName, String interType, Integer modelId) {
         Page<ModelInterfaceRelListVo> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<ModelInterfaceRelListVo>  list=reportInterfaceMapper.selectReportModelInterList(jpage,modelName,interType,modelId);
+        List<ModelInterfaceRelListVo> list = reportInterfaceMapper.selectReportModelInterList(jpage, modelName, interType, modelId);
         jpage.setRecords(list);
-        jpage.setTotal(reportInterfaceMapper.selectModelInterCount(modelName,interType,modelId));
+        jpage.setTotal(reportInterfaceMapper.selectModelInterCount(modelName, interType, modelId));
         return Result.of(jpage);
     }
-
 
 
     @ApiOperation(value = "报告脚本定义_根据接口编码取接口数据")
@@ -147,13 +155,13 @@ public class ReportCfgController {
     })
     @GetMapping("/inter/interbycode")
     public Result selectInterByCode(String code) {
-        if (code==null || "".equals(code)) {
+        if (code == null || "".equals(code)) {
             return Result.error(ResultCode.NOT_FOUND);
         }
-        QueryWrapper<ReportInterface> qw=new QueryWrapper();
-        qw.eq("code",code);
-        List<ReportInterface> l=reportInterfaceMapper.selectList(qw);
-        if (l!=null && l.size()>0){
+        QueryWrapper<ReportInterface> qw = new QueryWrapper();
+        qw.eq("code", code);
+        List<ReportInterface> l = reportInterfaceMapper.selectList(qw);
+        if (l != null && l.size() > 0) {
             return Result.of(l.get(0));
         }
         return Result.of(l);
@@ -175,7 +183,7 @@ public class ReportCfgController {
     @PostMapping("/param/add")
     public Result addInterParam(@RequestBody InterParams interParams) {
 //        interParams.setInterId(1);
-        if (interParams==null) {
+        if (interParams == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
         return Result.of(interParamsMapper.insert(interParams));
@@ -208,6 +216,7 @@ public class ReportCfgController {
         }
         return Result.ok();
     }
+
     @ApiOperation(value = "报告脚本定义_接口参数列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -217,12 +226,12 @@ public class ReportCfgController {
             @ApiImplicitParam(name = "paramName", value = "参数类型", required = false),
     })
     @PostMapping("/param/list")
-    public Result selectInterParam(@ApiIgnore Page<InterParams> page,Integer interId, String interName, String paramName) {
+    public Result selectInterParam(@ApiIgnore Page<InterParams> page, Integer interId, String interName, String paramName) {
         Page<InterParams> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<InterParams>  list=interParamsMapper.selectInterParamList(jpage,interId,interName,paramName);
+        List<InterParams> list = interParamsMapper.selectInterParamList(jpage, interId, interName, paramName);
         jpage.setRecords(list);
-        jpage.setTotal(interParamsMapper.selectCount(interId,interName,paramName));
+        jpage.setTotal(interParamsMapper.selectCount(interId, interName, paramName));
         return Result.of(jpage);
     }
 
@@ -232,13 +241,13 @@ public class ReportCfgController {
     })
     @PostMapping("/model/typelist")
     public Result typelist() {
-        QueryWrapper<StationType> qw=new QueryWrapper<>();
-        qw.eq("is_show",1);
-        List<StationType> list=stationTypeMapper.selectList(qw);
+        QueryWrapper<StationType> qw = new QueryWrapper<>();
+        qw.eq("is_show", 1);
+        List<StationType> list = stationTypeMapper.selectList(qw);
 
-        List<KeyValueVO> vo= new ArrayList<>();
-        list.forEach(p->{
-            KeyValueVO v=new KeyValueVO();
+        List<KeyValueVO> vo = new ArrayList<>();
+        list.forEach(p -> {
+            KeyValueVO v = new KeyValueVO();
             v.setKey(p.getId().toString());
             v.setValue(p.getTypeName());
             vo.add(v);
@@ -260,15 +269,16 @@ public class ReportCfgController {
     public Result delModel(Integer id) {
         return Result.of(reportModelMapper.deleteById(id));
     }
+
     @ApiOperation(value = "报告模板配置_编辑报告模板")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportModel.class),
     })
     @PostMapping("/model/edit")
     public Result editModelInfo(ReportModel reportModel) {
-        String pathFile= null;
+        String pathFile = null;
         //如果又上传了模板文件
-        if (reportModel!=null && reportModel.getModelFile()!=null) {
+        if (reportModel != null && reportModel.getModelFile() != null) {
             try {
                 pathFile = ftpFileService.upload(reportModel.getModelFile().getOriginalFilename(), reportModel.getModelFile().getInputStream());
             } catch (IOException e) {
@@ -283,6 +293,32 @@ public class ReportCfgController {
         return Result.ok();
     }
 
+    /**
+     * TODO 待确定具体模板定义，暂时计划模板-报告为一对多关系
+     * @param page
+     * @param modelType
+     * @param modelStatus
+     * @param name
+     * @return
+     */
+    @ApiOperation(value = "报告模板配置_列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
+            @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
+            @ApiImplicitParam(name = "modelType", value = "模板类型", required = true),
+            @ApiImplicitParam(name = "modelStatus", value = "模板状态;2=已停用，1= 启用.0=待启用", required = false),
+            @ApiImplicitParam(name = "name", value = "模板名称|报告名称", required = false),
+    })
+    @PostMapping("/model/list")
+    public Result selectModelList(@ApiIgnore Page<InterParams> page, Integer modelType, Integer modelStatus, String name) {
+        Page<ReportModel> jpage = new Page<>(page.getCurrent(), page.getSize());
+        jpage.setSearchCount(false);
+        List<ReportModel> list = reportModelMapper.selectModelReportList(jpage, modelType, modelStatus, name);
+        jpage.setRecords(list);
+        jpage.setTotal(reportModelMapper.reportSelectCount(modelType, modelStatus, name));
+        return Result.of(jpage);
+    }
+
     @ApiOperation(value = "报告模板配置_参数配置_增加模板接口")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = IdlistVo.class),
@@ -293,7 +329,7 @@ public class ReportCfgController {
     })
     @PostMapping("/model/addinter")
     public Result addModelInter(IdlistVo idlistVo) {
-        if (idlistVo==null) {
+        if (idlistVo == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
 
@@ -312,6 +348,7 @@ public class ReportCfgController {
         }
         return Result.ok();
     }
+
     @ApiOperation(value = "报告模板配置_参数配置_增加模板接口参数映射")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = ReportParamsMap.class),
@@ -357,6 +394,7 @@ public class ReportCfgController {
         }
         return Result.ok();
     }
+
     @ApiOperation(value = "报告模板配置_参数配置_模板接口参数映射列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -369,9 +407,9 @@ public class ReportCfgController {
     public Result selectInterParamMap(@ApiIgnore Page<ModelInterParamMapVo> page, String interCode, String paramCode, String paramName) {
         Page<ModelInterParamMapVo> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<ModelInterParamMapVo>  list=reportParamsMapMapper.selectReportParamsMapList(jpage,interCode,paramCode,paramName);
+        List<ModelInterParamMapVo> list = reportParamsMapMapper.selectReportParamsMapList(jpage, interCode, paramCode, paramName);
         jpage.setRecords(list);
-        jpage.setTotal(reportParamsMapMapper.selectCount(interCode,paramCode,paramName));
+        jpage.setTotal(reportParamsMapMapper.selectCount(interCode, paramCode, paramName));
         return Result.of(jpage);
     }
 
@@ -381,8 +419,8 @@ public class ReportCfgController {
     })
     @PostMapping("/reportcfg/stationlist")
     public Result stationlist() {
-        QueryWrapper<Station> qw=new QueryWrapper<>();
-        List<Station> list=stationMapper.selectList(qw);
+        QueryWrapper<Station> qw = new QueryWrapper<>();
+        List<Station> list = stationMapper.selectList(qw);
         return Result.of(list);
     }
 
@@ -396,17 +434,17 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
     })
     @GetMapping("/reportcfg/reportnamelist")
-    public Result reportNamelist(String modelName,String modelv,String reportType) {
+    public Result reportNamelist(String modelName, String modelv, String reportType) {
         //找模板ID
-        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
-        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
-        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
-        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
-        List<ReportModel> list=reportModelMapper.selectList(qw);
-        List<KeyValueVO> vo= new ArrayList<>();
-        if (list!=null && list.size()>0){
-            list.forEach(p->{
-                KeyValueVO v=new KeyValueVO();
+        QueryWrapper<ReportModel> qw = new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(modelName), "model_name", modelName);
+        qw.eq(StrUtil.isNotBlank(modelv), "model_version", modelv);
+        qw.eq(StrUtil.isNotBlank(reportType), "model_type", reportType);
+        List<ReportModel> list = reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo = new ArrayList<>();
+        if (list != null && list.size() > 0) {
+            list.forEach(p -> {
+                KeyValueVO v = new KeyValueVO();
                 v.setKey(p.getReportName());
                 v.setValue(p.getReportName());
                 vo.add(v);
@@ -426,18 +464,18 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
     })
     @GetMapping("/reportcfg/modelnamelist")
-    public Result modelNamelist(String reportName,String modelv,String reportType) {
+    public Result modelNamelist(String reportName, String modelv, String reportType) {
         //找模板ID
-        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
-        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
-        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
-        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
-        List<ReportModel> list=reportModelMapper.selectList(qw);
-        List<KeyValueVO> vo= new ArrayList<>();
-        if (list!=null && list.size()>0){
+        QueryWrapper<ReportModel> qw = new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName), "report_name", reportName);
+        qw.eq(StrUtil.isNotBlank(modelv), "model_version", modelv);
+        qw.eq(StrUtil.isNotBlank(reportType), "model_type", reportType);
+        List<ReportModel> list = reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo = new ArrayList<>();
+        if (list != null && list.size() > 0) {
             //下拉框
-            list.forEach(p->{
-                KeyValueVO v=new KeyValueVO();
+            list.forEach(p -> {
+                KeyValueVO v = new KeyValueVO();
                 v.setKey(p.getModelName());
                 v.setValue(p.getModelName());
                 vo.add(v);
@@ -457,18 +495,18 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
     })
     @GetMapping("/reportcfg/modelvlist")
-    public Result reportTypelist(String reportName,String modelName,String reportType) {
+    public Result reportTypelist(String reportName, String modelName, String reportType) {
         //找模板ID
-        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
-        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
-        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
-        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
-        List<ReportModel> list=reportModelMapper.selectList(qw);
-        List<KeyValueVO> vo= new ArrayList<>();
-        if (list!=null && list.size()>0){
+        QueryWrapper<ReportModel> qw = new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName), "report_name", reportName);
+        qw.eq(StrUtil.isNotBlank(modelName), "model_name", modelName);
+        qw.eq(StrUtil.isNotBlank(reportType), "model_type", reportType);
+        List<ReportModel> list = reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo = new ArrayList<>();
+        if (list != null && list.size() > 0) {
             //下拉框
-            list.forEach(p->{
-                KeyValueVO v=new KeyValueVO();
+            list.forEach(p -> {
+                KeyValueVO v = new KeyValueVO();
                 v.setKey(p.getModelName());
                 v.setValue(p.getModelName());
                 vo.add(v);
@@ -487,18 +525,18 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
     })
     @GetMapping("/reportcfg/modelvreportTypelist")
-    public Result modelVersionlist(String reportName,String modelv,String modelName) {
+    public Result modelVersionlist(String reportName, String modelv, String modelName) {
         //找模板ID
-        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
-        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
-        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
-        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
-        List<ReportModel> list=reportModelMapper.selectList(qw);
-        List<KeyValueVO> vo= new ArrayList<>();
-        if (list!=null && list.size()>0){
+        QueryWrapper<ReportModel> qw = new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName), "report_name", reportName);
+        qw.eq(StrUtil.isNotBlank(modelv), "model_version", modelv);
+        qw.eq(StrUtil.isNotBlank(modelName), "model_name", modelName);
+        List<ReportModel> list = reportModelMapper.selectList(qw);
+        List<KeyValueVO> vo = new ArrayList<>();
+        if (list != null && list.size() > 0) {
             //下拉框
-            list.forEach(p->{
-                KeyValueVO v=new KeyValueVO();
+            list.forEach(p -> {
+                KeyValueVO v = new KeyValueVO();
                 v.setKey(p.getModelName());
                 v.setValue(p.getModelName());
                 vo.add(v);
@@ -515,25 +553,25 @@ public class ReportCfgController {
     @PostMapping("/reportcfg/addstation")
     public Result addStationReport(ModelStationIdsVo modelStationIdsVo) {
         //找模板ID
-        String reportName=modelStationIdsVo.getReportName();
-        String reportType=modelStationIdsVo.getReportType();
-        String modelv=modelStationIdsVo.getModelv();
-        String modelName=modelStationIdsVo.getModelName();
-        QueryWrapper<ReportModel> qw=new QueryWrapper<>();
-        qw.eq(StrUtil.isNotBlank(reportName),"report_name",reportName);
-        qw.eq(StrUtil.isNotBlank(modelv),"model_version",modelv);
-        qw.eq(StrUtil.isNotBlank(reportType),"model_type",reportType);
-        qw.eq(StrUtil.isNotBlank(modelName),"model_name",modelName);
-        List<ReportModel> list=reportModelMapper.selectList(qw);
-        if (list!=null && list.size()>0){
-            Integer mid=list.get(0).getId();//模板ID
+        String reportName = modelStationIdsVo.getReportName();
+        String reportType = modelStationIdsVo.getReportType();
+        String modelv = modelStationIdsVo.getModelv();
+        String modelName = modelStationIdsVo.getModelName();
+        QueryWrapper<ReportModel> qw = new QueryWrapper<>();
+        qw.eq(StrUtil.isNotBlank(reportName), "report_name", reportName);
+        qw.eq(StrUtil.isNotBlank(modelv), "model_version", modelv);
+        qw.eq(StrUtil.isNotBlank(reportType), "model_type", reportType);
+        qw.eq(StrUtil.isNotBlank(modelName), "model_name", modelName);
+        List<ReportModel> list = reportModelMapper.selectList(qw);
+        if (list != null && list.size() > 0) {
+            Integer mid = list.get(0).getId();//模板ID
             //添加配置报告
 
 
-            Integer[] ids=modelStationIdsVo.getIdList();
-            if (ids!=null){
-                for (Integer id:ids){
-                    StationModelRel rel=new StationModelRel();
+            Integer[] ids = modelStationIdsVo.getIdList();
+            if (ids != null) {
+                for (Integer id : ids) {
+                    StationModelRel rel = new StationModelRel();
                     rel.setModelId(mid);
                     rel.setStationId(id);
                     rel.setCreateTime(LocalDateTime.now());
@@ -565,19 +603,19 @@ public class ReportCfgController {
         List<ReportModel> list=reportModelMapper.selectList(qw);
         */
         //先删除以前的模板场站
-        QueryWrapper<StationModelRel> qw=new QueryWrapper();
-        qw.eq("model_id",modelStationIdsVo.getModelId());
+        QueryWrapper<StationModelRel> qw = new QueryWrapper();
+        qw.eq("model_id", modelStationIdsVo.getModelId());
         stationModelRelMapper.delete(qw);
 
-        Integer[] islist=modelStationIdsVo.getIdList();
+        Integer[] islist = modelStationIdsVo.getIdList();
         //再增加新的场站
-        if (islist!=null && islist.length>0){
-            for (Integer id:islist){
-                 StationModelRel rel=new StationModelRel();
-                 rel.setModelId(modelStationIdsVo.getModelId());
-                 rel.setStationId(id);
-                 rel.setCreateTime(LocalDateTime.now());
-                 stationModelRelMapper.insert(rel);
+        if (islist != null && islist.length > 0) {
+            for (Integer id : islist) {
+                StationModelRel rel = new StationModelRel();
+                rel.setModelId(modelStationIdsVo.getModelId());
+                rel.setStationId(id);
+                rel.setCreateTime(LocalDateTime.now());
+                stationModelRelMapper.insert(rel);
             }
         }
         return Result.ok();
@@ -589,20 +627,20 @@ public class ReportCfgController {
     })
     @PostMapping("/reportcfg/delmodelcfgs")
     public Result delmodelcfgs(Integer id) {
-        QueryWrapper<StationModelRel> rel=new QueryWrapper<>();
-        rel.eq("model_id",id);
+        QueryWrapper<StationModelRel> rel = new QueryWrapper<>();
+        rel.eq("model_id", id);
         return Result.of(stationModelRelMapper.delete(rel));
     }
 
     @ApiOperation(value = "报告配置_启用|停用")
 
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "id", value = "模板ID", required = true),
-        @ApiImplicitParam(name = "status", value = "2=已停用，1= 启用.0=待启用", required = true),
+            @ApiImplicitParam(name = "id", value = "模板ID", required = true),
+            @ApiImplicitParam(name = "status", value = "2=已停用，1= 启用.0=待启用", required = true),
     })
     @PostMapping("/reportcfg/reportstatus")
-    public Result statuslmodelcfgs(Integer id,Integer status) {
-        ReportModel m=new ReportModel();
+    public Result statuslmodelcfgs(Integer id, Integer status) {
+        ReportModel m = new ReportModel();
         m.setId(id);
         m.setReportStatus(status);
         m.setReportStatusDate(LocalDate.now());
@@ -618,12 +656,12 @@ public class ReportCfgController {
             @ApiImplicitParam(name = "name", value = "模板名称|报告名称", required = false),
     })
     @PostMapping("/reportcfg/list")
-    public Result reportcfgList(@ApiIgnore Page<InterParams> page,Integer modelType, Integer reportStatus, String name) {
+    public Result reportcfgList(@ApiIgnore Page<InterParams> page, Integer modelType, Integer reportStatus, String name) {
         Page<ReportModel> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<ReportModel> list=reportModelMapper.selectModelReportList(jpage,modelType,reportStatus,name);
+        List<ReportModel> list = reportModelMapper.selectModelReportList(jpage, modelType, reportStatus, name);
         jpage.setRecords(list);
-        jpage.setTotal(reportModelMapper.reportSelectCount(modelType,reportStatus,name));
+        jpage.setTotal(reportModelMapper.reportSelectCount(modelType, reportStatus, name));
         return Result.of(jpage);
     }
 
@@ -633,15 +671,15 @@ public class ReportCfgController {
     })
     @PostMapping("/reportcfg/view")
     public Result reportcfgView(Integer id) {
-        ReportModel m=reportModelMapper.selectById(id);
-        if (m==null){
+        ReportModel m = reportModelMapper.selectById(id);
+        if (m == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
-        ModelReportViewVo vo=new ModelReportViewVo();
+        ModelReportViewVo vo = new ModelReportViewVo();
         vo.setReportName(m.getReportName());
         vo.setModelName(m.getModelName());
         vo.setModelv(m.getModelVersion());
-        if (m.getModelType()!=null) {
+        if (m.getModelType() != null) {
             vo.setReportType(m.getModelType().toString());
         }
         vo.setRel(stationModelRelMapper.selectStationModelRelVoList(id));
