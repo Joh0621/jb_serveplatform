@@ -56,10 +56,17 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
         return reportMngMapper.selectDocUrl(ids);
     }
 
+    /**
+     *  新生成报告文件
+     * @param reportMng
+     * @return
+     * @throws IOException
+     */
     @Override
     @Async("threadPoolTaskExecutor")
     public int insertReport(ReportModelInter reportMng) throws IOException {
         //取得场站类型的模板
+        /**
         QueryWrapper<StationModelRel> qw = new QueryWrapper<>();
         qw.eq("station_id", reportMng.getStationId());
         List<StationModelRel> rell = stationModelRelMapper.selectList(qw);
@@ -68,6 +75,8 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
             return 0;
         }
         modelId = rell.get(0).getModelId();
+        **/
+        Integer modelId =reportMng.getModelId();
         //上季度 开始时间和结束时间
         String startdate = DateUtil.lastQrtStart();
         String enddate = DateUtil.lastQrtEnd();
@@ -90,10 +99,16 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
         return reportMngMapper.insert(mng);
     }
 
+    /**
+     * 重新生成报告文件
+     * @param reportMng
+     * @throws IOException
+     */
     @Override
     @Async("threadPoolTaskExecutor")
     public void updateReport(ReportMng reportMng) throws IOException {
         //取得场站类型的模板
+        /**
         QueryWrapper<StationModelRel> qw = new QueryWrapper<>();
         qw.eq("station_id", reportMng.getStationId());
         List<StationModelRel> rell = stationModelRelMapper.selectList(qw);
@@ -102,6 +117,8 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
             return;
         }
         modelId = rell.get(0).getModelId();
+         **/
+        Integer modelId =reportMng.getModelId();
         //获得已知季度的 开始时间和结束时间
         Map<String, String> d = DateUtil.getStartByYearQrt(reportMng.getReportYear(), reportMng.getReportQuarter());
         JSONObject jsonstr = JsonUtil.createJson(reportMng.getStationId(), reportMng.getStationType(), modelId, d.get("startDate"), d.get("endDate"));

@@ -4,10 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: dupengling
@@ -177,5 +174,12 @@ public class DateUtil {
         //Map<String,String> dateMap=DateUtil.getStartByYear(2021,1);
        // System.out.println(dateMap.get("startDate"));
        // System.out.println(dateMap.get("endDate"));
+
+        String[] array = {"1","2","3","4"};
+        boolean flag = Arrays.asList(array).contains("12");
+        System.out.println(flag);
+
+
+        System.out.println("ddddupenngling".contains("ud"));
     }
 }

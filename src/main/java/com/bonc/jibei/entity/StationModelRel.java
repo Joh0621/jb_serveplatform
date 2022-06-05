@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
  * @Description: 场站与模板关系表
  */
 @Data
-@TableName("jb_station_model_rel")
+@TableName("jb_station_cfg_rel")
 public class StationModelRel {
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -27,8 +27,8 @@ public class StationModelRel {
     @ApiModelProperty("场站ID")
     private Integer stationId;
 
-    @ApiModelProperty("模板ID")
-    private Integer modelId;
+    @ApiModelProperty("报告配置ID,取自表jb_report_cfg id")
+    private Integer cfgId;
 
     @ApiModelProperty("添加时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

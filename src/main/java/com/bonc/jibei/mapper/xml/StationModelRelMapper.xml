@@ -8,7 +8,7 @@
         station.station_name AS stationName,
         rel.create_time AS createTime
         FROM
-        jb_station_model_rel rel
+        jb_station_cfg_rel rel
         INNER JOIN jb_station station ON rel.station_id = station.station_id
         WHERE
         1 =1

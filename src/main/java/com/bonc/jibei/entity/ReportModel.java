@@ -40,12 +40,6 @@ public class ReportModel {
     @ApiModelProperty("模板版本号")
     private String  modelVersion;
 
-    @ApiModelProperty("报告编码")
-    private String  reportCode;
-
-    @ApiModelProperty("报告名称")
-    private String  reportName;
-
     @ApiModelProperty("模板文件名称")
     private String  modelFileName;
 
@@ -59,6 +53,17 @@ public class ReportModel {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate operStatusDate;
+    
+    @ApiModelProperty("模板文件，上传文件时用，其它情况时空null")
+    @TableField(exist = false)
+    private MultipartFile modelFile;
+
+    /**
+    @ApiModelProperty("报告编码")
+    private String  reportCode;
+
+    @ApiModelProperty("报告名称")
+    private String  reportName;
 
     @ApiModelProperty("报告状态;是否启用;2=已停用，1= 启用.0=待启用")
     private Integer reportStatus;
@@ -67,8 +72,6 @@ public class ReportModel {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate reportStatusDate;
+    **/
 
-    @ApiModelProperty("模板文件，上传文件时用，其它情况时空null")
-    @TableField(exist = false)
-    private MultipartFile modelFile;
 }

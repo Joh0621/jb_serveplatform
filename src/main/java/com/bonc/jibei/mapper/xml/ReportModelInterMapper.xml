@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bonc.jibei.mapper.ReportModelInterMapper">
-    <!-- 取模板 -->
+    <!-- 取与报告配置 关联的 场站 新增报告管理-->
     <select id="selectReportModel" resultType="com.bonc.jibei.vo.ReportModelInter">
-        SELECT
+       SELECT
         station.station_id AS stationId,
-        station.station_type AS stationType
+        station.station_type AS stationType,
+        rpt.report_name as reportName,
+        model.id as modelId,
+        model.model_version as modelVersion,
+        model.model_file_url as modelFileUrl
         FROM
-        jb_station_model_rel rel
-        INNER JOIN jb_report_model model ON rel.model_id = model.id and model.status=1
+        jb_station_cfg_rel rel
+        INNER JOIN jb_report_cfg cfg on cfg.id=rel.cfg_id
+        INNER JOIN jb_report rpt on rpt.id=cfg.report_id
+        INNER JOIN jb_report_model model ON cfg.model_id = model.id and model.status=1
         INNER JOIN jb_station station ON rel.station_id = station.station_id AND station.is_show = 1
         where  not EXISTS (select 1 from jb_report_mng mng where mng.station_id=rel.station_id
         <if test="year != null">
@@ -19,16 +25,22 @@
         </if>
         )
     </select>
+    <!-- 取与报告配置 关联的 场站 重新生成报告管理-->
     <select id="selectReReportModel" resultType="com.bonc.jibei.entity.ReportMng">
         SELECT
         mng.id,
         mng.report_year as reportYear,
         mng.report_quarter as reportQuarter,
         mng.station_id AS stationId,
-        mng.station_type AS stationType
+        mng.station_type AS stationType,
+        report.report_name as reportName,
+        model.id as modelId,
+        model.model_version as modelVersion
         FROM
-        jb_station_model_rel rel
-        INNER JOIN jb_report_model model ON rel.model_id = model.id  and model.status=1
+        jb_station_cfg_rel rel
+        INNER JOIN jb_report_cfg cfg on cfg.id=rel.cfg_id
+        INNER JOIN jb_report rpt on rpt.id=cfg.report_id
+        INNER JOIN jb_report_model model ON cfg.model_id = model.id  and model.status=1
         INNER JOIN jb_station station ON rel.station_id = station.station_id AND station.is_show = 1
         INNER JOIN jb_report_mng mng ON mng.station_id = rel.station_id
         <if test="reportStatus != null">

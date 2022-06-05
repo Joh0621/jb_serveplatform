@@ -14,7 +14,6 @@
         from jb_model_params_map rel
         inner join jb_report_model model on rel.model_id=model.id
         inner join jb_report_interface inter on inter.id=rel.inter_id
-        inner join jb_report_model model on model.id=rel.model_id
         where 1=1
         <if test="interCode != null and interCode != ''">
             and inter.code=#{interCode}
@@ -33,7 +32,6 @@
         from jb_model_params_map rel
         inner join jb_report_model model on rel.model_id=model.id
         inner join jb_report_interface inter on inter.id=rel.inter_id
-        inner join jb_report_model model on model.id=rel.model_id
         where 1=1
         <if test="interCode != null and interCode != ''">
             and inter.code=#{interCode}

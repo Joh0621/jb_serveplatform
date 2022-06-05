@@ -1,6 +1,7 @@
 package com.bonc.jibei.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -38,20 +39,26 @@ public class ReportMng {
 
     @ApiModelProperty("报告文件存放位置")
     private String reportUrl;
+
     @ApiModelProperty("生成时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createTime;
+
     @ApiModelProperty("生成人")
     private Integer createUserId;
+
     @ApiModelProperty("发布时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime releaseTime;
+
     @ApiModelProperty("发布人")
     private Integer releaseUserId;
+
     @ApiModelProperty("模板版本号")
     private String modelVersion;
+
     @ApiModelProperty("报告状态;0=待复核;1=发布;2=提交队列;3=正在生成")
     private Integer reportStatus;
 
@@ -64,4 +71,8 @@ public class ReportMng {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime reportTime;
+
+    @TableField(exist = false)
+    @ApiModelProperty("模板Id")
+    private Integer modelId;
 }

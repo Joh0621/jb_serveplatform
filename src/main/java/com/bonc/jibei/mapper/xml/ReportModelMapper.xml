@@ -14,7 +14,7 @@
         model.report_status as reportStatus,
         model.report_status_date as reportStatusDate
         from jb_report_model model
-        where exists (select 1 from jb_station_model_rel where model_id=model.id)
+        where exists (select 1 from jb_station_cfg_rel where cfg_id=model.id)
         <if test="modelType != null ">
             and model.model_type=#{modelType}
         </if>
@@ -30,7 +30,7 @@
         select
         count(*) as cnt
         from jb_report_model model
-        where exists (select 1 from jb_station_model_rel where model_id=model.id)
+        where exists (select 1 from jb_station_cfg_rel where cfg_id=model.id)
         <if test="modelType != null ">
             and model.model_type=#{modelType}
         </if>
