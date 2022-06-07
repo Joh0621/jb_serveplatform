@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bonc.jibei.mapper.InterParamsMapper">
-    <select id="selectInterParamList" resultType="com.bonc.jibei.entity.InterParams">
-        select
+    <select id="selectInterParamList" resultType="com.bonc.jibei.vo.ModelInterParamMapVo">
+        SELECT
         param.id,
-        inter.id as interId,
-        inter.org_id as orgId,
-        inter.inter_type as interType,
-        inter.inter_name as interName,
-        param.param as param,
-        param.param_attr as paramAttr,
-        param.param_name as paraName
-        from jb_inter_params param
-        inner join jb_report_interface inter on inter.id=param.inter_id
+        rel.inter_id AS interId	,
+        inter.org_id AS orgId,
+        inter.inter_type AS interType,
+        inter.inter_name AS interName,
+        param.param_type AS paramType,
+        param.param_desc AS paramDesc,
+        param.param_name AS paramName
+        FROM
+        jb_report_interface inter
+        INNER JOIN jb_model_interface_rel rel on rel.model_id=inter.id
+        INNER JOIN jb_inter_params param ON rel.inter_id = param.inter_id
+        where 1=1
         <if test="interId != null ">
             and param.inter_id=#{interId}
         </if>
-        where 1=1
+
         <if test="paramName != null and paramName != ''">
             and (param.param_name like concat('%', #{paramName}, '%') or param.param like concat('%', #{paramName}, '%'))
         </if>
@@ -28,12 +31,13 @@
     <select id="selectCount" resultType="int">
         select
         count(*) as cnt
-        from jb_inter_params param
-        inner join jb_report_interface inter on inter.id=param.inter_id
+        from jb_report_interface inter
+        INNER JOIN jb_model_interface_rel rel on rel.model_id=inter.id
+        INNER JOIN jb_inter_params param ON rel.inter_id = param.inter_id
+        where 1=1
         <if test="interId != null ">
             and param.inter_id=#{interId}
         </if>
-        where 1=1
         <if test="paramName != null and paramName != ''">
             and (param.param_name like concat('%', #{paramName}, '%') or param.param like concat('%', #{paramName}, '%'))
         </if>

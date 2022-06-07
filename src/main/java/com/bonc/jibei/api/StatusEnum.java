@@ -6,8 +6,8 @@ package com.bonc.jibei.api;
  * @Description: TODO
  */
 public enum StatusEnum {
-    INTER_TYPE_NOCHK("0", "待审核"),
-    INTER_TYPE_START("1", "启用"),
+    INTER_TYPE_NOCHK("0", "待启动"),
+    INTER_TYPE_START("1", "已启用"),
     INTER_TYPE_STOP("2", "已停用"),
     ;
     private final String  code;

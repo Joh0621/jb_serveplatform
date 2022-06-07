@@ -32,4 +32,6 @@ public interface ReportInterfaceMapper extends RootMapper<ReportInterface> {
      */
     List<ModelInterfaceRelListVo> selectReportModelInterList(IPage<?> page, @Param("modelName") String modelName, @Param("interType") String interType, @Param("modelId") Integer modelId);
     Integer selectModelInterCount(@Param("modelName") String modelName, @Param("interType") String interType,@Param("modelId") Integer modelId);
+
+    List<ModelInterfaceRelListVo> selectReportModelByInterId( @Param("InterCode") Integer InterCode);
 }

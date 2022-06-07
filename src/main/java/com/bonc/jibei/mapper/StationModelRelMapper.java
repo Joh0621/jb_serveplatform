@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Mapper
 public interface StationModelRelMapper extends  RootMapper<StationModelRel>{
-    List<StationModelRelVo> selectStationModelRelVoList(@Param("modelId") Integer modelId);
+    List<StationModelRelVo> selectStationModelRelVoList(@Param("reportId") Integer reportId);
 }

@@ -23,12 +23,12 @@ public class InterParams {
     @ApiModelProperty("接口ID")
     private Integer interId;
 
-    @ApiModelProperty("参数")
-    private String param;
-
-    @ApiModelProperty("参数属性")
-    private String paramAttr;
-
     @ApiModelProperty("参数名")
     private String paramName;
+
+    @ApiModelProperty("参数属性")
+    private String paramType;
+
+    @ApiModelProperty("参数描述")
+    private String paramDesc;
 }

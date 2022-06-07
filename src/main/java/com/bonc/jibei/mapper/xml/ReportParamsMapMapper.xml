@@ -4,15 +4,16 @@
     <select id="selectReportParamsMapList" resultType="com.bonc.jibei.vo.ModelInterParamMapVo">
         select
         rel.id,
-        model.model_name as modelName,
-        inter.code as InterCode,
+<!--        model.model_name as modelName,-->
+        inter.id as InterCode,
         rel.map_param as code,
         inter.inter_type as interType,
         inter.inter_name as interName,
-        rel.param as param,
-        rel.param_name as paramName
+        rel.param_type as paramType,
+        rel.param_name as paramName,
+        rel.param_Desc as paramDesc
         from jb_model_params_map rel
-        inner join jb_report_model model on rel.model_id=model.id
+<!--        inner join jb_report_model model on rel.model_id=model.id-->
         inner join jb_report_interface inter on inter.id=rel.inter_id
         where 1=1
         <if test="interCode != null and interCode != ''">
@@ -30,8 +31,9 @@
         select
         count(*) as cnt
         from jb_model_params_map rel
-        inner join jb_report_model model on rel.model_id=model.id
+<!--        inner join jb_report_model model on rel.model_id=model.id-->
         inner join jb_report_interface inter on inter.id=rel.inter_id
+<!--        inner join jb_report_model model on model.id=rel.model_id-->
         where 1=1
         <if test="interCode != null and interCode != ''">
             and inter.code=#{interCode}

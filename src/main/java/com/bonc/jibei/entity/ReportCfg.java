@@ -30,6 +30,12 @@ public class ReportCfg {
     @ApiModelProperty("报告ID")
     private Integer reportId;
 
+    @ApiModelProperty("报告类型")
+    private Integer reportType;
+
+    @ApiModelProperty("报告名")
+    private String reportName;
+
     @ApiModelProperty("状态")
     private Integer status;
 

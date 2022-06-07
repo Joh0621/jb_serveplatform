@@ -11,13 +11,13 @@ import lombok.Data;
 @Data
 public class ModelStationIdsVo {
     @ApiModelProperty("报告id,编辑用")
-    Integer modelId;
+    Integer reportId;
 
     @ApiModelProperty("报告名称")
     String reportName;
 
     @ApiModelProperty("模板版本号")
-    String modelv;
+    String modelVersion;
 
     @ApiModelProperty("报告类型")
     String reportType;

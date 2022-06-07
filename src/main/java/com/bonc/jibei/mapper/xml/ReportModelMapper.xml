@@ -5,21 +5,20 @@
         select
         model.id as id,
         model.report_code as reportCode,
-        model.model_code as modelCode,
-        model.model_type as modelType,
-        model.model_name as modelName,
-        model.model_desc as modelDesc,
-        model.model_version as modelVersion,
-        model.report_name as reportName,
-        model.report_status as reportStatus,
-        model.report_status_date as reportStatusDate
+        model.model_code AS modelCode,
+        model.model_type AS modelType,
+        model.model_name AS modelName,
+        model.model_desc AS modelDesc,
+        model.model_version AS modelVersion ,
+        model.status AS status,
+        model.oper_status_date AS operStatusDate
         from jb_report_model model
-        where exists (select 1 from jb_station_cfg_rel where cfg_id=model.id)
+        where 1=1
         <if test="modelType != null ">
             and model.model_type=#{modelType}
         </if>
-        <if test="reportStatus != null ">
-            and model.report_status=#{reportStatus}
+        <if test="modelStatus != null ">
+            and model.status=#{modelStatus}
         </if>
         <if test="name != null and name != ''">
             and (model.model_name like concat('%', #{name}, '%') or model.report_name like concat('%', #{name}, '%') )
@@ -30,15 +29,105 @@
         select
         count(*) as cnt
         from jb_report_model model
-        where exists (select 1 from jb_station_cfg_rel where cfg_id=model.id)
+        where 1=1
         <if test="modelType != null ">
             and model.model_type=#{modelType}
         </if>
-        <if test="reportStatus != null ">
-            and model.report_status=#{reportStatus}
+        <if test="modelStatus != null ">
+            and model.status=#{modelStatus}
         </if>
         <if test="name != null and name != ''">
             and (model.model_name like concat('%', #{name}, '%') or model.report_name like concat('%', #{name}, '%') )
         </if>
     </select>
+
+    <select id="selectReportList" resultType="com.bonc.jibei.entity.ReportModel">
+            select  * from  jb_report_mng
+    </select>
+
+    <select id="selectInfoByModelId" resultType="com.bonc.jibei.vo.ModelInterfaceRelListVo">
+        SELECT
+            model.id,
+            model.model_name AS ModelName,
+            model.model_type modelType,
+            model.model_desc modelDesc,
+            model.model_version modelVersion,
+            model.model_file_name modelFileName,
+            rel.inter_id AS interId,
+            rel.model_id AS modelId,
+            map.param_name paramName,
+            map.param_desc paramDesc,
+            map.map_param AS mapParam,
+            map.id as ParamId
+        FROM
+            jb_report_model model
+                INNER JOIN jb_model_interface_rel rel ON rel.model_id = model.id
+                INNER JOIN jb_model_params_map map ON map.model_id = model.id
+                AND map.inter_id = rel.inter_id
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            and  model.id=#{id}
+        </if>
+
+    </select>
+
+
+
+    <select id="selectReportCfgList" resultType="com.bonc.jibei.vo.ReportModelVo">
+        SELECT
+        cfg.id  id,
+        cfg.report_id  reportId,
+        cfg.report_name AS reportName,
+        cfg.report_type AS reportType,
+        model.id AS modelCode,
+        model.model_type AS modelType,
+        model.model_name AS modelName,
+        model.model_version AS modelVersion ,
+        cfg.status AS reportStatus,
+         cfg.start_time As reportStatusDate
+        FROM
+        jb_report_cfg cfg
+        INNER JOIN jb_report_model model ON model.id = cfg.model_id
+        where 1=1
+        <!--        exists (select 1 from jb_station_model_rel where model_id=model.id)-->
+        <if test="modelType != null ">
+            and model.model_type=#{modelType}
+        </if>
+        <if test="modelStatus != null ">
+            and cfg.status=#{modelStatus}
+        </if>
+        <if test="name != null and name != ''">
+            and (model.model_name like concat('%', #{name}, '%') or report.report_name like concat('%', #{name}, '%') )
+        </if>
+
+    </select>
+
+    <select id="reportCfgSelectCount" resultType="int">
+        select
+        count(*) as cnt
+        FROM
+        jb_report_cfg cfg
+        INNER JOIN jb_report_model model ON model.id = cfg.model_id
+        where 1=1
+        <!--        exists (select 1 from jb_station_model_rel where model_id=model.id)-->
+        <if test="modelType != null ">
+            and model.model_type=#{modelType}
+        </if>
+        <if test="modelStatus != null ">
+            and cfg.status=#{modelStatus}
+        </if>
+        <if test="name != null and name != ''">
+            and (model.model_name like concat('%', #{name}, '%') or report.report_name like concat('%', #{name}, '%') )
+        </if>
+
+    </select>
+
+
+    <select id="selectReportCfgListData" resultType="com.bonc.jibei.vo.ReportModelVo">
+
+
+    </select>
+
+
+
 </mapper>

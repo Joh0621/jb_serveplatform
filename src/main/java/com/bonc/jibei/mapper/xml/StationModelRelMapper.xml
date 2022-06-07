@@ -12,8 +12,8 @@
         INNER JOIN jb_station station ON rel.station_id = station.station_id
         WHERE
         1 =1
-        <if test="modelId != null ">
-            and rel.model_id=#{modelId}
+        <if test="reportId != null ">
+            and rel.cfg_id=#{reportId}
         </if>
 
     </select>

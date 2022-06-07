@@ -17,7 +17,7 @@ public class ModelInterParamMapVo {
     private String  modelName;
 
     @ApiModelProperty("接口编码")
-    private String  InterCode;
+    private String  interId;
 
     @ApiModelProperty("参数编码")
     private String  code;
@@ -31,11 +31,17 @@ public class ModelInterParamMapVo {
     @ApiModelProperty("接口描述")
     private String interDesc;
 
-    @ApiModelProperty("参数")
-    private String param;
+    @ApiModelProperty("参数类型")
+    private Integer paramType;
 
     @ApiModelProperty("参数名")
     private String paramName;
+
+    @ApiModelProperty("参数描述")
+    private String paramDesc;
+
+    @ApiModelProperty("参数类型名")
+    private String paramTypeName;
 
     @ApiModelProperty("映射参数")
     private String mapParam;
