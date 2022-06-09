@@ -39,7 +39,7 @@ public class ReGenerateReporter {
         //先取 场站模板
         Integer reportStatus = 2;
         List<ReportMng> stationModellist = reportModelInterMapper.selectReReportModel(reportStatus);
-        LOGGER.info(stationModellist.toString());
+//        LOGGER.info(stationModellist.toString());
         //处理场站模板 接口 生成报告
         if (stationModellist.size() > 0) {
             for (ReportMng obj : stationModellist) {

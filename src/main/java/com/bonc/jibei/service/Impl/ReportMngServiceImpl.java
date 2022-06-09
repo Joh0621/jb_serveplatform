@@ -124,7 +124,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
         JSONObject jsonstr = JsonUtil.createJson(reportMng.getStationId(), reportMng.getStationType(), modelId, d.get("startDate"), d.get("endDate"));
         //调用接口 生成报告文件
         LOGGER.info("generate report : " + reportMng.getStationId());
-        LOGGER.info("jsonstr : " + jsonstr);
+//        LOGGER.info("jsonstr : " + jsonstr);
         String reportUrl = reportService.generate(jsonstr);
         reportMng.setReportUrl(reportUrl);
         reportMng.setReportStatus(0);//重置待审核状态

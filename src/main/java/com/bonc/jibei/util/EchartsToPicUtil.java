@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 /**
  * eachrts  根据数据形成后台出图
  */
@@ -43,39 +44,42 @@ public class EchartsToPicUtil {
     private static Log log = LogFactory.getLog(EchartsToPicUtil.class);
 
     @Value("${spring.cfg.pngPath}")
-    private String  pngPath;
+    private String pngPath;
     @Value("${spring.cfg.OSType}")
-    private String  OSType;
+    private String OSType;
     @Value("${spring.cfg.resourcePath}")
-    private String  rootPath;
+    private String rootPath;
 
     @PostConstruct
-    public void getMngPath(){
+    public void getMngPath() {
         pngPathV = pngPath;
     }
+
     @PostConstruct
-    public void getOSType(){
+    public void getOSType() {
         OSTypeV = OSType;
     }
+
     @PostConstruct
-    public void getRootPathV(){
+    public void getRootPathV() {
         rootPathV = rootPath;
     }
 
     /**
      * 柱状图
-     * @param isHorizontal  是否水平放置
-     * @param title 标题
-     * @param xData x轴数据
-     * @param yData y轴数据
+     *
+     * @param isHorizontal 是否水平放置
+     * @param title        标题
+     * @param xData        x轴数据
+     * @param yData        y轴数据
      * @return
      */
-    public static String echartBar(boolean isHorizontal,String title,String[] xData,Double[] yData) {
-       /**
-		String[] colors = { "rgb(2,111,230)", "rgb(186,73,46)",
-				"rgb(78,154,97)", "rgb(2,111,230)", "rgb(186,73,46)",
-				"rgb(78,154,97)" };
-        **/
+    public static String echartBar(boolean isHorizontal, String title, String[] xData, Double[] yData) {
+        /**
+         String[] colors = { "rgb(2,111,230)", "rgb(186,73,46)",
+         "rgb(78,154,97)", "rgb(2,111,230)", "rgb(186,73,46)",
+         "rgb(78,154,97)" };
+         **/
         GsonOption option = new GsonOption();
         option.title(title); // 标题
         // 工具栏
@@ -111,21 +115,23 @@ public class EchartsToPicUtil {
         option.series(bar);
         return generateEChart(new Gson().toJson(option));
     }
+
     /**
      * 折线图
+     *
      * @param isHorizontal 是否水平放置
-     *@param xData x轴数据
-     *@param yData y轴数据
+     * @param xData        x轴数据
+     * @param yData        y轴数据
      */
-    public static String echartLine(boolean isHorizontal,String title,String[] yBarName,String[] xData ,Double[][] yData) {
-       // yBarName = new String[]{"邮件营销", "联盟广告", "视频广告"};
+    public static String echartLine(boolean isHorizontal, String title, String[] yBarName, String[] xData, Double[][] yData) {
+        // yBarName = new String[]{"邮件营销", "联盟广告", "视频广告"};
         /**
-        yData = new double[][]{{120, 132, 101, 134, 90, 230, 210},
-                {220, 182, 191, 234, 290, 330, 310},
-                {150, 232, 201, 154, 190, 330, 410}};
+         yData = new double[][]{{120, 132, 101, 134, 90, 230, 210},
+         {220, 182, 191, 234, 290, 330, 310},
+         {150, 232, 201, 154, 190, 330, 410}};
          **/
         //xData=new String[]{"周一", "周二", "周三", "周四", "周五", "周六", "周日"};
-       // title = "广告数据";
+        // title = "广告数据";
         GsonOption option = new GsonOption();
         option.title().text(title).subtext("虚构").x("left");// 大标题、小标题、位置
         // 提示工具
@@ -155,11 +161,13 @@ public class EchartsToPicUtil {
         }
         return generateEChart(new Gson().toJson(option));
     }
+
     /**
      * 柱状|线状图
+     *
      * @param isHorizontal 是否水平放置,title:表名；type：图形标识：Bar 是柱状，否则是线状
      */
-    public static String echartBarand(boolean isHorizontal,String title,String[] xData,double[][] yData,String [] type ,String[] yBarName){
+    public static String echartBarand(boolean isHorizontal, String title, String[] xData, double[][] yData, String[] type, String[] yBarName) {
 
         GsonOption option = new GsonOption();
         option.title(title); // 标题
@@ -178,28 +186,27 @@ public class EchartsToPicUtil {
         for (int i = 0; i < yBarName.length; i++) {
             // 类目对应的柱状图
             //根据是柱状或者线状，构造对象
-            if("Bar".equals(type[i])){
+            if ("Bar".equals(type[i])) {
                 bar = new Bar(yBarName[i]);
-            }
-            else {
+            } else {
                 line = new Line(yBarName[i]);
             }
             for (int j = 0; j < yData[i].length; j++) {
-                if("Bar".equals(type[i])){
+                if ("Bar".equals(type[i])) {
                     bar.data(yData[i][j]);
-                }else {
+                } else {
                     line.data(yData[i][j]);
                 }
             }
-            if("Bar".equals(type[i])){
+            if ("Bar".equals(type[i])) {
                 option.series(bar);
-            }else {
+            } else {
                 option.series(line);
             }
         }
         option.xAxis(new CategoryAxis().data(xData));
         option.yAxis(new ValueAxis().max("250").min(0));
-       // option.yAxis(new ValueAxis().max("25").min(0));
+        // option.yAxis(new ValueAxis().max("25").min(0));
         if (isHorizontal) {// 横轴为类别、纵轴为值
             option.xAxis(category);// x轴
             option.yAxis(new ValueAxis());// y轴
@@ -208,28 +215,29 @@ public class EchartsToPicUtil {
             option.yAxis(category);// y轴
         }
         return generateEChart(new Gson().toJson(option));
-       // return new Gson().toJson(option);
+        // return new Gson().toJson(option);
     }
 
     /**
      * 饼状图
      * * @param isHorizontal 是否水平放置
-     * 	 *@param names 名称
-     * 	 *@param datas 数据值
-     * 	 *@param title 图表名
+     * *@param names 名称
+     * *@param datas 数据值
+     * *@param title 图表名
+     *
      * @return
      */
-    public static String echartPie(boolean isHorizontal,String title,String[] names,Double[] datas){
+    public static String echartPie(boolean isHorizontal, String title, String[] names, Double[] datas) {
         //names = new String[]{"Search Engine", "Direct", "Email", "Union Ad", "Video Ads"};
-       // datas = new double[]{1048, 735, 580, 484, 300};
-        List<Map> list= Lists.newArrayList();
+        // datas = new double[]{1048, 735, 580, 484, 300};
+        List<Map> list = Lists.newArrayList();
         for (int i = 0; i < names.length; i++) {
             Map data = new HashMap<>();//通过map存放要填充的数据
-            data.put("name",names[i]);
-            data.put("value",datas[i]);
+            data.put("name", names[i]);
+            data.put("value", datas[i]);
             list.add(data);
         }
-       // title = "标题";
+        // title = "标题";
         GsonOption option = new GsonOption();
         option.title(title); // 标题
         Pie bar = new Pie(title);// 图类别(柱状图)
@@ -245,20 +253,21 @@ public class EchartsToPicUtil {
     /**
      * 多组柱状图
      * * @param isHorizontal 是否水平放置
-     * 	 *@param xData x轴数据
-     * 	 *@param yBarName y轴显示的柱状数据名称
-     * 	 *@param yData y轴显示的多个柱状图数据
-     * 	 *@param title[] 标题 包括主标题和子标题
+     * *@param xData x轴数据
+     * *@param yBarName y轴显示的柱状数据名称
+     * *@param yData y轴显示的多个柱状图数据
+     * *@param title[] 标题 包括主标题和子标题
+     *
      * @return
      */
-    public static String echartBarGroup(Boolean isHorizontal,String[] title,String[] yBarName,String[] xData ,Double[][] yData){
+    public static String echartBarGroup(Boolean isHorizontal, String[] title, String[] yBarName, String[] xData, Double[][] yData) {
         EnhancedOption option = new EnhancedOption();
-        if (title.length>1) {
-            Title t=option.title().text(title[0]);
-            for (int i=1;i<title.length;i++){
+        if (title.length > 1) {
+            Title t = option.title().text(title[0]);
+            for (int i = 1; i < title.length; i++) {
                 t.subtext(title[i]);
             }
-        }else if (title.length>0) {
+        } else if (title.length > 0) {
             option.title().text(title[0]);
         }
         option.tooltip().trigger(Trigger.axis);
@@ -277,21 +286,23 @@ public class EchartsToPicUtil {
         }
         return generateEChart(new Gson().toJson(option));
     }
+
     /**
      * 堆叠图
-     *  * * @param isHorizontal 是否水平放置
-     * 	 * 	 *@param xData x轴数据
-     * 	 * 	 *@param yBarName y轴显示的柱状数据名称
-     * 	 * 	 *@param yData y轴显示的多个柱状图数据
+     * * * @param isHorizontal 是否水平放置
+     * * 	 *@param xData x轴数据
+     * * 	 *@param yBarName y轴显示的柱状数据名称
+     * * 	 *@param yData y轴显示的多个柱状图数据
+     *
      * @return
      */
-    public static String echartStackedBare(Boolean isHorizontal,String title,String[] xData ,String[] yName,Double[][] yData){
+    public static String echartStackedBare(Boolean isHorizontal, String title, String[] xData, String[] yName, Double[][] yData) {
         EnhancedOption option = new EnhancedOption();
         option.tooltip().trigger(Trigger.axis).axisPointer().type(PointerType.shadow);
         option.legend(yName);
         option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        option.yAxis(  new ValueAxis());
+        option.yAxis(new ValueAxis());
         option.xAxis(new CategoryAxis().data(xData));
 
         for (int i = 0; i < yName.length; i++) {
@@ -308,29 +319,30 @@ public class EchartsToPicUtil {
         }
         return generateEChart(new Gson().toJson(option));
     }
+
     /**
      * 雷达图
-     *  * * @param isHorizontal 是否水平放置
-     * 	 * 	 *@param xData x轴数据
-     * 	 * 	 *@param yBarName y轴显示的柱状数据名称
-     * 	 * 	 *@param yData y轴显示的多个柱状图数据
-     * 	 *@param title 主标题 和子标题
+     * * * @param isHorizontal 是否水平放置
+     * * 	 *@param xData x轴数据
+     * * 	 *@param yBarName y轴显示的柱状数据名称
+     * * 	 *@param yData y轴显示的多个柱状图数据
+     * *@param title 主标题 和子标题
+     *
      * @return
      */
-    public static String echartRadar(Boolean isHorizontal,String title[],String[] xData,Double[] yData ,String[] yName){
+    public static String echartRadar(Boolean isHorizontal, String title[], String[] xData, Double[] yData, String[] yName) {
         //此图可理解为平铺的柱状图，x轴为统计的类别，y轴为具体数据和名称
         EnhancedOption option = new EnhancedOption();
-        if (title!=null && title.length>1){
-            Title t=option.title().text(title[0]);
-            for (int i=1;i<title.length;i++){
+        if (title != null && title.length > 1) {
+            Title t = option.title().text(title[0]);
+            for (int i = 1; i < title.length; i++) {
                 t.subtext(title[i]);
             }
             option.title().text(title[0]).subtext(title[1]);
-        }
-        else if(title!=null && title.length>0){
+        } else if (title != null && title.length > 0) {
             option.title().text(title[0]);
         }
-        option.legend(MapUtils.putAll(new HashMap(),yName).values());
+        option.legend(MapUtils.putAll(new HashMap(), yName).values());
         //设置 Radar
         Radar radar = new Radar();
         radar.name(new Radar.Name().textStyle(new TextStyle().color("#fff").backgroundColor("#999").borderRadius(3).padding(new Integer[]{3, 5})));
@@ -342,9 +354,9 @@ public class EchartsToPicUtil {
             for (int j = 0; j < xData.length; j++) {
                 //此处的边界最大次是否需要作为入参，可讨论
                 double max = yData[j];
-                max= yData[j]>max?yData[j]:max;
-                if (i==yName.length-1) {
-                    radar.indicator(new Radar.Indicator().name(xData[j]).max(max*1.2));
+                max = yData[j] > max ? yData[j] : max;
+                if (i == yName.length - 1) {
+                    radar.indicator(new Radar.Indicator().name(xData[j]).max(max * 1.2));
                 }
             }
         }
@@ -380,8 +392,7 @@ public class EchartsToPicUtil {
                     + " -outfile " + path;
             log.info("shell " + cmd);
             Process process = Runtime.getRuntime().exec(cmd);
-            BufferedReader input = new BufferedReader(new InputStreamReader(
-                    process.getInputStream()));
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line = "";
             while ((line = input.readLine()) != null) {
                 log.info(line);
@@ -390,16 +401,16 @@ public class EchartsToPicUtil {
 
             File jsonFile = new File(dataPath);
             if (jsonFile.exists()) {
-                jsonFile.delete();
+                boolean delete = jsonFile.delete();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return path;
     }
+
     public static String writeFile(String options, String tmpPath) {
-        String dataPath = tmpPath
-                + UUID.randomUUID().toString().substring(0, 8) + ".json";
+        String dataPath = tmpPath + UUID.randomUUID().toString().substring(0, 8) + ".json";
         try {
             /* 写入Txt文件 */
             File writename = new File(dataPath); // 相对路径，如果没有则要建立一个新的output.txt文件
@@ -429,6 +440,7 @@ public class EchartsToPicUtil {
             return "windows";
         }
     }
+
     public static void main(String[] args) {
         //雷达图
         /*
@@ -453,7 +465,7 @@ public class EchartsToPicUtil {
          };
         echartStackedBare(true, null, xData ,yName,yData);
         */
-       //多组柱状图
+        //多组柱状图
         /*
         String[] title={"某地区蒸发量和降水量","纯属虚构"};
         String[] yBarName=new String[]{"蒸发量", "降水量","消耗量"};

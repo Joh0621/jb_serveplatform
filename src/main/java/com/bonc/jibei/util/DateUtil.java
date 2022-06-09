@@ -165,21 +165,5 @@ public class DateUtil {
         dateMap.put("endDate",endDateTime);
         return dateMap;
     }
-    public static void main(String[] args) {
-       ;// System.out.println(getDateQrt(true));
-       // System.out.println(DateUtil.getDateQrt(true).toString());
-        //System.out.println(lastQrtStart());
-       //System.out.println(lastQrtEnd());
 
-        //Map<String,String> dateMap=DateUtil.getStartByYear(2021,1);
-       // System.out.println(dateMap.get("startDate"));
-       // System.out.println(dateMap.get("endDate"));
-
-        String[] array = {"1","2","3","4"};
-        boolean flag = Arrays.asList(array).contains("12");
-        System.out.println(flag);
-
-
-        System.out.println("ddddupenngling".contains("ud"));
-    }
 }

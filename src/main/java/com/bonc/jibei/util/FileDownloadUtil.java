@@ -112,7 +112,7 @@ public class FileDownloadUtil {
             //循环读取文件路径集合，获取每一个文件的路径
             for (String filePath : filePaths) {
                 filePath = wordCfgProperties.getWordPath() + filePath;
-                System.out.println(filePath);
+//                System.out.println(filePath);
                 File inputFile = new File(filePath);
                 //判断文件是否存在
                 if (inputFile.exists()) {

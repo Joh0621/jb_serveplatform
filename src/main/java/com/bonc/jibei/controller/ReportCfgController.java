@@ -77,8 +77,8 @@ public class ReportCfgController {
     @Resource
     FileService ftpFileService;
 
-    @Value("${spring.cfg.modelPathTest}")
-    private String downFilePath ;
+    @Value("${spring.cfg.modelPath}")
+    private String modelFilePath;
 
     @ApiOperation(value = "报告脚本定义_增加接口")
     @ApiResponses({
@@ -110,11 +110,11 @@ public class ReportCfgController {
         Page<ReportInterface> jpage = new Page<>(page.getCurrent(), page.getSize());
 
         jpage.setSearchCount(false);
-        List<ReportInterface> list ;
-        if (page.getCurrent()==0&&page.getSize()==0){
+        List<ReportInterface> list;
+        if (page.getCurrent() == 0 && page.getSize() == 0) {
             list = reportInterfaceMapper.selectReportInterList(null, interType);
-        }else {
-            list  = reportInterfaceMapper.selectReportInterList(jpage, interType);
+        } else {
+            list = reportInterfaceMapper.selectReportInterList(jpage, interType);
         }
         for (ReportInterface e : list) {
             switch (e.getInterType()) {
@@ -185,7 +185,7 @@ public class ReportCfgController {
 //        QueryWrapper<ReportInterface> qw = new QueryWrapper();
 //        qw.eq("code", code);
 //        List<ReportInterface> l = reportInterfaceMapper.selectList(qw);
-        List<ModelInterfaceRelListVo> l =reportInterfaceMapper.selectReportModelByInterId(code);
+        List<ModelInterfaceRelListVo> l = reportInterfaceMapper.selectReportModelByInterId(code);
         if (l != null && l.size() > 0) {
             return Result.of(l.get(0));
         }
@@ -208,7 +208,7 @@ public class ReportCfgController {
     @PostMapping("/param/add")
     public Result addInterParam(@RequestBody InterParams interParams) {
 //        interParams.setInterId(1);
-        if (interParams==null||"".equals(interParams.getParamName())) {
+        if (interParams == null || "".equals(interParams.getParamName())) {
             return Result.error(ResultCode.NOT_FOUND);
         }
         return Result.of(interParamsMapper.insert(interParams));
@@ -221,7 +221,7 @@ public class ReportCfgController {
     @PostMapping("/param/edit")
     public Result editInterParam(@RequestBody InterParams interParams) {
 //        interParams.setInterId(1);
-        if (interParams==null||"".equals(interParams.getParamName())) {
+        if (interParams == null || "".equals(interParams.getParamName())) {
             return Result.error(ResultCode.NOT_FOUND);
         }
         return Result.of(interParamsMapper.updateById(interParams));
@@ -268,10 +268,10 @@ public class ReportCfgController {
         Page<ModelInterParamMapVo> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
 
-        List<ModelInterParamMapVo> list ;
-        if (page.getCurrent()==0&&page.getSize()==0){
+        List<ModelInterParamMapVo> list;
+        if (page.getCurrent() == 0 && page.getSize() == 0) {
             list = interParamsMapper.selectInterParamList(null, interId, interName, paramName);
-        }else {
+        } else {
             list = interParamsMapper.selectInterParamList(jpage, interId, interName, paramName);
         }
 
@@ -395,20 +395,18 @@ public class ReportCfgController {
     @PostMapping("/model/view")
     public Result modelView(Integer id) {
 //        ReportModel m=reportModelMapper.selectById(id);
-        if (id==null){
+        if (id == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
-        if (id==null){
+        if (id == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
-        ModelInterfaceRelListVo vo=new ModelInterfaceRelListVo();
+        ModelInterfaceRelListVo vo = new ModelInterfaceRelListVo();
 
-        List<ModelInterfaceRelListVo> infoByModelIds = reportModelMapper.selectInfoByModelId( id);
+        List<ModelInterfaceRelListVo> infoByModelIds = reportModelMapper.selectInfoByModelId(id);
 
 //        vo.setRel(stationModelRelMapper.selectStationModelRelVoList(id));
 //        BeanUtils.copyProperties(vo, m);
-
-
 
 
         return Result.of(infoByModelIds);
@@ -422,7 +420,7 @@ public class ReportCfgController {
     @PostMapping("/model/edit")
     public Result editModelInfo(@RequestBody ReportModel reportModel) {
         String pathFile = null;
-        if (reportModel==null) {
+        if (reportModel == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
         //如果又上传了模板文件
@@ -437,8 +435,8 @@ public class ReportCfgController {
             reportModelMapper.insert(reportModel);
             //删除原来服务器上的文件
             ftpFileService.delete(reportModel.getModelFileUrl());
-        }else {
-        reportModelMapper.updateById(reportModel);
+        } else {
+            reportModelMapper.updateById(reportModel);
         }
         return Result.ok();
     }
@@ -457,8 +455,10 @@ public class ReportCfgController {
         m.setOperStatusDate(LocalDate.now());
         return Result.of(reportModelMapper.updateById(m));
     }
+
     /**
      * TODO 待确定具体模板定义，暂时计划模板-报告为一对多关系
+     *
      * @param page
      * @param modelType
      * @param modelStatus
@@ -493,7 +493,7 @@ public class ReportCfgController {
     })
     @PostMapping("/model/addinter")
     public Result addModelInter(IdlistVo idlistVo) {
-        if (idlistVo==null) {
+        if (idlistVo == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
 
@@ -519,7 +519,7 @@ public class ReportCfgController {
     })
     @PostMapping("/interparammap/add")
     @ResponseBody
-    public Result addModelInterParamMap( ReportParamsMap reportParamsMap) {
+    public Result addModelInterParamMap(ReportParamsMap reportParamsMap) {
         return Result.of(reportParamsMapMapper.insert(reportParamsMap));
     }
 
@@ -563,7 +563,6 @@ public class ReportCfgController {
     }
 
 
-
     @ApiOperation(value = "报告模板配置_参数配置_模板接口参数映射列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
@@ -591,11 +590,10 @@ public class ReportCfgController {
     public Result upload(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
         //文件存放的路径
-        File file1 = new File(downFilePath + filename);
+        File file1 = new File(modelFilePath + filename);
         file.transferTo(file1);
         return Result.ok(filename);
     }
-
 
 
     @ApiOperation(value = "报告模版配置_文件下载")
@@ -603,22 +601,21 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = IdlistVo.class),
     })
     @GetMapping("/model/downFile")
-    public String fileDownLoad(HttpServletResponse response, @RequestParam("fileName") String fileName){
-        File file = new File(downFilePath + fileName);
-        System.out.println(file);
-        if(!file.exists()){
-            System.out.println(11);
+    public String fileDownLoad(HttpServletResponse response, @RequestParam("fileName") String fileName) {
+        File file = new File(modelFilePath + fileName);
+//        System.out.println(file);
+        if (!file.exists()) {
             return "下载文件不存在";
         }
         response.reset();
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         response.setContentLength((int) file.length());
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName );
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 
-        try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) {
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));) {
             byte[] buff = new byte[1024];
-            OutputStream os  = response.getOutputStream();
+            OutputStream os = response.getOutputStream();
             int i = 0;
             while ((i = bis.read(buff)) != -1) {
                 os.write(buff, 0, i);
@@ -629,15 +626,16 @@ public class ReportCfgController {
         }
         return "下载成功";
     }
+
     @ApiOperation(value = "报告模版配置_文件删除")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK", response = IdlistVo.class),
     })
     @GetMapping("model/deletFile")
     @ResponseBody
-    public Result deletFile(@RequestParam("fileName") String fileName){
-        String filepathDir="/Users/wangtao/Downloads/";
-         FileSystemUtils.deleteRecursively(new File(filepathDir + fileName));
+    public Result deletFile(@RequestParam("fileName") String fileName) {
+        String filepathDir = "/Users/wangtao/Downloads/";
+        FileSystemUtils.deleteRecursively(new File(filepathDir + fileName));
         return Result.ok();
 
 
@@ -698,21 +696,17 @@ public class ReportCfgController {
         //找模板ID
         List<ReportModel> list = reportModelMapper.selectModelReportList(null, null, null, null);
 
-
-
 //        List<ReportModel> list = reportModelMapper.selectList(qw);
         List<KeyValueVO> vo = new ArrayList<>();
         if (list != null && list.size() > 0) {
             //下拉框
             list.forEach(p -> {
                 KeyValueVO v = new KeyValueVO();
-            if(StrUtil.isNotBlank(p.getModelName())) {
-                System.out.println("aa");
-                v.setKey(p.getModelName());
-                v.setValue(p.getModelVersion());
-                vo.add(v);
-                    }
-
+                if (StrUtil.isNotBlank(p.getModelName())) {
+                    v.setKey(p.getModelName());
+                    v.setValue(p.getModelVersion());
+                    vo.add(v);
+                }
 
 
             });
@@ -787,7 +781,7 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = ModelStationIdsVo.class),
     })
     @PostMapping("/reportcfg/addstation")
-    public Result addStationReport(@RequestBody  ModelStationIdsVo modelStationIdsVo) {
+    public Result addStationReport(@RequestBody ModelStationIdsVo modelStationIdsVo) {
         //找模板ID
         String reportName = modelStationIdsVo.getReportName();
         String reportType = modelStationIdsVo.getReportType();
@@ -802,7 +796,7 @@ public class ReportCfgController {
         ReportCfg cfg = new ReportCfg();
         Integer modleId = list.get(0).getId();
         cfg.setModelId(modleId);
-        System.out.println(reportType);
+//        System.out.println(reportType);
         cfg.setReportType(Integer.valueOf(reportType));
         cfg.setReportName(reportName);
         cfg.setCreateTime(LocalDateTime.now());
@@ -829,7 +823,7 @@ public class ReportCfgController {
                 }
             }
             return Result.of(Result.ok());
-        }else {
+        } else {
             return Result.of(Result.error(ResultCode.NOT_FOUND));
         }
         //以后判断 key 唯一性
@@ -841,7 +835,7 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = ModelStationIdsVo.class),
     })
     @PostMapping("/reportcfg/editstation")
-    public Result editStationReport(@RequestBody  ModelStationIdsVo modelStationIdsVo) {
+    public Result editStationReport(@RequestBody ModelStationIdsVo modelStationIdsVo) {
         //找模板ID
         /*
         String reportName=modelStationIdsVo.getReportName();
@@ -896,7 +890,7 @@ public class ReportCfgController {
     public Result patchdelmodelcfgs(@RequestBody IdlistVo idlistVo) {
 
         for (Integer stationId : idlistVo.getIdsList()) {
-            if (stationId == null || idlistVo.getId() ==null ) {
+            if (stationId == null || idlistVo.getId() == null) {
                 continue;
             }
             QueryWrapper<StationModelRel> rel = new QueryWrapper<>();
@@ -949,18 +943,18 @@ public class ReportCfgController {
     @PostMapping("/reportcfg/view")
     @ResponseBody
 
-    public Result reportcfgView( @RequestBody  ReportModelVo reVo) {
+    public Result reportcfgView(@RequestBody ReportModelVo reVo) {
         if (reVo == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
 
-        ModelReportViewVo vo=new ModelReportViewVo();
+        ModelReportViewVo vo = new ModelReportViewVo();
 
 
         vo.setReportName(reVo.getReportName());
         vo.setModelName(reVo.getModelName());
         vo.setModelv(reVo.getModelVersion());
-        if (reVo.getReportType()!=null) {
+        if (reVo.getReportType() != null) {
             vo.setReportType(reVo.getReportType().toString());
         }
         StationModelRel rel = new StationModelRel();
