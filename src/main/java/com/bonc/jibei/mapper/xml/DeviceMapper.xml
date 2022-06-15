@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.DeviceMapper">
+    <select id="selectDeviceList" resultType="com.bonc.jibei.entity.Code">
+        SELECT
+            id,
+            code_detail
+        FROM
+            gb_codes
+        WHERE
+            pid = 247
+          AND code_id = 246
+    </select>
+
+    <select id="selectDeviceListCount"  resultType="int">
+        SELECT
+           count(*)
+        FROM
+            gb_codes
+        WHERE
+            pid = 247
+          AND code_id = 246
+    </select>
+
+    <select id="selectdeviceParam" resultType="com.bonc.jibei.vo.CodeTypeVo">
+        SELECT
+            cc.id,
+            cc.pid,
+            cc.code_id AS codeId,
+            cc.code_detail AS codeDetail,
+            tt.CODE,
+            tt.code_name,
+            tt.value_unit,
+            tt.sort_no,
+            tt.required,
+            tt.example
+        FROM
+            gb_codes cc
+                LEFT JOIN gb_code_type tt ON tt.code_id = cc.code_id
+        WHERE
+            cc.pid IN (
+        SELECT id FROM gb_codes WHERE
+        <if test="interId != null ">
+             pid=#{pid}
+        </if>
+         )
+    </select>
+</mapper>
