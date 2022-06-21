@@ -99,4 +99,28 @@
             AND rel.model_id =  #{modelId}
         </if>
     </select>
+
+
+    <update id="editModelInterRel" parameterType="com.bonc.jibei.vo.ModelInterVo" >
+        update  jb_model_interface_rel
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="orgId != null">
+                org_id = #{orgId},
+            </if>
+            <if test="modelId != null">
+                model_id = #{modelId},
+            </if>
+            <if test="interId != null">
+                inter_id = #{interId},
+            </if>
+        </set>
+           where  id = #{id};
+    </update>
+    <insert id="interModelInterRel"  parameterType="com.bonc.jibei.vo.ModelInterVo" >
+        INSERT INTO jb_model_interface_rel (`id`, `org_id`, `model_id`, `inter_id`)
+        VALUES (NUll, #{orgId},  #{modelId}, #{interId});
+    </insert>
 </mapper>

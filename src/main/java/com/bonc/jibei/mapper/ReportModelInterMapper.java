@@ -2,6 +2,7 @@ package com.bonc.jibei.mapper;
 
 import com.bonc.jibei.entity.ReportInterface;
 import com.bonc.jibei.entity.ReportMng;
+import com.bonc.jibei.vo.ModelInterVo;
 import com.bonc.jibei.vo.ReportModelInter;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -39,4 +40,7 @@ public interface ReportModelInterMapper extends  RootMapper<ReportModelInter>{
      * param:modelType 模板类型；modelId 模板id
      */
     List<ReportInterface> selectReportInter(@Param("modelId") Integer modelId);
+
+    int  interModelInterRel( ModelInterVo vo);
+    int  editModelInterRel( ModelInterVo vo);
 }
