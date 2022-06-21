@@ -1,15 +1,20 @@
 package com.bonc.jibei.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
+@TableName("gb_codes")
 public class Code {
     /**
      * id
      * (主键ID)
      * (无默认值)
      */
+    @TableId(type = IdType.AUTO)
     private Integer id;
     /**
      * 父级id,场站或者设备;
