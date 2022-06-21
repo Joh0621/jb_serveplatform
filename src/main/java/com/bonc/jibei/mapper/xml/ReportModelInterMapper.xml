@@ -33,7 +33,7 @@
         mng.report_quarter as reportQuarter,
         mng.station_id AS stationId,
         mng.station_type AS stationType,
-        report.report_name as reportName,
+        mng.report_name as reportName,
         model.id as modelId,
         model.model_version as modelVersion
         FROM
