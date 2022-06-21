@@ -419,21 +419,29 @@ public class ReportCfgController {
             return Result.error(ResultCode.NOT_FOUND);
         }
         //如果又上传了模板文件
-        if (reportModel != null && reportModel.getModelFile() != null) {
+        if (reportModel != null ) {
+            pathFile=reportModel.getModelFileUrl()+"/"+reportModel.getModelFileName();
+
             try {
-                pathFile = ftpFileService.upload(reportModel.getModelFile().getOriginalFilename(), reportModel.getModelFile().getInputStream());
-            } catch (IOException e) {
+                File file = new File(pathFile);
+                System.out.println(pathFile);
+                if(file.delete()) {
+                    System.out.println( file.getName() + " is deleted!");
+                }else {
+                    System.out.println("Delete operation is failed.");
+                }
+            } catch(Exception e) {
                 e.printStackTrace();
             }
-            LOGGER.info(pathFile);
-            reportModel.setModelFileUrl(pathFile);
-            //修改模板
-            reportModelMapper.insert(reportModel);
-            //删除原来服务器上的文件
-//            ftpFileService.delete(reportModel.getModelFileUrl());
-        } else {
-            reportModelMapper.updateById(reportModel);
+
+                //修改模板
+//            reportModelMapper.insert(reportModel);
+                reportModelMapper.updateById(reportModel);
+
         }
+//        else {
+//            reportModelMapper.updateById(reportModel);
+//        }
         return Result.ok();
     }
 
@@ -585,17 +593,19 @@ public class ReportCfgController {
     @ResponseBody
     public Result upload(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
-//        String pathFile = ftpFileService.upload(filename, file.getInputStream());
+
+
 //        LOGGER.info(pathFile);
-        LOGGER.info(modelFilePath + File.separator + filename);
         //文件存放的路径
-        File file1 = new File(modelFilePath + File.separator + filename);
+        File file1 = new File(modelFilePath + filename);
         file.transferTo(file1);
 //        String[] split = pathFile.split("/");
+        String absolutePath = file1.getAbsolutePath();
+        String filePath = absolutePath.
+                substring(0,absolutePath.lastIndexOf(File.separator));
         Map<String, String> map = new HashMap<>();
         map.put("filename", filename);
-//        map.put("filepath", split[split.length - 1]);
-        map.put("filepath", filename);
+        map.put("filepath", filePath);
         return Result.ok(map);
     }
 
@@ -980,5 +990,25 @@ public class ReportCfgController {
 //        }
 //        vo.setRel(stationModelRelMapper.selectStationModelRelVoList(id));
         return Result.of(vo);
+    }
+
+    @ApiOperation(value = "报告脚本定义_增加模版接口数据")
+
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = ReportInterface.class),
+    })
+    @PostMapping("/inter/addModelInterRel")
+    public Result addModelInterRel(@RequestBody ModelInterVo vo) {
+        return Result.of(  reportModelInterMapper.interModelInterRel(vo));
+    }
+
+    @ApiOperation(value = "报告脚本定义_修改模版接口数据")
+
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK", response = ReportInterface.class),
+    })
+    @PostMapping("/inter/editModelInterRel")
+    public Result editModelInterRel(@RequestBody ModelInterVo vo) {
+        return Result.of(  reportModelInterMapper.editModelInterRel(vo));
     }
 }
