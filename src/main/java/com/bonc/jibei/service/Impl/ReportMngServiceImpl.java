@@ -1,12 +1,9 @@
 package com.bonc.jibei.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.bonc.jibei.entity.ReportMng;
-import com.bonc.jibei.entity.StationModelRel;
 import com.bonc.jibei.mapper.ReportMngMapper;
 import com.bonc.jibei.mapper.StationModelRelMapper;
 import com.bonc.jibei.service.ReportMngService;
@@ -124,7 +121,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
         JSONObject jsonstr = JsonUtil.createJson(reportMng.getStationId(), reportMng.getStationType(), modelId, d.get("startDate"), d.get("endDate"));
         //调用接口 生成报告文件
         LOGGER.info("generate report : " + reportMng.getStationId());
-//        LOGGER.info("jsonstr : " + jsonstr);
+        // 调用生成报告
         String reportUrl = reportService.generate(jsonstr);
         reportMng.setReportUrl(reportUrl);
         reportMng.setReportStatus(0);//重置待审核状态

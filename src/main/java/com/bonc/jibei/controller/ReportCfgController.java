@@ -8,13 +8,10 @@ import com.bonc.jibei.api.*;
 import com.bonc.jibei.entity.*;
 import com.bonc.jibei.mapper.*;
 import com.bonc.jibei.service.FileService;
-
 import com.bonc.jibei.vo.*;
-
 import io.swagger.annotations.*;
-
-import org.apache.poi.util.IOUtils;
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: dupengling
@@ -42,6 +36,9 @@ import java.util.List;
 @Api(tags = "报告配置接口")
 @RestController
 public class ReportCfgController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
+
     @Resource
     ReportModelMapper reportModelMapper;
 
@@ -398,10 +395,8 @@ public class ReportCfgController {
         if (id == null) {
             return Result.error(ResultCode.NOT_FOUND);
         }
-        if (id == null) {
-            return Result.error(ResultCode.NOT_FOUND);
-        }
-        ModelInterfaceRelListVo vo = new ModelInterfaceRelListVo();
+
+//        ModelInterfaceRelListVo vo = new ModelInterfaceRelListVo();
 
         List<ModelInterfaceRelListVo> infoByModelIds = reportModelMapper.selectInfoByModelId(id);
 
@@ -430,11 +425,12 @@ public class ReportCfgController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            LOGGER.info(pathFile);
             reportModel.setModelFileUrl(pathFile);
             //修改模板
             reportModelMapper.insert(reportModel);
             //删除原来服务器上的文件
-            ftpFileService.delete(reportModel.getModelFileUrl());
+//            ftpFileService.delete(reportModel.getModelFileUrl());
         } else {
             reportModelMapper.updateById(reportModel);
         }
@@ -497,7 +493,7 @@ public class ReportCfgController {
             return Result.error(ResultCode.NOT_FOUND);
         }
 
-        List<String> msglist = null;
+//        List<String> msglist = null;
         Integer[] idsList = idlistVo.getIdsList();
         for (Integer id : idsList) {
             if (id == null || id <= 0) {
@@ -589,10 +585,16 @@ public class ReportCfgController {
     @ResponseBody
     public Result upload(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
+        String pathFile = ftpFileService.upload(filename, file.getInputStream());
+        LOGGER.info(pathFile);
         //文件存放的路径
-        File file1 = new File(modelFilePath + filename);
-        file.transferTo(file1);
-        return Result.ok(filename);
+//        File file1 = new File(modelFilePath + filename);
+//        file.transferTo(file1);
+        String[] split = pathFile.split("/");
+        Map<String, String> map = new HashMap<>();
+        map.put("filename", filename);
+        map.put("filepath", split[split.length - 1]);
+        return Result.ok(map);
     }
 
 
@@ -634,7 +636,7 @@ public class ReportCfgController {
     @GetMapping("model/deletFile")
     @ResponseBody
     public Result deletFile(@RequestParam("fileName") String fileName) {
-        String filepathDir = "/Users/wangtao/Downloads/";
+        String filepathDir = modelFilePath + fileName;
         FileSystemUtils.deleteRecursively(new File(filepathDir + fileName));
         return Result.ok();
 

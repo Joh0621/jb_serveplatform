@@ -53,17 +53,15 @@
             model.model_desc modelDesc,
             model.model_version modelVersion,
             model.model_file_name modelFileName,
-            rel.inter_id AS interId,
-            rel.model_id AS modelId,
+            map.inter_id AS interId,
+            map.model_id AS modelId,
             map.param_name paramName,
             map.param_desc paramDesc,
             map.map_param AS mapParam,
             map.id as ParamId
         FROM
             jb_report_model model
-                INNER JOIN jb_model_interface_rel rel ON rel.model_id = model.id
-                INNER JOIN jb_model_params_map map ON map.model_id = model.id
-                AND map.inter_id = rel.inter_id
+        left JOIN jb_model_params_map map ON map.model_id = model.id
         WHERE 1=1
         <if test="id != null and id != ''">
             and  model.id=#{id}
