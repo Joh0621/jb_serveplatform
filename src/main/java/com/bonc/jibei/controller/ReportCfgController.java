@@ -585,15 +585,17 @@ public class ReportCfgController {
     @ResponseBody
     public Result upload(MultipartFile file) throws IOException {
         String filename = file.getOriginalFilename();
-        String pathFile = ftpFileService.upload(filename, file.getInputStream());
-        LOGGER.info(pathFile);
+//        String pathFile = ftpFileService.upload(filename, file.getInputStream());
+//        LOGGER.info(pathFile);
+        LOGGER.info(modelFilePath + File.separator + filename);
         //文件存放的路径
-//        File file1 = new File(modelFilePath + filename);
-//        file.transferTo(file1);
-        String[] split = pathFile.split("/");
+        File file1 = new File(modelFilePath + File.separator + filename);
+        file.transferTo(file1);
+//        String[] split = pathFile.split("/");
         Map<String, String> map = new HashMap<>();
         map.put("filename", filename);
-        map.put("filepath", split[split.length - 1]);
+//        map.put("filepath", split[split.length - 1]);
+        map.put("filepath", filename);
         return Result.ok(map);
     }
 
