@@ -14,7 +14,7 @@
 
     <select id="selectDeviceListCount"  resultType="int">
         SELECT
-           count(*)
+            count(*)
         FROM
             gb_codes
         WHERE
@@ -24,25 +24,121 @@
 
     <select id="selectdeviceParam" resultType="com.bonc.jibei.vo.CodeTypeVo">
         SELECT
-            cc.id,
-            cc.pid,
-            cc.code_id AS codeId,
-            cc.code_detail AS codeDetail,
-            tt.CODE,
-            tt.code_name,
-            tt.value_unit,
-            tt.sort_no,
-            tt.required,
-            tt.example
+        cc.id,
+        cc.pid,
+        cc.code_id AS codeId,
+        cc.code_detail AS codeDetail,
+        tt.CODE,
+        tt.code_name,
+        tt.value_unit,
+        tt.sort_no,
+        tt.required,
+        tt.example
         FROM
-            gb_codes cc
-                LEFT JOIN gb_code_type tt ON tt.code_id = cc.code_id
+        gb_codes cc
+        LEFT JOIN gb_code_type tt ON tt.code_id = cc.code_id
         WHERE
-            cc.pid IN (
+        cc.pid IN (
         SELECT id FROM gb_codes WHERE
         <if test="interId != null ">
-             pid=#{pid}
+            pid=#{pid}
         </if>
-         )
+        )
+    </select>
+
+    <insert id="insetCodeType" parameterType="com.bonc.jibei.vo.CodeTypeVo" useGeneratedKeys="true" keyProperty="codeId">
+        INSERT INTO `gb_codes`.`gb_code_type` (`code_id`, `code`, `code_name`, `value_unit`, `sort_no`, `required`, `example`)
+        VALUES (NUll, #{code},  #{codeName}, #{valueUnit}, #{sortNo}, #{required}, #{example});
+    </insert>
+
+    <insert id="insetDeviceCompany" parameterType="String">
+        INSERT INTO `gb_codes`.`gb_codes` (`id`, `pid`, `code_id`, `code_detail`, `data_sources`)
+        VALUES (NULL, 8845, 48, #{Company}, NULL);
+    </insert>
+
+    <update id="updateCodeType"  parameterType="com.bonc.jibei.entity.CodeType">
+        update  `gb_codes`.`gb_code_type`
+        <set>
+            <if test="codeId != null">
+                code_id = #{codeId},
+            </if>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="codeName != null">
+                code_name = #{codeName},
+            </if>
+            <if test="valueUnit != null">
+                value_unit = #{valueUnit},
+            </if>
+            <if test="sortNo != null">
+                sort_no = #{sortNo},
+            </if>
+            <if test="required != null">
+                required = #{required},
+            </if>
+            <if test="example != null">
+                example = #{example},
+            </if>
+        </set>
+        WHERE
+        `code_id` = #{codeId};
+    </update>
+
+
+    <select id="selectDeviceModelList" resultType="com.bonc.jibei.entity.DeviceModel">
+        SELECT
+            id,
+            modelCode,
+            modelName,
+            deviceCompName AS deviceCompany
+        FROM
+            gb_device_model mm
+        GROUP BY
+            modelCode,
+            deviceCompany
+    </select>
+
+    <select id="SelectdropDownType" resultType="com.bonc.jibei.entity.Code">
+
+
+
+        SELECT  code_detail as codeDetail,id FROM  gb_codes
+        <if test="dropDownType != null and dropDownType == '1'.toString()">
+            WHERE
+            pid = 256
+            AND code_id = 246
+        </if>
+        <if test="dropDownType != null and dropDownType == '2'.toString()">
+            WHERE
+            pid IN ( 8845, 8846 )
+            AND code_id IN (
+            48)
+        </if>
+        <if test="dropDownType != null and dropDownType == '3'.toString()">
+            WHERE
+            pid IN ( 8845, 8846 )
+            AND code_id IN (
+            49)
+        </if>
+    </select>
+
+    <select id="getDeviceInfo" resultType="com.bonc.jibei.entity.DeviceModel">
+        SELECT
+            id,
+            modelCode,
+            modelName,
+            deviceCompany,
+            code_value codeValue,
+            device_type,
+            ct.code_name as category ,
+            ctc.code_name as code
+        FROM
+            gb_device_model  gb
+                INNER JOIN gb_code_type ct on ct.code_id=gb.category
+                INNER JOIN gb_code_type ctc on ctc.code_id=gb.`code`
+        WHERE
+            modelName = 'WTO/110'
+          AND deviceCompName = '许昌金继风电有限公司'
     </select>
 </mapper>
