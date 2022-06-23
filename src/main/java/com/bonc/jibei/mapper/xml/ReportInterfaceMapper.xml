@@ -24,9 +24,8 @@
         inter.inter_name as interName,
         inter.inter_desc as interDesc,
         inter.inter_url as interUrl,
-        rel.inter_id as interCode
-        from jb_model_interface_rel rel
-        inner join jb_report_interface inter on inter.id=rel.inter_id
+        inter.id as interCode
+        from jb_report_interface inter
         where 1=1
         <if test="InterCode != null and InterCode != ''">
             and rel.inter_id=#{InterCode}
@@ -57,12 +56,13 @@
         param.param_desc AS paramDesc
         from jb_model_interface_rel rel
         inner join jb_report_interface inter on inter.id=rel.inter_id
-        <if test="modelId != null ">
-            and rel.model_id=#{modelId}
-        </if>
+
         inner join jb_report_model model on model.id=rel.model_id
         INNER JOIN jb_inter_params param ON inter.id = param.inter_id
         where 1=1
+        <if test="modelId != null ">
+            and rel.model_id=#{modelId}
+        </if>
         <if test="interType != null and interType != ''">
             and inter.inter_type=#{interType}
         </if>

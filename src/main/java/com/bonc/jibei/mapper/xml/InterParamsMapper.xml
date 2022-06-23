@@ -4,7 +4,7 @@
     <select id="selectInterParamList" resultType="com.bonc.jibei.vo.ModelInterParamMapVo">
         SELECT
         param.id,
-        rel.inter_id AS interId	,
+        inter.id AS interId ,
         inter.org_id AS orgId,
         inter.inter_type AS interType,
         inter.inter_name AS interName,
@@ -13,8 +13,7 @@
         param.param_name AS paramName
         FROM
         jb_report_interface inter
-        INNER JOIN jb_model_interface_rel rel on rel.model_id=inter.id
-        INNER JOIN jb_inter_params param ON rel.inter_id = param.inter_id
+        INNER JOIN jb_inter_params param ON inter.id = param.inter_id
         where 1=1
         <if test="interId != null ">
             and param.inter_id=#{interId}
@@ -31,9 +30,9 @@
     <select id="selectCount" resultType="int">
         select
         count(*) as cnt
-        from jb_report_interface inter
-        INNER JOIN jb_model_interface_rel rel on rel.model_id=inter.id
-        INNER JOIN jb_inter_params param ON rel.inter_id = param.inter_id
+        FROM
+        jb_report_interface inter
+        INNER JOIN jb_inter_params param ON inter.id = param.inter_id
         where 1=1
         <if test="interId != null ">
             and param.inter_id=#{interId}
