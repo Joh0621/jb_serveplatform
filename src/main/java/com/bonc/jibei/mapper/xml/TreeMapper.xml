@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.TreeMapper">
+<!--    <select id="selectList" resultType="com.bonc.jibei.vo.PropertyVo">-->
+<!--&lt;!&ndash;        ( SELECT&ndash;&gt;-->
+<!--&lt;!&ndash;              gc.id id,&ndash;&gt;-->
+<!--&lt;!&ndash;              gc.pid as pid,&ndash;&gt;-->
+<!--&lt;!&ndash;              gp.pro_name name,&ndash;&gt;-->
+<!--&lt;!&ndash;              gp.id fdc_id ,&ndash;&gt;-->
+<!--&lt;!&ndash;              gp.point_code ,&ndash;&gt;-->
+<!--&lt;!&ndash;              gp.pro_code ,&ndash;&gt;-->
+<!--&lt;!&ndash;              gp.type_code&ndash;&gt;-->
+<!--&lt;!&ndash;          FROM&ndash;&gt;-->
+<!--&lt;!&ndash;              gb_codes gc&ndash;&gt;-->
+<!--&lt;!&ndash;                  INNER JOIN gb_property gp ON gc.code_id = gp.point_code&ndash;&gt;-->
+<!--&lt;!&ndash;                  INNER JOIN (&ndash;&gt;-->
+<!--&lt;!&ndash;                  SELECT&ndash;&gt;-->
+<!--&lt;!&ndash;                      gb.id AS dq_id,&ndash;&gt;-->
+<!--&lt;!&ndash;                      gp.pro_name dq_name&ndash;&gt;-->
+<!--&lt;!&ndash;                  FROM&ndash;&gt;-->
+<!--&lt;!&ndash;                      gb_codes gb&ndash;&gt;-->
+<!--&lt;!&ndash;                          LEFT JOIN gb_property gp ON gb.code_id = gp.point_code&ndash;&gt;-->
+<!--&lt;!&ndash;                  WHERE&ndash;&gt;-->
+<!--&lt;!&ndash;                      gb.pid = 0&ndash;&gt;-->
+<!--&lt;!&ndash;                    AND gp.type_code = 2&ndash;&gt;-->
+<!--&lt;!&ndash;              ) dq ON dq.dq_id = gc.pid&ndash;&gt;-->
+<!--&lt;!&ndash;          WHERE&ndash;&gt;-->
+<!--&lt;!&ndash;              gp.type_code = 4&ndash;&gt;-->
+<!--&lt;!&ndash;        ) UNION&ndash;&gt;-->
+<!--&lt;!&ndash;        (&ndash;&gt;-->
+<!--&lt;!&ndash;            SELECT&ndash;&gt;-->
+<!--&lt;!&ndash;                gb.id AS id,&ndash;&gt;-->
+<!--&lt;!&ndash;                gb.pid as pid,&ndash;&gt;-->
+<!--&lt;!&ndash;                gp.pro_name name,&ndash;&gt;-->
+<!--&lt;!&ndash;                gp.id fdc_id ,&ndash;&gt;-->
+<!--&lt;!&ndash;                gp.point_code ,&ndash;&gt;-->
+<!--&lt;!&ndash;                gp.pro_code ,&ndash;&gt;-->
+<!--&lt;!&ndash;                gp.type_code&ndash;&gt;-->
+<!--&lt;!&ndash;            FROM&ndash;&gt;-->
+<!--&lt;!&ndash;                gb_codes gb&ndash;&gt;-->
+<!--&lt;!&ndash;                    LEFT JOIN gb_property gp ON gb.code_id = gp.point_code&ndash;&gt;-->
+<!--&lt;!&ndash;            WHERE&ndash;&gt;-->
+<!--&lt;!&ndash;                gb.pid = 0&ndash;&gt;-->
+<!--&lt;!&ndash;              AND gp.type_code = 2&ndash;&gt;-->
+<!--&lt;!&ndash;        ) UNION&ndash;&gt;-->
+<!--&lt;!&ndash;        SELECT&ndash;&gt;-->
+<!--&lt;!&ndash;            gd.id AS id,&ndash;&gt;-->
+<!--&lt;!&ndash;            gd.pid pid,&ndash;&gt;-->
+<!--&lt;!&ndash;            gpp.pro_name AS name,&ndash;&gt;-->
+<!--&lt;!&ndash;            gpp.id fdc_id ,&ndash;&gt;-->
+<!--&lt;!&ndash;            gpp.point_code ,&ndash;&gt;-->
+<!--&lt;!&ndash;            gpp.pro_code ,&ndash;&gt;-->
+<!--&lt;!&ndash;            gpp.type_code&ndash;&gt;-->
+<!--&lt;!&ndash;        FROM&ndash;&gt;-->
+<!--&lt;!&ndash;            gb_codes gd&ndash;&gt;-->
+<!--&lt;!&ndash;                INNER JOIN (&ndash;&gt;-->
+<!--&lt;!&ndash;                SELECT&ndash;&gt;-->
+<!--&lt;!&ndash;                    gc.id cz_id,&ndash;&gt;-->
+<!--&lt;!&ndash;                    dq.dq_id,&ndash;&gt;-->
+<!--&lt;!&ndash;                    dq.dq_name,&ndash;&gt;-->
+<!--&lt;!&ndash;                    gp.pro_name cz_name,&ndash;&gt;-->
+<!--&lt;!&ndash;                    gp.id AS fdc_id&ndash;&gt;-->
+<!--&lt;!&ndash;                FROM&ndash;&gt;-->
+<!--&lt;!&ndash;                    gb_codes gc&ndash;&gt;-->
+<!--&lt;!&ndash;                        INNER JOIN gb_property gp ON gc.code_id = gp.point_code&ndash;&gt;-->
+<!--&lt;!&ndash;                        INNER JOIN (&ndash;&gt;-->
+<!--&lt;!&ndash;                        SELECT&ndash;&gt;-->
+<!--&lt;!&ndash;                            gb.id AS dq_id,&ndash;&gt;-->
+<!--&lt;!&ndash;                            gp.pro_name dq_name&ndash;&gt;-->
+<!--&lt;!&ndash;                        FROM&ndash;&gt;-->
+<!--&lt;!&ndash;                            gb_codes gb&ndash;&gt;-->
+<!--&lt;!&ndash;                                LEFT JOIN gb_property gp ON gb.code_id = gp.point_code&ndash;&gt;-->
+<!--&lt;!&ndash;                        WHERE&ndash;&gt;-->
+<!--&lt;!&ndash;                            gb.pid = 0&ndash;&gt;-->
+<!--&lt;!&ndash;                          AND gp.type_code = 2&ndash;&gt;-->
+<!--&lt;!&ndash;                    ) dq ON dq.dq_id = gc.pid&ndash;&gt;-->
+<!--&lt;!&ndash;                WHERE&ndash;&gt;-->
+<!--&lt;!&ndash;                    gp.type_code = 4&ndash;&gt;-->
+<!--&lt;!&ndash;            ) dqq ON dqq.cz_id = gd.pid&ndash;&gt;-->
+<!--&lt;!&ndash;                INNER JOIN gb_property gpp ON gd.code_id = gpp.point_code&ndash;&gt;-->
+<!--&lt;!&ndash;        WHERE&ndash;&gt;-->
+<!--&lt;!&ndash;            gpp.type_code = 18&ndash;&gt;-->
+<!--&lt;!&ndash;          AND dqq.fdc_id = gpp.pid&ndash;&gt;-->
+    <select id="selectList" resultType="com.bonc.jibei.vo.PropertyVo">
+        SELECT
+        gc.id,
+        gc.pid,
+        code_id,
+        IFNULL(pro_name,code_detail) name,
+        gpt.type_code type,
+        gpt.type_name
+        FROM
+        gb_codes gc
+        LEFT JOIN gb_property gp ON gp.id = gc.code_detail
+        LEFT JOIN gb_property_type gpt ON gp.type_code = gpt.type_code
+        WHERE
+        gc.data_sources =4
+    </select>
+
+    <select id="selectById" resultType="com.bonc.jibei.vo.PropertyVo">
+        SELECT
+            dd.id id,
+            gbb.id AS pid,
+            dd.code_id codeId,
+            dd.NAME,
+            dd.typeName,
+            dd.code_detail,
+            dd.data_sources dataSources,
+            dd.pro_name,
+            IFNULL( gpp.pro_name, gbb.code_detail ) AS pidName,
+            IFNULL( gpt.type_name, gct.code_name ) AS pidTypeName
+        FROM
+            gb_codes gbb
+                INNER JOIN (
+                SELECT
+                    gb.id,
+                    gb.pid,
+                    gb.code_id,
+                    gb.code_detail,
+                    gb.data_sources,
+                    gp.pro_name,
+                    IFNULL( gp.pro_name, gb.code_detail ) AS NAME,
+                    IFNULL( gpt.type_name, gct.code_name ) AS typeName
+                FROM
+                    gb_codes gb
+                        LEFT JOIN gb_property gp ON gb.code_detail = gp.id
+                        LEFT JOIN gb_property_type gpt ON gp.type_code = gpt.type_code
+                        LEFT JOIN gb_code_type gct ON gb.code_id = gct.code_id
+                WHERE
+                    gb.id = #{id}
+            ) dd ON gbb.id = dd.pid
+                LEFT JOIN gb_property gpp ON gbb.code_detail = gpp.id
+                LEFT JOIN gb_property_type gpt ON gpp.type_code = gpt.type_code
+                LEFT JOIN gb_code_type gct ON gbb.code_id = gct.code_id
+    </select>
+</mapper>
