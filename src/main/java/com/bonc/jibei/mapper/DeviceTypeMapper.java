@@ -13,5 +13,5 @@ import java.util.List;
  * @Description:  接口参数
  */
 public interface DeviceTypeMapper extends  RootMapper<CodeType>{
-
+    Integer selectByName(String deviceName);
 }

@@ -3,28 +3,47 @@
 <mapper namespace="com.bonc.jibei.mapper.DeviceMapper">
     <select id="selectDeviceList" resultType="com.bonc.jibei.entity.Code">
         SELECT
-            id,
-            code_detail
+            gc.id,
+            pid,
+            gc.code_id,
+            gct.code_name code_detail,
+            data_sources
         FROM
-            gb_codes
+            gb_codes gc
+                LEFT JOIN  gb_code_type gct on gc.code_id=gct.code_id
         WHERE
-            pid = 247
-          AND code_id = 246
+                pid in (
+                SELECT gc.id from gb_codes gc where gc.code_id=246 and code_detail='设备')
+        <if test="codeId != null  and codeId != ''">
+            and gc.code_id=#{codeId}
+        </if>
+    </select>
+
+    <select id="selectDeviceListForTree" resultType="com.bonc.jibei.entity.CodeType">
+        SELECT
+        *
+        FROM
+            gb_code_type gct
+        where
+          code_id > 260
     </select>
 
     <select id="selectDeviceListCount"  resultType="int">
         SELECT
-            count(*)
+       count(*)
         FROM
-            gb_codes
+        gb_codes gc
+        LEFT JOIN  gb_code_type gct on gc.code_id=gct.code_id
         WHERE
-            pid = 247
-          AND code_id = 246
+        pid in (
+        SELECT gc.id from gb_codes gc where gc.code_id=246 and code_detail='设备')
+        <if test="codeId != null  and codeId != ''">
+            and gc.code_id=#{codeId}
+        </if>
     </select>
 
     <select id="selectdeviceParam" resultType="com.bonc.jibei.vo.CodeTypeVo">
-        SELECT
-        cc.id,
+        SELECT 	cc.id,
         cc.pid,
         cc.code_id AS codeId,
         cc.code_detail AS codeDetail,
@@ -33,31 +52,31 @@
         tt.value_unit,
         tt.sort_no,
         tt.required,
-        tt.example
-        FROM
-        gb_codes cc
+        tt.example  from gb_codes cc
         LEFT JOIN gb_code_type tt ON tt.code_id = cc.code_id
-        WHERE
-        cc.pid IN (
-        SELECT id FROM gb_codes WHERE
-        <if test="interId != null ">
-            pid=#{pid}
+        where  1=1
+        <if test="pid != null  and pid != ''">
+          and  pid=#{pid}
         </if>
-        )
+
     </select>
 
     <insert id="insetCodeType" parameterType="com.bonc.jibei.vo.CodeTypeVo" useGeneratedKeys="true" keyProperty="codeId">
-        INSERT INTO `gb_codes`.`gb_code_type` (`code_id`, `code`, `code_name`, `value_unit`, `sort_no`, `required`, `example`)
-        VALUES (NUll, #{code},  #{codeName}, #{valueUnit}, #{sortNo}, #{required}, #{example});
+        INSERT INTO `gb_code_type` (`code_id`, `code`, `code_name`, `value_unit`, `sort_no`,`required`, `example`)
+        select    #{codeId}, #{code},  #{codeName}, #{valueUnit}, #{sortNo}, #{required}, #{example}
+            WHERE not exists (select * from gb_code_type
+                      where
+                 code_name=#{codeName}
+                );
     </insert>
 
     <insert id="insetDeviceCompany" parameterType="String">
-        INSERT INTO `gb_codes`.`gb_codes` (`id`, `pid`, `code_id`, `code_detail`, `data_sources`)
+        INSERT INTO  gb_codes (`id`, `pid`, `code_id`, `code_detail`, `data_sources`)
         VALUES (NULL, 8845, 48, #{Company}, NULL);
     </insert>
 
     <update id="updateCodeType"  parameterType="com.bonc.jibei.entity.CodeType">
-        update  `gb_codes`.`gb_code_type`
+        update  gb_code_type
         <set>
             <if test="codeId != null">
                 code_id = #{codeId},
@@ -85,60 +104,199 @@
         `code_id` = #{codeId};
     </update>
 
+    <delete id="delModelDevice" parameterType="String">
+        delete from  gb_device_model
+        where 1=1
+        <if test="deviceType != null  and deviceType != ''">
+            and  device_type = #{deviceType}
+        </if>
+        <if test="deviceCompany != null and deviceCompany != ''">
+            and  device_company =#{deviceCompany}
+        </if>
+        <if test="modelCode != null and modelCode != ''">
+            and  model_code  =#{modelCode}
+        </if>
+           </delete>
 
-    <select id="selectDeviceModelList" resultType="com.bonc.jibei.entity.DeviceModel">
+    <select id="selectDeviceModelList" resultType="com.bonc.jibei.vo.DeviceModelVo">
         SELECT
-            id,
-            modelCode,
-            modelName,
-            deviceCompName AS deviceCompany
+        ct.code_detail AS modelName,
+        ctt.code_detail deviceCompanyName,
+        mm.device_type as deviceType,
+        mm.model_code modelCode,
+        mm.device_company  deviceCompany
         FROM
-            gb_device_model mm
+        gb_device_model mm
+        INNER JOIN gb_codes ct ON ct.id = mm.model_code
+        INNER JOIN gb_codes ctt ON ctt.id = mm.device_company
+        where 1=1
+        <if test="deviceType != null  and deviceType != ''">
+            and  device_type = #{deviceType}
+        </if>
+        <if test="deviceCompany != null and deviceCompany != ''">
+            and  device_company =#{deviceCompany}
+        </if>
+        <if test="modelName != null and modelName != ''">
+            and  ct.code_detail  like concat('%', #{modelName}, '%')
+        </if>
         GROUP BY
-            modelCode,
-            deviceCompany
+        model_code,
+        device_company
     </select>
 
     <select id="SelectdropDownType" resultType="com.bonc.jibei.entity.Code">
-
-
-
-        SELECT  code_detail as codeDetail,id FROM  gb_codes
+        SELECT  id,code_id as codeId,pid,code_detail as codeDetail,id FROM  gb_codes
         <if test="dropDownType != null and dropDownType == '1'.toString()">
             WHERE
-            pid = 256
-            AND code_id = 246
+            code_id=256
         </if>
         <if test="dropDownType != null and dropDownType == '2'.toString()">
             WHERE
-            pid IN ( 8845, 8846 )
+            pid IN (SELECT id from gb_codes where code_id=256 )
             AND code_id IN (
             48)
         </if>
         <if test="dropDownType != null and dropDownType == '3'.toString()">
             WHERE
-            pid IN ( 8845, 8846 )
+            pid IN (SELECT id from gb_codes where code_id=256 )
             AND code_id IN (
             49)
         </if>
     </select>
 
-    <select id="getDeviceInfo" resultType="com.bonc.jibei.entity.DeviceModel">
+    <select id="getDeviceInfo" resultType="com.bonc.jibei.vo.DeviceModelVo">
         SELECT
             id,
-            modelCode,
-            modelName,
-            deviceCompany,
+            model_code,
+            device_company,
+            gb.code,
             code_value codeValue,
             device_type,
-            ct.code_name as category ,
-            ctc.code_name as code
+            ct.code_name as categoryName ,
+            gb.category category,
+            gb.is_show isShow,
+            ctc.code_name as codeName
         FROM
             gb_device_model  gb
                 INNER JOIN gb_code_type ct on ct.code_id=gb.category
                 INNER JOIN gb_code_type ctc on ctc.code_id=gb.`code`
+        WHERE is_show=1
+        <if test="deviceType != null  and deviceType != ''">
+            and  gb.device_type = #{deviceType}
+        </if>
+        <if test="deviceCompany != null and deviceCompany != ''">
+            and  gb.device_company =#{deviceCompany}
+        </if>
+        <if test="modelCode != null and modelCode != ''">
+            and  gb.model_code = #{modelCode}
+        </if>
+    </select>
+
+    <select id="getDeviceBasicInfo" resultType="com.bonc.jibei.vo.DeviceModelVo"  parameterType="String">
+        SELECT
+        gcc.pid category,
+        gcttt.code_name categoryName,
+        gcc.code_id CODE,
+        gctt.code_name codeName,
+        gb.code_value AS codeValue ,
+
+        <if test="deviceType != null  and deviceType != ''">
+            gb.is_show as isShow,
+        </if>
+        gb.id as id
+        FROM
+            gb_codes gcc
+                INNER JOIN gb_code_type gctt ON gcc.code_id = gctt.code_id
+                INNER JOIN gb_code_type gcttt ON gcc.pid = gcttt.code_id
+                left JOIN (
+                select 	DISTINCT(code),code_value,is_show,id
+                from gb_device_model
+                where 1=1
+                <if test="deviceType != null  and deviceType != ''">
+                    and  device_type = #{deviceType}
+                </if>
+                <if test="deviceCompany != null and deviceCompany != ''">
+                    and  device_company =#{deviceCompany}
+                </if>
+                <if test="modelCode != null and modelCode != ''">
+                    and  model_code = #{modelCode}
+                </if>
+            )  gb on gb.code=gcc.code_id
         WHERE
-            modelName = 'WTO/110'
-          AND deviceCompName = '许昌金继风电有限公司'
+                gcc.pid IN (
+                SELECT
+                    gct.code_id
+                FROM
+                    gb_codes gc
+                        INNER JOIN gb_code_type gct ON gc.code_id = gct.code_id
+                WHERE
+                    gc.pid = 244
+            )
+
+    </select>
+
+
+    <insert id="insertDeviceModel"  parameterType="com.bonc.jibei.vo.DeviceModelVo">
+        INSERT INTO `gb_device_model` ( `model_code`,  `device_company`, `category`, `code`, `code_value`, `create`, `create_time`, `device_type`, `is_show`)
+        select  #{modelCode},#{deviceCompany}, #{category},#{code},#{codeValue},#{create},#{createTime},#{deviceType},#{isShow}
+            WHERE not exists (select * from gb_device_model
+                      where
+        <if test="modelCode != null and modelCode != ''">
+                      model_code = #{modelCode}
+        </if>
+        <if test="deviceCompany != null and deviceCompany != ''">
+        and device_company=#{deviceCompany}
+        </if>
+        <if test="category != null and category != ''">
+        and category=#{category}
+        </if>
+        <if test="code != null and code != ''">
+        and code=#{code}
+        </if>
+        <if test="codeValue != null and codeValue != ''">
+        and code_value=#{codeValue}
+        </if>
+        <if test="isShow != null and isShow != ''">
+            and is_show=#{isShow}
+        </if>
+                );
+    </insert>
+    <update id="updateDeviceModelShow"  parameterType="com.bonc.jibei.vo.DeviceModelVo">
+        UPDATE `gb_device_model`
+        SET `model_code` = #{modelCode}, `device_company` = #{deviceCompany}, `category` = #{category}, `code` = #{code}, `code_value` = #{codeValue}, `create` = #{create}, `create_time` = #{createTime}, `device_type` = #{deviceType}, `is_show` = #{isShow}
+        WHERE `id` = #{id};
+
+    </update>
+    <select id="selectIdByName" parameterType="com.bonc.jibei.entity.CodeType" resultType="com.bonc.jibei.entity.CodeType">
+        SELECT  * from gb_code_type where 1=1
+        <if test="codeName != null">
+           and   code_name = #{codeName}
+        </if>
+        <if test="codeId != null">
+          and  code_id = #{codeId}
+        </if>
+    </select>
+
+
+
+
+    <insert id="insertCode" parameterType="com.bonc.jibei.entity.Code"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `gb_codes` (`id`, `pid`, `code_id`, `code_detail`, `data_sources`)
+        select #{id}, #{pid}, #{codeId},#{codeDetail}, #{dataSources}
+            WHERE not exists (select * from gb_codes
+                      where pid = #{pid}
+                        and code_id=#{codeId}
+                        and code_detail=#{codeDetail}
+                );
+    </insert>
+
+
+    <select id="selModelCode" parameterType="String" resultType="com.bonc.jibei.entity.Code">
+        select * from  gb_codes where 1=1
+        <if test="codeDetail != null and codeDetail != ''">
+            and code_detail=#{codeDetail}
+        </if>
+
+        limit 1
     </select>
 </mapper>

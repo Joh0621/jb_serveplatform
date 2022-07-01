@@ -25,5 +25,13 @@ public interface ModelInterfaceRelMapper extends  RootMapper<ModelInterfaceRel>{
      * @return 返回映射列表
      */
     List<ModelInterfaceRelListVo> selectInterParamRelList(IPage<?> page, @Param("interCode") String interCode, @Param("paramCode") String paramCode, @Param("interDesc") String interDesc);
+
+    /**
+     * sql未使用
+     * @param interCode
+     * @param paramCode
+     * @param interDesc
+     * @return
+     */
     Integer selectCount(@Param("interCode") String interCode, @Param("paramCode") String paramCode, @Param("interDesc") String interDesc);
 }
