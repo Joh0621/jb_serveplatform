@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bonc.jibei.entity.Code;
 import com.bonc.jibei.entity.CodeType;
 import com.bonc.jibei.entity.DeviceModel;
+import com.bonc.jibei.entity.StationBasecInfo;
 import com.bonc.jibei.vo.CodeTypeVo;
 import com.bonc.jibei.vo.DeviceModelVo;
 
@@ -65,6 +66,12 @@ public interface DeviceMapper extends  RootMapper<Code>{
    int  delModelDevice( String deviceType,String modelCode,String deviceCompany);
 
 
-   Code selModelCode(String codeDetail);
+   Code selModelCode(String codeId,String codeDetail,String dataSources);
+
+
+  List<StationBasecInfo>  stationList();
+
+
+    void delCzInfo(String id);
 
 }

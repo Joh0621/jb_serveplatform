@@ -133,4 +133,20 @@
                 LEFT JOIN gb_property_type gpt ON gpp.type_code = gpt.type_code
                 LEFT JOIN gb_code_type gct ON gbb.code_id = gct.code_id
     </select>
+
+    <select id="stationdownList" resultType="com.bonc.jibei.entity.Property">
+        SELECT id,pro_name from gb_property
+        <if test="id != null and id == '2'.toString()">
+            where type_code=4
+        </if>
+    </select>
+
+
+   <delete id="delCzInfo" parameterType="String">
+       delete from  gb_codes
+       where
+       <if test="id != null and id != ''">
+         ( pid  =#{id} or id=#{id})  and data_sources=4
+       </if>
+   </delete>
 </mapper>

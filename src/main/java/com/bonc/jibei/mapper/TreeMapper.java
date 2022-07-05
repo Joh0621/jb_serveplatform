@@ -25,4 +25,8 @@ public interface TreeMapper extends  RootMapper<Property>{
       * @return
       */
      List<PropertyVo>   selectById(Long id);
+
+   List<Property>  stationdownList(String id);
+
+   void delCzInfo(String id);
 }
