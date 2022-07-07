@@ -72,6 +72,6 @@ public interface DeviceMapper extends  RootMapper<Code>{
   List<StationBasecInfo>  stationList();
 
 
-    void delCzInfo(String id);
+    void delCzInfo(String id,String dataSources);
 
 }

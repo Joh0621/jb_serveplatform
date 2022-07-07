@@ -3,17 +3,17 @@
 <mapper namespace="com.bonc.jibei.mapper.DeviceMapper">
     <select id="selectDeviceList" resultType="com.bonc.jibei.entity.Code">
         SELECT
-            gc.id,
-            pid,
-            gc.code_id,
-            gct.code_name code_detail,
-            data_sources
+        gc.id,
+        pid,
+        gc.code_id,
+        gct.code_name code_detail,
+        data_sources
         FROM
-            gb_codes gc
-                LEFT JOIN  gb_code_type gct on gc.code_id=gct.code_id
+        gb_codes gc
+        LEFT JOIN gb_code_type gct ON gc.code_id = gct.code_id
         WHERE
-                pid in (
-                SELECT gc.id from gb_codes gc where gc.code_id=246 and code_detail='设备')
+        pid IN ( SELECT gc.id FROM gb_codes gc WHERE gc.code_id = 246 AND code_detail = '设备' )
+        and id!=8841
         <if test="codeId != null  and codeId != ''">
             and gc.code_id=#{codeId}
         </if>
@@ -21,11 +21,16 @@
 
     <select id="selectDeviceListForTree" resultType="com.bonc.jibei.entity.CodeType">
         SELECT
-        *
+            gc.id ,
+            pid,
+            gc.code_id ,
+            gct.code_name code_name,
+            data_sources
         FROM
-            gb_code_type gct
-        where
-          code_id > 260
+            gb_codes gc
+                LEFT JOIN gb_code_type gct ON gc.code_id = gct.code_id
+        WHERE
+                pid IN ( SELECT gc.id FROM gb_codes gc WHERE gc.code_id = 246 AND code_detail = '设备' )
     </select>
 
     <select id="selectDeviceListCount"  resultType="int">
@@ -145,7 +150,7 @@
         </if>
            </delete>
 
-    <select id="selectDeviceModelList" resultType="com.bonc.jibei.vo.DeviceModelVo">
+    <select id="selectDeviceModelList" resultType="com.bonc.jibei.entity.DeviceModel">
         SELECT
         ct.code_detail AS modelName,
         ctt.code_detail deviceCompanyName,
@@ -365,16 +370,16 @@
     <select id="stationList" resultType="com.bonc.jibei.entity.StationBasecInfo">
         select
             gc.pid id,
-            GROUP_CONCAT(case gc.code_id when 293 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end ) czbasicName,
-            GROUP_CONCAT(case gc.code_id when 269 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end) czbasicLX,
-            GROUP_CONCAT(case gc.code_id when 262 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end) czbasicDQ,
-            GROUP_CONCAT(case gc.code_id when 60 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end ) czbasicSSJT,
-            GROUP_CONCAT(case gc.code_id when 17 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end) czbasicZJRL,
-            GROUP_CONCAT(case gc.code_id when 310 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end) czbasicJZSL,
-            GROUP_CONCAT(case gc.code_id when 294 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end )czbasicDYDJ,
-            GROUP_CONCAT(case gc.code_id when 295 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end ) czbasicDDJG,
-            GROUP_CONCAT(case gc.code_id when 296 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end ) czbasicJJDW,
-            GROUP_CONCAT(case gc.code_id when 297 then IFNULL( gpp.pro_name, gc.code_detail ) else NULL end ) czbasicTYZT
+            GROUP_CONCAT( CASE gc.code_id WHEN 262 THEN IFNULL( gpp.pro_name, gc.code_detail ) ELSE NULL END ) czbasicDQ,
+            GROUP_CONCAT( CASE gc.code_id WHEN 293 THEN IFNULL( gpp.pro_name, gc.code_detail ) ELSE NULL END ) czbasicName,
+            GROUP_CONCAT( CASE gc.code_id WHEN 269 THEN gc.code_detail END ) czbasicLX,
+            GROUP_CONCAT( CASE gc.code_id WHEN 60 THEN  gc.code_detail  END ) czbasicSSJT,
+            GROUP_CONCAT( CASE gc.code_id WHEN 17 THEN   gc.code_detail  END ) czbasicZJRL,
+            GROUP_CONCAT( CASE gc.code_id WHEN 310 THEN   gc.code_detail  END )czbasicJZSL,
+            GROUP_CONCAT( CASE gc.code_id WHEN 294 THEN   gc.code_detail  END ) czbasicDYDJ,
+            GROUP_CONCAT( CASE gc.code_id WHEN 295 THEN   gc.code_detail  END ) czbasicDDJG,
+            GROUP_CONCAT( CASE gc.code_id WHEN 296 THEN   gc.code_detail  END ) czbasicJJDW,
+            GROUP_CONCAT( CASE gc.code_id WHEN 297 THEN   gc.code_detail  END ) czbasicTYZT
         FROM
             gb_codes gc
                 LEFT JOIN gb_code_type gct ON gc.code_id = gct.code_id
@@ -388,7 +393,11 @@
         delete from  gb_codes
         where
         <if test="id != null and id != ''">
-              pid  =#{id} and data_sources=5
+              pid  =#{id}
         </if>
+        <if test="dataSources != null and dataSources != ''">
+            and data_sources=#{dataSources}
+        </if>
+
     </delete>
 </mapper>

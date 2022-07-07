@@ -222,19 +222,20 @@ public class DeviceController {
     public Result addCompany(@RequestBody DeviceModel deviceModel) {
         int flag1 = 0;
         int flag2 = 0;
-        deviceModel.setDeviceType(String.valueOf(8846));
         if (deviceModel.getDeviceType() == null) {
             return Result.error(ResultCode.NOT_FOUND);
         } else {
             CodeType codeType = new CodeType();
             codeType.setCodeName(deviceModel.getDeviceType());
+            //根据型号名字查询型号id
+            Code code1 = deviceMapper.selModelCode("256", deviceModel.getDeviceType(), "");
 //            codeType = deviceMapper.selectIdByName(codeType);
 //            codeType.setCodeId(288);
             if (deviceModel.getModelName() != null) {
                 //判断是否存在已有数据
                 Code code = new Code();
                 //此处8825为型号的id，先写死
-                code.setPid(Integer.valueOf(deviceModel.getDeviceType()));
+                code.setPid(code1.getId());
                 code.setCodeId(49);
                 code.setCodeDetail(deviceModel.getModelName());
                 flag1 = deviceMapper.insertCode(code);
@@ -244,7 +245,7 @@ public class DeviceController {
             if (deviceModel.getDeviceCompanyName() != null) {
                 //判断是否存在已有数据
                 Code code = new Code();
-                code.setPid(Integer.valueOf(deviceModel.getDeviceType()));
+                code.setPid(code1.getId());
                 code.setCodeId(48);
                 code.setCodeDetail(deviceModel.getDeviceCompanyName());
                 flag2 = deviceMapper.insertCode(code);
@@ -345,9 +346,13 @@ public class DeviceController {
     public Result delDevice(String deviceType, String modelCode, String deviceCompany) {
         //删除model_device表数据
         deviceMapper.delModelDevice(deviceType, modelCode, deviceCompany);
+        //删除code表关联信息
         deviceMapper.deleteById(modelCode);
         deviceMapper.deleteById(deviceCompany);
-        //删除code表关联信息
+        //删除制造商信息
+        deviceMapper.delCzInfo(modelCode,null);
+        deviceMapper.delCzInfo(deviceCompany,null);
+
         return Result.of(Result.ok());
     }
 
@@ -386,7 +391,8 @@ public class DeviceController {
     @ApiOperation("设备树-删除节点信息")
     @ApiImplicitParam(name = "id", value = "编号", required = true, example = "1024", dataTypeClass = Long.class)
     public Result delTree(Integer id) {
-
+        //删除父级id
+        deviceMapper.delCzInfo(String.valueOf(id),null);
         return Result.of(deviceMapper.deleteById(id));
     }
 
@@ -848,10 +854,10 @@ public class DeviceController {
         //删除场站
         deviceMapper.deleteById(id);
         //删除场站基本信息
-        deviceMapper.delCzInfo(id);
+        deviceMapper.delCzInfo(id,"5");
 
         //删除设备树场站信息
-        treeMapper.delCzInfo(String.valueOf(code1.getId()));
+        deviceMapper.delCzInfo(String.valueOf(code1.getId()),"4");
         return Result.of(Result.ok());
     }
 
