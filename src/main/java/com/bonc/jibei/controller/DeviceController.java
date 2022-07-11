@@ -434,7 +434,21 @@ public class DeviceController {
 
         }
     }
+    @PostMapping("tree/editDeviceInfo")
+    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "id", value = "模板id", required = true),
+            @ApiImplicitParam(name = "DeviceModelListVo", value = "接口映射参数ID数组", required = true),
+    })
+    @ApiOperation("设备树-修改设备信息")
+    public Result editDeviceInfo(@RequestBody DeviceModelListVo deviceModelListVo) {
 
+        System.out.println(deviceModelListVo);
+        for (DeviceModelVo vo : deviceModelListVo.getIdsList()
+        ) {
+          deviceMapper.updateDeviceModelShow(vo);
+        }
+        return Result.of(Result.ok());
+    }
     @GetMapping("tree/getInfo")
     @ApiOperation("设备树-查看设备信息")
     public Result getTreeInfo(String id, String codeId) {
@@ -477,8 +491,6 @@ public class DeviceController {
         System.out.println(codeTypeListVo);
         for (CodeTypeVo vo : codeTypeListVo.getIdsList()
         ) {
-
-
             Code code = new Code();
 //            BeanUtils.copyProperties(vo,code);
             //此处的id为具体设备的id

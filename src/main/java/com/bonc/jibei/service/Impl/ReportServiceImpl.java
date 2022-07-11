@@ -130,7 +130,7 @@ public class ReportServiceImpl implements ReportService {
     private void handleBar(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
         Double[] yData = Convert.toDoubleArray(value.getJSONArray("yData"));
-        String path = EchartsToPicUtil.echartBar(true, "", xData, yData);
+        String path = EchartsToPicUtil.echartBar(true, "", xData, yData,null);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 
@@ -143,7 +143,7 @@ public class ReportServiceImpl implements ReportService {
             Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
             y[j] = data;
         }
-        String path = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y);
+        String path = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y,null,null);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 
@@ -209,7 +209,7 @@ public class ReportServiceImpl implements ReportService {
             Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
             y[j] = data;
         }
-        String path = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y);
+        String path = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y,null);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 
@@ -218,8 +218,8 @@ public class ReportServiceImpl implements ReportService {
         String[] yNames = Convert.toStrArray(value.getJSONArray("yName"));
         Double[] yData =  Convert.toDoubleArray(value.getJSONArray("yData"));
         String[] titles = {};
-        String path = EchartsToPicUtil.echartRadar(true, titles, xData, yData, yNames);
-        ftlData.put(name, PoiTLUtils.picData(path));
+//        String path = EchartsToPicUtil.echartRadar(true, titles, xData, yData, yNames);
+        ftlData.put(name, PoiTLUtils.picData(null));
     }
 
     private void handleLine(String name, JSONObject value, Map<String, Object> ftlData) {
@@ -231,7 +231,7 @@ public class ReportServiceImpl implements ReportService {
             Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
             y[j] = data;
         }
-        String path = EchartsToPicUtil.echartLine(true, "", yNames, xData, y);
+        String path = EchartsToPicUtil.echartLine(true, "", yNames, xData, y,null);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 

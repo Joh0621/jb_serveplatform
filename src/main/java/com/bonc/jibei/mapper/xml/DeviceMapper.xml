@@ -251,6 +251,9 @@
         <if test="modelCode != null and modelCode != ''">
             and  gb.model_code = #{modelCode}
         </if>
+        <if test="pid != null and pid != ''">
+            and  gb.pid = #{pid}
+        </if>
     </select>
 
     <select id="getDeviceBasicInfo" resultType="com.bonc.jibei.vo.DeviceModelVo"  parameterType="String">
@@ -324,7 +327,7 @@
     </insert>
     <update id="updateDeviceModelShow"  parameterType="com.bonc.jibei.vo.DeviceModelVo">
         UPDATE `gb_device_model`
-        SET `model_code` = #{modelCode}, `device_company` = #{deviceCompany}, `category` = #{category}, `code` = #{code}, `code_value` = #{codeValue}, `create` = #{create}, `create_time` = #{createTime}, `device_type` = #{deviceType}, `is_show` = #{isShow}
+        SET `pid` = #{pid}, `model_code` = #{modelCode}, `device_company` = #{deviceCompany}, `category` = #{category}, `code` = #{code}, `code_value` = #{codeValue}, `create` = #{create}, `create_time` = #{createTime}, `device_type` = #{deviceType}, `is_show` = #{isShow}
         WHERE `id` = #{id};
 
     </update>
