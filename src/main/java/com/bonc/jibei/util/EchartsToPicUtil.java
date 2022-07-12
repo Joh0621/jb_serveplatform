@@ -37,7 +37,7 @@ import java.util.UUID;
  */
 @Component
 public class EchartsToPicUtil {
-    @Value("${spring.cfg.pngPath}")
+
     private static String pngPathV;
     private static String OSTypeV;
     private static String rootPathV;
@@ -75,7 +75,7 @@ public class EchartsToPicUtil {
      * @param yData        y轴数据
      * @return
      */
-    public static String echartBar(boolean isHorizontal, String title, String[] xData, Double[] yData,String[] xYunit ) {
+    public static String echartBar(boolean isHorizontal, String title, String[] xData, Double[] yData, String[] xYunit ) {
         /**
          String[] colors = { "rgb(2,111,230)", "rgb(186,73,46)",
          "rgb(78,154,97)", "rgb(2,111,230)", "rgb(186,73,46)",
@@ -128,7 +128,6 @@ public class EchartsToPicUtil {
             option.yAxis(category);
         }
         option.series(bar);
-        System.out.println(new Gson().toJson(option));
         return generateEChart(new Gson().toJson(option));
     }
 
@@ -352,7 +351,6 @@ public class EchartsToPicUtil {
             option.series(line,bar);
         }
         option.yAxis(new ValueAxis().max(((int) (maxL*1.1 / 10))*10).min(((int) (minL*0.8 / 10))*10).name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"%":xYunit[1]), valueAxis);
-        System.out.println(option);
         return generateEChart(new Gson().toJson(option));
     }
 
@@ -415,19 +413,14 @@ public class EchartsToPicUtil {
         //设置 Radar
         Radar radar = new Radar();
         radar.name(new Radar.Name().textStyle(new TextStyle().color("#fff").backgroundColor("#999").borderRadius(3).padding(new Integer[]{3, 5})));
-        //设置 Series
-        RadarSeries radar1 = new RadarSeries("预算 vs 开销（Budget vs spending）");
+        RadarSeries radar1 = new RadarSeries("");
+        RadarData radarData1 = new RadarData("",yData);
+        radar1.data(radarData1);
         for (int i = 0; i < yName.length; i++) {
-            RadarData radarData1 = new RadarData(yName[i], yData[i]);
-            radar1.data(radarData1);
-            for (int j = 0; j < xData.length; j++) {
-                //此处的边界最大次是否需要作为入参，可讨论
-                double max = yData[j];
-                max = yData[j] > max ? yData[j] : max;
-                if (i == yName.length - 1) {
-                    radar.indicator(new Radar.Indicator().name(xData[j]).max(max * 1.2));
-                }
-            }
+            //此处的边界最大次是否需要作为入参，可讨论
+            double max = yData[i];
+            max = max > 100 ? (yData[i] > max ? yData[i] : max) : 100;
+            radar.indicator(new Radar.Indicator().name(yName[i]).max(max * 1.2));
         }
         option.radar(radar);
         option.series(radar1);
@@ -437,7 +430,7 @@ public class EchartsToPicUtil {
     @SuppressWarnings("finally")
     public static String generateEChart(String options) {
         //String OSTypeV="windows";
-//        String pngPathV="/Users/wangtao/kms/test/png/";
+        //String pngPathV="d:/test/png/png/";
 //        String rootPath="";
 //        if ("windows".equals(OSTypeV)) {
 //            rootPath = EchartsToPicUtil.class.getResource("/").toString().replace("file:/", "");
@@ -465,7 +458,7 @@ public class EchartsToPicUtil {
             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line = "";
             while ((line = input.readLine()) != null) {
-                log.info(line);
+//                log.info(line);
             }
             input.close();
 
@@ -480,7 +473,6 @@ public class EchartsToPicUtil {
     }
 
     public static String writeFile(String options, String tmpPath) {
-//        tmpPath="/Users/wangtao/kms/test/png/";
         String dataPath = tmpPath + UUID.randomUUID().toString().substring(0, 8) + ".json";
         try {
             /* 写入Txt文件 */

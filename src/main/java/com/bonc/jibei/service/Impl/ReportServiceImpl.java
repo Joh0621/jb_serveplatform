@@ -58,8 +58,8 @@ public class ReportServiceImpl implements ReportService {
         List<ReportInterface> reportInterfaces = reportModelInterMapper.selectReportInter(modelId);
 
         // 接口请求参数
-        params.put("reportId", modelId);
-        params.remove("modelId"); // 删除该参数
+        params.put("reportId", params.getInteger("reportId"));
+//        params.remove("modelId"); // 删除该参数
 
         // 模版数据
         Map<String, Object> ftlData = new HashMap<>();
