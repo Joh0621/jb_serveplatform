@@ -19,8 +19,11 @@ public class DeviceModel {
     @ApiModelProperty("设备型号")
     private String   modelName;
 
-    @ApiModelProperty("设备制造商")
+    @ApiModelProperty("设备制造商编码")
     private String deviceCompany;
+
+    @ApiModelProperty("设备制造商名字")
+    private String deviceCompanyName;
 
     @ApiModelProperty("设备分类")
     private String category;
@@ -39,7 +42,9 @@ public class DeviceModel {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createTime;
 
-    private  String device_type;
+    private  String deviceType;
+
+    private  int isShow;
 
 
 }

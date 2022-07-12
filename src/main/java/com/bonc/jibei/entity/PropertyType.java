@@ -1,9 +1,11 @@
 package com.bonc.jibei.entity;
 
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
+@TableName("gb_property_type")
 public class PropertyType {
 
     /**

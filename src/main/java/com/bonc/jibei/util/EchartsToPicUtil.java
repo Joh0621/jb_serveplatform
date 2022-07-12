@@ -3,6 +3,7 @@ package com.bonc.jibei.util;
 import com.github.abel533.echarts.Radar;
 import com.github.abel533.echarts.Title;
 import com.github.abel533.echarts.axis.CategoryAxis;
+import com.github.abel533.echarts.axis.SplitLine;
 import com.github.abel533.echarts.axis.ValueAxis;
 import com.github.abel533.echarts.code.Magic;
 import com.github.abel533.echarts.code.PointerType;
@@ -26,7 +27,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * eachrts  根据数据形成后台出图
@@ -71,7 +75,7 @@ public class EchartsToPicUtil {
      * @param yData        y轴数据
      * @return
      */
-    public static String echartBar(boolean isHorizontal, String title, String[] xData, Double[] yData) {
+    public static String echartBar(boolean isHorizontal, String title, String[] xData, Double[] yData, String[] xYunit ) {
         /**
          String[] colors = { "rgb(2,111,230)", "rgb(186,73,46)",
          "rgb(78,154,97)", "rgb(2,111,230)", "rgb(186,73,46)",
@@ -91,6 +95,11 @@ public class EchartsToPicUtil {
         Bar bar = new Bar(title);// 图类别(柱状图)
         CategoryAxis category = new CategoryAxis();// 轴分类
         category.data(xData);// 轴数据类别
+        if (xYunit==null||xYunit[0]==null||xYunit[0]==""){
+            category.name("时间");
+        }else {
+            category.name(xYunit[0]);
+        }
         // 循环数据
         for (int i = 0; i < xData.length; i++) {
             Double data = yData[i];
@@ -102,12 +111,18 @@ public class EchartsToPicUtil {
 //
             bar.data(map);
         }
-        if (isHorizontal) {// 横轴为类别、纵轴为值
-            option.xAxis(category);// x轴
-            option.yAxis(new ValueAxis());// y轴
-        } else {// 横轴为值、纵轴为类别
-            option.xAxis(new ValueAxis());// x轴
-            option.yAxis(category);// y轴
+        if (isHorizontal) {
+            // 横轴为类别、纵轴为值
+            option.xAxis(category);
+            // x轴
+            option.yAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));
+            // y轴
+        } else {
+            // 横轴为值、纵轴为类别
+            // x轴
+            option.xAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));
+            // y轴
+            option.yAxis(category);
         }
         option.series(bar);
         return generateEChart(new Gson().toJson(option));
@@ -120,7 +135,7 @@ public class EchartsToPicUtil {
      * @param xData        x轴数据
      * @param yData        y轴数据
      */
-    public static String echartLine(boolean isHorizontal, String title, String[] yBarName, String[] xData, Double[][] yData) {
+    public static String echartLine(boolean isHorizontal, String title, String[] yBarName, String[] xData, Double[][] yData,String[] xYunit) {
         // yBarName = new String[]{"邮件营销", "联盟广告", "视频广告"};
         /**
          yData = new double[][]{{120, 132, 101, 134, 90, 230, 210},
@@ -139,6 +154,11 @@ public class EchartsToPicUtil {
         CategoryAxis category = new CategoryAxis();// 轴分类
         category.data(xData);
         category.boundaryGap(false);// 起始和结束两端空白策略
+        if (xYunit==null||xYunit[0]==null||xYunit[0]==""){
+            category.name("时间");
+        }else {
+            category.name(xYunit[0]);
+        }
         // 循环数据
         for (int i = 0; i < yBarName.length; i++) {
             Line line = new Line();// 三条线，三个对象
@@ -151,9 +171,9 @@ public class EchartsToPicUtil {
         }
         if (isHorizontal) {// 横轴为类别、纵轴为值
             option.xAxis(category);// x轴
-            option.yAxis(new ValueAxis());// y轴
+            option.yAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));// y轴
         } else {// 横轴为值、纵轴为类别
-            option.xAxis(new ValueAxis());// x轴
+            option.xAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));// x轴
             option.yAxis(category);// y轴
         }
         return generateEChart(new Gson().toJson(option));
@@ -254,10 +274,11 @@ public class EchartsToPicUtil {
      * *@param yBarName y轴显示的柱状数据名称
      * *@param yData y轴显示的多个柱状图数据
      * *@param title[] 标题 包括主标题和子标题
-     *
+     * @param yData y轴左边数据，必填
+     * @param yData y轴右边数据，选填 为折线图
      * @return
      */
-    public static String echartBarGroup(Boolean isHorizontal, String[] title, String[] yBarName, String[] xData, Double[][] yData) {
+    public static String echartBarGroup(Boolean isHorizontal, String[] title, String[] yBarName, String[] xData, Double[][] yData,Double[][] yDataR,String[] xYunit) {
         EnhancedOption option = new EnhancedOption();
         if (title.length > 1) {
             Title t = option.title().text(title[0]);
@@ -271,16 +292,57 @@ public class EchartsToPicUtil {
         option.legend(yBarName);
         option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        option.xAxis(new CategoryAxis().data(xData));
-        option.yAxis(new ValueAxis());
+        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"时间":xYunit[0]));
 
+        ValueAxis valueAxis = new ValueAxis();
+//        option.yAxis(new ValueAxis());
+        //y轴右边对象创建
+//        for (int i = 0; i < yBarName.length; i++) {
+//            Bar bar = new Bar(yBarName[i]);
+//            for (int j = 0; j < yData[i].length; j++) {
+//                bar.data(yData[i][j]);
+//            }
+//            option.series(bar);
+//        }
+        double maxL=yData[0][0];
+        double minL=yData[0][0];
+        double max = 0;
+        double min= 0;
+        if (yDataR!=null&&yDataR.length!=0){
+             min=yDataR[0][0];
+        }
         for (int i = 0; i < yBarName.length; i++) {
             Bar bar = new Bar(yBarName[i]);
-            for (int j = 0; j < yData[i].length; j++) {
-                bar.data(yData[i][j]);
+            Line line=new Line(yBarName[i]);
+
+            if (i<yData.length){
+                for (int j = 0; j < yData[i].length; j++) {
+                    maxL=yData[i][j]>maxL?yData[i][j]:maxL;
+                    minL=yData[i][j]<minL?yData[i][j]:minL;
+                    bar.data(yData[i][j]);
+                }
             }
-            option.series(bar);
+            if (i>=yData.length){
+                System.out.println(i);
+                if (yDataR!=null&&yDataR.length!=0){
+
+                    for (int j = 0; j < yDataR[i-yData.length].length; j++) {
+                        line.data(yDataR[i-yData.length][j]);
+                        max=yDataR[i-yData.length][j]>max?yDataR[i-yData.length][j]:max;
+                        min=yDataR[i-yData.length][j]<min?yDataR[i-yData.length][j]:min;
+                    }
+
+                }
+
+            }
+            System.out.println(max+"---"+min);
+            valueAxis.max(((int) (max*1.1 / 10))*10);
+            valueAxis.min(((int) (min*0.8 / 10))*10);
+            valueAxis.name(xYunit==null||xYunit[2]==null||xYunit[2]==""?"%":xYunit[2]);
+            valueAxis.splitLine(new SplitLine().show(false));
+            option.series(line,bar);
         }
+        option.yAxis(new ValueAxis().max(((int) (maxL*1.1 / 10))*10).min(((int) (minL*0.8 / 10))*10).name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"%":xYunit[1]), valueAxis);
         return generateEChart(new Gson().toJson(option));
     }
 
@@ -293,16 +355,14 @@ public class EchartsToPicUtil {
      *
      * @return
      */
-    public static String echartStackedBare(Boolean isHorizontal, String title, String[] xData, String[] yName, Double[][] yData) {
+    public static String echartStackedBare(Boolean isHorizontal, String title, String[] xData, String[] yName, Double[][] yData,String[] xYunit) {
         EnhancedOption option = new EnhancedOption();
         option.tooltip().trigger(Trigger.axis).axisPointer().type(PointerType.shadow);
         option.legend(yName);
         option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        ValueAxis valueAxis = new ValueAxis();
-//        valueAxis.setType();
-        option.yAxis(valueAxis, new ValueAxis());
-        option.xAxis(new CategoryAxis().data(xData));
+        option.yAxis(new ValueAxis().name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"时间":xYunit[0]));
+        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"%":xYunit[1]));
 
         for (int i = 0; i < yName.length; i++) {
             Bar bar = new Bar(yName[i]);
@@ -370,6 +430,7 @@ public class EchartsToPicUtil {
 //        else {
 //            rootPath = EchartsToPicUtil.class.getResource("/").toString().replace("file:", "");
 //        }
+//        String rootPathV = EchartsToPicUtil.class.getResource("/").toString().replace("file:", "");
         String echartJsPath = rootPathV + "echarts-convert" + File.separator + "echarts-convert1.js";
         String OSPath = switchOS(OSTypeV);
         String dataPath = writeFile(options, pngPathV);
@@ -460,33 +521,47 @@ public class EchartsToPicUtil {
         echartStackedBare(true, null, xData ,yName,yData);
         */
         //多组柱状图
-        /*
-        String[] title={"某地区蒸发量和降水量","纯属虚构"};
-        String[] yBarName=new String[]{"蒸发量", "降水量","消耗量"};
-        String[] xData=new String[]{"1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"};
-
-        double[][] yData = new double[][]{{2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3},
-         {2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3},
-         {11.6, 15.9, 19.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3}};
-        echartBarGroup(true,title,yBarName,xData ,yData);
-        */
+//        String[] title={"某地区蒸发量和降水量","纯属虚构"};
+//        String[] yBarName=new String[]{"蒸发量","蒸发量1", "降水量","消耗量","蒸发量1"};
+//        String[] xData=new String[]{"1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"};
+//
+//        Double[][] yData = new Double[][]{{2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3},
+//         {2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3},
+//         {11.6, 15.9, 19.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3}};
+//        Double[][]   yDataR = new Double[][]{
+//                {11.6, 15.9, 19.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3},
+//                {2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 382.2, 48.7, 18.8, 6.0, 2.3}};
+//        echartBarGroup(true,title,yBarName,xData ,yData,yDataR);
         //柱状图
-        /*
-        String title="test测试";
-        String[] xData = new String[]{"广州", "深圳", "珠海", "汕头", "韶关", "佛山"};
-        double[] yData = new double[]{6030, 7800, 5200, 3444, 2666, 5708};
-        echartBar(true,title,xData,yData);
-        */
-        //柱状|线状图
-        /*
-        double[][] yData = new double[][]{{2.0, 2.2, 3.3}, {2.0, 4.9, 7.0}, {12.0, 4.9, 17.0}};
-        String[] xData =new String[]{"Mon", "Tue", "Wed"};
 
-        int[] datas = {6030, 7800, 5200, 3444, 2666, 5708};
-        String[] yBarName = new String[]{"Evaporation", "Precipitation", "Temperature"};
-        String []  type = new String[]{"Bar", "Line","Line"};
-        String title = "地市数据";
-        echartBarand(true, title, xData, yData,type , yBarName);
-        */
+//        String title="test测试";
+//        String[] xData = new String[]{"广州", "深圳", "珠海", "汕头", "韶关", "佛山"};
+//        Double[] yData = new Double[]{Double.valueOf(6030), Double.valueOf(7800), 5200.00, 3444.00, 2666.00, 5708.00};
+//        String[] xYUnit=null;
+//        echartBar(true,title,xData,yData,xYUnit);
+//        String title="test测试";
+//        String[] xData = new String[]{"广州", "深圳", "珠海", "汕头", "韶关", "佛山"};
+//        Double[] yData = new Double[]{Double.valueOf(6030), Double.valueOf(7800), 5200.00, 3444.00, 2666.00, 5708.00};
+//        echartBar(true,title,xData,/*  double[][] yData = new double[][]{{2.0, 2.2, 3.3}, {2.0, 4.9, 7.0}, {12.0, 4.9, 17.0}};
+//        String[] xData =new String[]{"Mon", "Tue", "Wed"};
+//       ,  yData, String[] type
+//        double[][]   yData = new double[][]{{2.0, 2.2, 3.3},
+//                {2.0, 4.9, 7.0},
+//                {12.0, 4.9, 17.0}};
+//        int[] datas = {6030, 7800, 5200, 3444, 2666, 5708};
+//        String[] yBarName = new String[]{"Evaporation", "Precipitation", "Temperature"};
+//        String[] xData   =new String[]{"Mon", "Tue", "Wed"};
+//        String[]  type = new String[]{"Bar", "Line", "Line"};
+//
+//
+//        String title = "地市数据";
+//        echartBarand(true, title, xData, yData,type , yBarName);
+
+        //柱状|线状图
+
+//        String title="test测试";
+//        String[] xData = new String[]{"广州", "深圳", "珠海", "汕头", "韶关", "佛山"};
+//        Double[] yData = new Double[]{Double.valueOf(6030), Double.valueOf(7800), 5200.00, 3444.00, 2666.00, 5708.00};
+//        echartBar(true,title,xData,yData);
     }
 }

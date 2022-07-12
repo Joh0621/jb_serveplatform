@@ -1,7 +1,11 @@
 package com.bonc.jibei.vo;
 
 
+import com.bonc.jibei.entity.DeviceModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 public class CodeTypeVo {
@@ -72,4 +76,8 @@ public class CodeTypeVo {
      * (无默认值)
      */
     private Integer dataSources;
+
+
+    @ApiModelProperty("设备分类信息")
+    private List<DeviceModel> category;
 }
