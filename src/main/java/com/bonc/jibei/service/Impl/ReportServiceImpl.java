@@ -16,6 +16,7 @@ import com.deepoove.poi.config.ConfigureBuilder;
 import com.deepoove.poi.plugin.table.LoopRowTableRenderPolicy;
 import com.deepoove.poi.policy.RenderPolicy;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -130,21 +131,31 @@ public class ReportServiceImpl implements ReportService {
     private void handleBar(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
         Double[] yData = Convert.toDoubleArray(value.getJSONArray("yData"));
-        String path = EchartsToPicUtil.echartBar(true, "", xData, yData,null);
+        String[] unitArr = Convert.toStrArray(value.getJSONArray("unitArr"));
+        String path = EchartsToPicUtil.echartBar(true, "", xData, yData, unitArr);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleBarGroup(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
         String[] yBarName = Convert.toStrArray(value.getJSONArray("yBarName"));
-        JSONArray yData = value.getJSONArray("yData");
-        Double[][] y = new Double[yData.size()][];
-        for (int j = 0; j < yData.size(); j++) {
-            Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
-            y[j] = data;
-        }
-        String path = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, y,null,null);
+        String[] unitArr = Convert.toStrArray(value.getJSONArray("unitArr"));
+        JSONArray yDataLeft = value.getJSONArray("yDataLeft");
+        Double[][] yl = getDoublesArray(yDataLeft);
+        JSONArray yDataRight = value.getJSONArray("yDataRight");
+        Double[][] yr = getDoublesArray(yDataRight);
+        String path = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, yl, yr, unitArr);
         ftlData.put(name, PoiTLUtils.picData(path));
+    }
+
+    @NotNull
+    private Double[][] getDoublesArray(JSONArray yDataRight) {
+        Double[][] yr = new Double[yDataRight.size()][];
+        for (int j = 0; j < yDataRight.size(); j++) {
+            Double[] data = Convert.toDoubleArray(yDataRight.getJSONArray(j));
+            yr[j] = data;
+        }
+        return yr;
     }
 
     private void handleMix(String rootName, JSONArray rootValue, Map<String, Object> ftlData, ConfigureBuilder builder, RenderPolicy policy) {
@@ -203,35 +214,29 @@ public class ReportServiceImpl implements ReportService {
     private void HandleStackedBare(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
         String[] yName = Convert.toStrArray(value.getJSONArray("yName"));
+        String[] unitArr = Convert.toStrArray(value.getJSONArray("unitArr"));
         JSONArray yData = value.getJSONArray("yData");
-        Double[][] y = new Double[yData.size()][];
-        for (int j = 0; j < yData.size(); j++) {
-            Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
-            y[j] = data;
-        }
-        String path = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y,null);
+        Double[][] y = getDoublesArray(yData);
+        String path = EchartsToPicUtil.echartStackedBare(true, "", xData, yName, y, unitArr);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleRadar(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
         String[] yNames = Convert.toStrArray(value.getJSONArray("yName"));
-        Double[] yData =  Convert.toDoubleArray(value.getJSONArray("yData"));
+        Double[] yData = Convert.toDoubleArray(value.getJSONArray("yData"));
         String[] titles = {};
-//        String path = EchartsToPicUtil.echartRadar(true, titles, xData, yData, yNames);
-        ftlData.put(name, PoiTLUtils.picData(null));
+        String path = EchartsToPicUtil.echartRadar(true, titles, xData, yData, yNames);
+        ftlData.put(name, PoiTLUtils.picData(path));
     }
 
     private void handleLine(String name, JSONObject value, Map<String, Object> ftlData) {
         String[] xData = Convert.toStrArray(value.getJSONArray("xData"));
         String[] yNames = Convert.toStrArray(value.getJSONArray("yName"));
+        String[] unitArr = Convert.toStrArray(value.getJSONArray("unitArr"));
         JSONArray yData = value.getJSONArray("yData");
-        Double[][] y = new Double[yData.size()][];
-        for (int j = 0; j < yData.size(); j++) {
-            Double[] data = Convert.toDoubleArray(yData.getJSONArray(j));
-            y[j] = data;
-        }
-        String path = EchartsToPicUtil.echartLine(true, "", yNames, xData, y,null);
+        Double[][] y = getDoublesArray(yData);
+        String path = EchartsToPicUtil.echartLine(true, "", yNames, xData, y, unitArr);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 
@@ -263,10 +268,11 @@ public class ReportServiceImpl implements ReportService {
 
     /**
      * 绑定表格行循环插件
+     *
      * @param builder builder
      * @param tagName tagName
      */
-    private void bindLoopRowTablePolicy(ConfigureBuilder builder, String tagName, RenderPolicy policy){
+    private void bindLoopRowTablePolicy(ConfigureBuilder builder, String tagName, RenderPolicy policy) {
         builder.bind(tagName, policy);
     }
 

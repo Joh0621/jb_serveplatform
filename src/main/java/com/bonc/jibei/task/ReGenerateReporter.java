@@ -33,7 +33,7 @@ public class ReGenerateReporter {
     private ReportMngService reportMngService;
 
     //5分钟执行一次
-//    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/2 * * * ?")
     // @Async("threadPoolTaskExecutor")
     public void reCreateReport() throws IOException {
         //先取 场站模板
