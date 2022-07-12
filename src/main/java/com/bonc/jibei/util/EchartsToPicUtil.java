@@ -99,7 +99,7 @@ public class EchartsToPicUtil {
         category.axisLabel().interval(0).rotate(45);
         category.axisLabel().interval(0).rotate(45);
         if (xYunit==null||xYunit[0]==null||xYunit[0]==""){
-            category.name("时间");
+            category.name("");
         }else {
             category.name(xYunit[0]);
         }
@@ -118,12 +118,12 @@ public class EchartsToPicUtil {
             // 横轴为类别、纵轴为值
             option.xAxis(category);
             // x轴
-            option.yAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));
+            option.yAxis(new ValueAxis().name(xYunit==null?"":xYunit[1]));
             // y轴
         } else {
             // 横轴为值、纵轴为类别
             // x轴
-            option.xAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));
+            option.xAxis(new ValueAxis().name(xYunit==null?"":xYunit[1]));
             // y轴
             option.yAxis(category);
         }
@@ -158,7 +158,7 @@ public class EchartsToPicUtil {
         category.data(xData);
         category.boundaryGap(false);// 起始和结束两端空白策略
         if (xYunit==null||xYunit[0]==null||xYunit[0]==""){
-            category.name("时间");
+            category.name("");
         }else {
             category.name(xYunit[0]);
         }
@@ -174,9 +174,9 @@ public class EchartsToPicUtil {
         }
         if (isHorizontal) {// 横轴为类别、纵轴为值
             option.xAxis(category);// x轴
-            option.yAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));// y轴
+            option.yAxis(new ValueAxis().name(xYunit==null?"":xYunit[1]));// y轴
         } else {// 横轴为值、纵轴为类别
-            option.xAxis(new ValueAxis().name(xYunit==null?"%":xYunit[1]));// x轴
+            option.xAxis(new ValueAxis().name(xYunit==null?"":xYunit[1]));// x轴
             option.yAxis(category);// y轴
         }
         return generateEChart(new Gson().toJson(option));
@@ -271,8 +271,8 @@ public class EchartsToPicUtil {
         //设置显示百分比
         bar.itemStyle().normal().label().show(true).formatter("{d}%");
         option.series(bar);
-        System.out.println(option);
-        return new Gson().toJson(option);
+//        System.out.println(option);
+        return generateEChart(new Gson().toJson(option));
     }
 
     /**
@@ -300,7 +300,7 @@ public class EchartsToPicUtil {
         option.legend(yBarName);
         option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"时间":xYunit[0]));
+        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"":xYunit[0]));
 
         ValueAxis valueAxis = new ValueAxis();
 //        option.yAxis(new ValueAxis());
@@ -346,11 +346,11 @@ public class EchartsToPicUtil {
             System.out.println(max+"---"+min);
             valueAxis.max(((int) (max*1.1 / 10))*10);
             valueAxis.min(((int) (min*0.8 / 10))*10);
-            valueAxis.name(xYunit==null||xYunit[2]==null||xYunit[2]==""?"%":xYunit[2]);
+            valueAxis.name(xYunit==null||xYunit[2]==null||xYunit[2]==""?"":xYunit[2]);
             valueAxis.splitLine(new SplitLine().show(false));
             option.series(line,bar);
         }
-        option.yAxis(new ValueAxis().max(((int) (maxL*1.1 / 10))*10).min(((int) (minL*0.8 / 10))*10).name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"%":xYunit[1]), valueAxis);
+        option.yAxis(new ValueAxis().max(((int) (maxL*1.1 / 10))*10).min(((int) (minL*0.8 / 10))*10).name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"":xYunit[1]), valueAxis);
         return generateEChart(new Gson().toJson(option));
     }
 
@@ -369,8 +369,8 @@ public class EchartsToPicUtil {
         option.legend(yName);
         option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        option.yAxis(new ValueAxis().name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"%":xYunit[1]));
-        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"时间":xYunit[0]));
+        option.yAxis(new ValueAxis().name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"":xYunit[1]));
+        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"":xYunit[0]));
 
         for (int i = 0; i < yName.length; i++) {
             Bar bar = new Bar(yName[i]);
