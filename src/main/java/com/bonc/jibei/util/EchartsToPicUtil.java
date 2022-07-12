@@ -26,10 +26,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * eachrts  根据数据形成后台出图
@@ -302,7 +299,9 @@ public class EchartsToPicUtil {
         option.legend(yName);
         option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        option.yAxis(new ValueAxis());
+        ValueAxis valueAxis = new ValueAxis();
+//        valueAxis.setType();
+        option.yAxis(valueAxis, new ValueAxis());
         option.xAxis(new CategoryAxis().data(xData));
 
         for (int i = 0; i < yName.length; i++) {
@@ -346,19 +345,14 @@ public class EchartsToPicUtil {
         //设置 Radar
         Radar radar = new Radar();
         radar.name(new Radar.Name().textStyle(new TextStyle().color("#fff").backgroundColor("#999").borderRadius(3).padding(new Integer[]{3, 5})));
-        RadarSeries radar1 = new RadarSeries("预算 vs 开销（Budget vs spending）");
+        RadarSeries radar1 = new RadarSeries("");
+        RadarData radarData1 = new RadarData("",yData);
+        radar1.data(radarData1);
         for (int i = 0; i < yName.length; i++) {
-
-            RadarData radarData1 = new RadarData(yName[i], yData[i]);
-            radar1.data(radarData1);
-            for (int j = 0; j < xData.length; j++) {
-                //此处的边界最大次是否需要作为入参，可讨论
-                double max = yData[j];
-                max = yData[j] > max ? yData[j] : max;
-                if (i == yName.length - 1) {
-                    radar.indicator(new Radar.Indicator().name(xData[j]).max(max * 1.2));
-                }
-            }
+            //此处的边界最大次是否需要作为入参，可讨论
+            double max = yData[i];
+            max = max > 100 ? (yData[i] > max ? yData[i] : max) : 100;
+            radar.indicator(new Radar.Indicator().name(yName[i]).max(max * 1.2));
         }
         option.radar(radar);
         option.series(radar1);
@@ -395,7 +389,7 @@ public class EchartsToPicUtil {
             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line = "";
             while ((line = input.readLine()) != null) {
-                log.info(line);
+//                log.info(line);
             }
             input.close();
 
