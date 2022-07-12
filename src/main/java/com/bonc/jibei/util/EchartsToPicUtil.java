@@ -95,6 +95,9 @@ public class EchartsToPicUtil {
         Bar bar = new Bar(title);// 图类别(柱状图)
         CategoryAxis category = new CategoryAxis();// 轴分类
         category.data(xData);// 轴数据类别
+        //x轴填满.倾斜
+        category.axisLabel().interval(0).rotate(45);
+        category.axisLabel().interval(0).rotate(45);
         if (xYunit==null||xYunit[0]==null||xYunit[0]==""){
             category.name("时间");
         }else {
@@ -248,24 +251,29 @@ public class EchartsToPicUtil {
     public static String echartPie(boolean isHorizontal, String title, String[] names, Double[] datas) {
         //names = new String[]{"Search Engine", "Direct", "Email", "Union Ad", "Video Ads"};
         // datas = new double[]{1048, 735, 580, 484, 300};
-        List<Map> list = Lists.newArrayList();
+        List<Map> list= Lists.newArrayList();
         for (int i = 0; i < names.length; i++) {
             Map data = new HashMap<>();//通过map存放要填充的数据
-            data.put("name", names[i]);
-            data.put("value", datas[i]);
+            data.put("name",names[i]);
+            data.put("value",datas[i]);
             list.add(data);
         }
-        // title = "标题";
+        title = "Referer of a Website";
         GsonOption option = new GsonOption();
         option.title(title); // 标题
+        option.legend().top("5%").left("center");
         Pie bar = new Pie(title);// 图类别(柱状图)
         // 循环数据
         for (int i = 0; i < names.length; i++) {
+
             bar.data(list.get(i));
         }
-        bar.radius("50%");
+//		bar.radius("70%");
+        //设置显示百分比
+        bar.itemStyle().normal().label().show(true).formatter("{d}%");
         option.series(bar);
-        return generateEChart(new Gson().toJson(option));
+        System.out.println(option);
+        return new Gson().toJson(option);
     }
 
     /**
@@ -373,8 +381,8 @@ public class EchartsToPicUtil {
             if (i >= yData.length) {
                 break;
             }
-            for (int j = 0; j < yData[i].length; j++) {
-                bar.data(yData[i][j]);
+            for (int j = 0; j < yData.length; j++) {
+                bar.data(yData[j][i]);
             }
             option.series(bar);
         }
