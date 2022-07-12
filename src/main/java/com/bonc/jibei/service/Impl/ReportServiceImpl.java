@@ -144,7 +144,7 @@ public class ReportServiceImpl implements ReportService {
         Double[][] yl = getDoublesArray(yDataLeft);
         JSONArray yDataRight = value.getJSONArray("yDataRight");
         Double[][] yr = getDoublesArray(yDataRight);
-        String path = EchartsToPicUtil.echartBarGroup(true, yBarName, yBarName, xData, yl, yr, unitArr);
+        String path = EchartsToPicUtil.echartBarGroup(true, null, yBarName, xData, yl, yr, unitArr);
         ftlData.put(name, PoiTLUtils.picData(path));
     }
 
