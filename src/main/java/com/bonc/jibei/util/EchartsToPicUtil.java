@@ -369,8 +369,8 @@ public class EchartsToPicUtil {
         option.legend(yName);
         option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        option.yAxis(new ValueAxis().name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"时间":xYunit[0]));
-        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"%":xYunit[1]));
+        option.yAxis(new ValueAxis().name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"%":xYunit[1]));
+        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"时间":xYunit[0]));
 
         for (int i = 0; i < yName.length; i++) {
             Bar bar = new Bar(yName[i]);
