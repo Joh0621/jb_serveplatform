@@ -174,12 +174,9 @@ public class EchartsToPicUtil {
         }
         if (isHorizontal) {// 横轴为类别、纵轴为值
             option.xAxis(category);// x轴
-            ValueAxis name = new ValueAxis().name(xYunit == null ? "" : xYunit[1]);
-            name.setScale(true);
-            option.yAxis(name);// y轴
+            option.yAxis(new ValueAxis().name(xYunit==null?"":xYunit[1]));// y轴
         } else {// 横轴为值、纵轴为类别
-            option.xAxis(new ValueAxis().name(xYunit == null ? "" : xYunit[1]));// x轴
-            category.setScale(true);
+            option.xAxis(new ValueAxis().name(xYunit==null?"":xYunit[1]));// x轴
             option.yAxis(category);// y轴
         }
         return generateEChart(new Gson().toJson(option));
@@ -285,12 +282,21 @@ public class EchartsToPicUtil {
      * *@param yBarName y轴显示的柱状数据名称
      * *@param yData y轴显示的多个柱状图数据
      * *@param title[] 标题 包括主标题和子标题
-     *
-     * @param yData y轴左边数据，必填
-     * @param yData y轴右边数据，选填 为折线图
+     * @param yDataL y轴左边数据，必填
+     * @param yDataR y轴右边数据，选填 为折线图
      * @return
      */
-    public static String echartBarGroup(Boolean isHorizontal, String[] title, String[] yBarName, String[] xData, Double[][] yData, Double[][] yDataR, String[] xYunit) {
+    public static String echartBarGroup(Boolean isHorizontal, String[] title, String[] yBarName, String[] xData, Double[][] yDataL,Double[][] yDataR,String[] xYunit) {
+//        yBarName=new String[]{"蒸发量","蒸发量1", "降水量","消耗量","蒸发量1"};
+//        xData=new String[]{"1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"};
+//        yDataR = new Double[][]{
+//                {11.6, 15.9, 19.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3},
+//                {2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 382.2, 48.7, 18.8, 6.0, 2.3}};
+//        yDataL = new Double[][]{
+//                {2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 185.6, 392.2, 48.7, 18.8, 6.0, 2.3},
+//                {2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 382.2, 48.7, 18.8, 6.0, 2.3},
+//                {11.6, 15.9, 19.0, 26.4, 28.7, 70.7, 175.6, 282.2, 48.7, 18.8, 6.0, 2.3}};
+       System.out.println("yDataL"+yDataL);
         EnhancedOption option = new EnhancedOption();
 //        if (title.length > 1) {
 //            Title t = option.title().text(title[0]);
@@ -304,8 +310,10 @@ public class EchartsToPicUtil {
         option.legend(yBarName);
 //        option.toolbox().show(true).feature(Tool.mark, Tool.dataView, new MagicType(Magic.line, Magic.bar).show(true), Tool.restore, Tool.saveAsImage);
         option.calculable(true);
-        option.xAxis(new CategoryAxis().data(xData).name(xYunit == null || xYunit[0] == null || xYunit[0] == "" ? "" : xYunit[0]));
-
+        option.xAxis(new CategoryAxis().data(xData).name(xYunit==null||xYunit[0]==null||xYunit[0]==""?"":xYunit[0]));
+        if (yDataL==null||yDataL.length==0){
+            return generateEChart(new Gson().toJson(option));
+        }
         ValueAxis valueAxis = new ValueAxis();
 //        option.yAxis(new ValueAxis());
         //y轴右边对象创建
@@ -316,8 +324,8 @@ public class EchartsToPicUtil {
 //            }
 //            option.series(bar);
 //        }
-        double maxL = yData[0][0];
-        double minL = yData[0][0];
+        double maxL = yDataL[0][0];
+        double minL = yDataL[0][0];
         double max = 0;
         double min = 0;
         if (yDataR != null && yDataR.length != 0) {
@@ -325,36 +333,35 @@ public class EchartsToPicUtil {
         }
         for (int i = 0; i < yBarName.length; i++) {
             Bar bar = new Bar(yBarName[i]);
-            Line line = new Line(yBarName[i]);
+            Line line=new Line(yBarName[i]);
 
-            if (i < yData.length) {
-                for (int j = 0; j < yData[i].length; j++) {
-                    maxL = yData[i][j] > maxL ? yData[i][j] : maxL;
-                    minL = yData[i][j] < minL ? yData[i][j] : minL;
-                    bar.data(yData[i][j]);
+            if (i<yDataL.length){
+                for (int j = 0; j < yDataL[i].length; j++) {
+                    maxL=yDataL[i][j]>maxL?yDataL[i][j]:maxL;
+                    minL=yDataL[i][j]<minL?yDataL[i][j]:minL;
+                    System.out.println("--"+yDataL[i][j]);
+                    bar.barWidth(50);
+                    bar.data(yDataL[i][j]);
                 }
             }
-            if (i >= yData.length) {
+            if (i>=yDataL.length){
                 System.out.println(i);
-                if (yDataR != null && yDataR.length != 0) {
-
-                    for (int j = 0; j < yDataR[i - yData.length].length; j++) {
-                        line.data(yDataR[i - yData.length][j]);
-                        max = yDataR[i - yData.length][j] > max ? yDataR[i - yData.length][j] : max;
-                        min = yDataR[i - yData.length][j] < min ? yDataR[i - yData.length][j] : min;
+                if (yDataR!=null&&yDataR.length!=0){
+                    for (int j = 0; j < yDataR[i-yDataL.length].length; j++) {
+                        line.data(yDataR[i-yDataL.length][j]);
+                        max=yDataR[i-yDataL.length][j]>max?yDataR[i-yDataL.length][j]:max;
+                        min=yDataR[i-yDataL.length][j]<min?yDataR[i-yDataL.length][j]:min;
                     }
-
+                    valueAxis.max(((int) (max*1.1 / 10))*10);
+                    valueAxis.min(((int) (min*0.8 / 10))*10);
+                    valueAxis.splitLine(new SplitLine().show(false));
+                    valueAxis.name(xYunit == null || xYunit[2] == null || xYunit[2] == "" ? "" : xYunit[2]);
                 }
 
             }
-            System.out.println(max + "---" + min);
-            valueAxis.max(((int) (max * 1.1 / 10)) * 10);
-            valueAxis.min(((int) (min * 0.8 / 10)) * 10);
-            valueAxis.name(xYunit == null || xYunit[2] == null || xYunit[2] == "" ? "" : xYunit[2]);
-            valueAxis.splitLine(new SplitLine().show(false));
-            option.series(line, bar);
+            option.series(line,bar);
         }
-        option.yAxis(new ValueAxis().max(((int) (maxL * 1.1 / 10)) * 10).min(((int) (minL * 0.8 / 10)) * 10).name(xYunit == null || xYunit[1] == null || xYunit[1] == "" ? "" : xYunit[1]), valueAxis);
+        option.yAxis(new ValueAxis().max(((int) (maxL*1.1 / 10))*10).min(((int) (minL*0.8 / 10))*10).name(xYunit==null||xYunit[1]==null||xYunit[1]==""?"":xYunit[1]), valueAxis);
         return generateEChart(new Gson().toJson(option));
     }
 
@@ -418,7 +425,7 @@ public class EchartsToPicUtil {
         Radar radar = new Radar();
         radar.name(new Radar.Name().textStyle(new TextStyle().color("#fff").backgroundColor("#999").borderRadius(3).padding(new Integer[]{3, 5})));
         RadarSeries radar1 = new RadarSeries("");
-        RadarData radarData1 = new RadarData("", yData);
+        RadarData radarData1 = new RadarData("",yData);
         radar1.data(radarData1);
         for (int i = 0; i < yName.length; i++) {
             //此处的边界最大次是否需要作为入参，可讨论
@@ -571,9 +578,9 @@ public class EchartsToPicUtil {
 
         //柱状|线状图
 
-//        String title="test测试";
-//        String[] xData = new String[]{"广州", "深圳", "珠海", "汕头", "韶关", "佛山"};
-//        Double[] yData = new Double[]{Double.valueOf(6030), Double.valueOf(7800), 5200.00, 3444.00, 2666.00, 5708.00};
-//        echartBar(true,title,xData,yData);
+        String title="test测试";
+        String[] xData = new String[]{"广州", "深圳", "珠海", "汕头", "韶关", "佛山"};
+        Double[] yData = new Double[]{Double.valueOf(6030), Double.valueOf(7800), 5200.00, 3444.00, 2666.00, 5708.00};
+        echartBar(true,title,xData,yData,null);
     }
 }
