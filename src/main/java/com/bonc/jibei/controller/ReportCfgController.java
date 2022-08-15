@@ -100,18 +100,19 @@ public class ReportCfgController {
             @ApiImplicitParam(name = "current", value = "当前页，默认值为 1", required = true),
             @ApiImplicitParam(name = "size", value = "页大小，默认值为 10", required = true),
             @ApiImplicitParam(name = "interType", value = "接口类型", required = false),
+            @ApiImplicitParam(name = "modelName", value = "接口名称", required = false),
     })
     @PostMapping("/inter/select")
-    public Result selectInter(@ApiIgnore Page<ReportInterface> page, String interType) {
+    public Result selectInter(@ApiIgnore Page<ReportInterface> page, String interType,String modelName) {
 
         Page<ReportInterface> jpage = new Page<>(page.getCurrent(), page.getSize());
 
         jpage.setSearchCount(false);
         List<ReportInterface> list;
         if (page.getCurrent() == 0 && page.getSize() == 0) {
-            list = reportInterfaceMapper.selectReportInterList(null, interType);
+            list = reportInterfaceMapper.selectReportInterList(null, interType,modelName);
         } else {
-            list = reportInterfaceMapper.selectReportInterList(jpage, interType);
+            list = reportInterfaceMapper.selectReportInterList(jpage, interType,modelName);
         }
         for (ReportInterface e : list) {
             switch (e.getInterType()) {
@@ -147,7 +148,7 @@ public class ReportCfgController {
 
         }
         jpage.setRecords(list);
-        jpage.setTotal(reportInterfaceMapper.selectCount(interType));
+        jpage.setTotal(reportInterfaceMapper.selectCount(interType,modelName));
         return Result.of(jpage);
     }
 
@@ -194,8 +195,8 @@ public class ReportCfgController {
             @ApiResponse(code = 200, message = "OK", response = KeyValueVO.class),
     })
     @GetMapping("/inter/intertype")
-    public Result selectInterType() {
-        return Result.of(EnumValue.getUserTypeName());
+    public Result selectInterType(Boolean isMix) {
+        return Result.of(EnumValue.getUserTypeName(isMix));
     }
 
     @ApiOperation(value = "报告脚本定义_增加接口参数")
@@ -592,20 +593,20 @@ public class ReportCfgController {
     @PostMapping("/model/uploadFile")
     @ResponseBody
     public Result upload(MultipartFile file) throws IOException {
-        String filename = file.getOriginalFilename();
-
-
+        //带文件格式的
+        String filepath = file.getOriginalFilename();
+        String filename = filepath.substring(0, filepath.lastIndexOf("."));
 //        LOGGER.info(pathFile);
         //文件存放的路径
-        File file1 = new File(modelFilePath + filename);
-        file.transferTo(file1);
+//        File file1 = new File(modelFilePath + filename);
+//        file.transferTo(file1);
 //        String[] split = pathFile.split("/");
-        String absolutePath = file1.getAbsolutePath();
-        String filePath = absolutePath.
-                substring(0,absolutePath.lastIndexOf(File.separator));
+//        String absolutePath = file1.getAbsolutePath();
+//        String filePath = absolutePath.
+//                substring(0,absolutePath.lastIndexOf(File.separator));
         Map<String, String> map = new HashMap<>();
         map.put("filename", filename);
-        map.put("filepath", filePath);
+        map.put("filepath", filepath);
         return Result.ok(map);
     }
 
@@ -797,7 +798,7 @@ public class ReportCfgController {
     @PostMapping("/reportcfg/addstation")
     public Result addStationReport(@RequestBody ModelStationIdsVo modelStationIdsVo) {
         //找模板ID
-        String reportName = modelStationIdsVo.getReportName();
+            String reportName = modelStationIdsVo.getReportName();
         String reportType = modelStationIdsVo.getReportType();
         String modelv = modelStationIdsVo.getModelVersion();
         String modelName = modelStationIdsVo.getModelName();
@@ -832,8 +833,6 @@ public class ReportCfgController {
                     rel.setStationId(id);
                     rel.setCreateTime(LocalDateTime.now());
                     stationModelRelMapper.insert(rel);
-
-
                 }
             }
             return Result.of(Result.ok());
