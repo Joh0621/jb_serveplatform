@@ -11,8 +11,8 @@ import com.bonc.jibei.service.DataQualityErrorService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +74,7 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
                 QualifiedNum+=ps.getQualifiedNum();
                 PassRateStatistics.setTotalNum(total);
                 PassRateStatistics.setQualifiedNum(QualifiedNum);
+                //总合格率
                 PassRateStatistics.setQualifiedRate( Double.valueOf( NumberUtil.round((Double.valueOf(QualifiedNum)/total*100), 2).toString()));
                if (ps.getTypeId().equals(1)){
                    PassRateStatistics.setWindQualifiedRate(ps.getQualifiedRate());
@@ -88,21 +89,24 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
     }
 
     @Override
-    public List<Map<String, Object>> selPassRateTrend(String startTime, String endTime, String type) {
-        List<Qualified> qualifieds = dataQualityErrorMapper.SelPassRateTrend(startTime, endTime, type);
-//        Map<Object, List<Qualified>> map = qualifieds.stream().collect(
-//                Collectors.groupingBy(
-//                        qualified -> qualified.getDateTime()
-//                ));
+    public List<Map<String, Object>> selPassRateTrend(String startTime, String endTime, String type, String dataFlag) {
+        List<Qualified> qualifieds = dataQualityErrorMapper.SelPassRateTrend(startTime, endTime, type,dataFlag);
         List<Map<String,Object>> windList = new ArrayList<>();
-        List<Map<String,Object>> powerList = new ArrayList<>();
-
         for (Qualified qualified:qualifieds){
-            if ("1".equals(qualified.getDataSource())){
-//                windList.add(qualified);
+            Map<String, Object> map = new HashMap<>();
+            map.put("hlpt",qualified.getHlpt() );
+            map.put("djxt", qualified.getDjxt() );
+            map.put("czsssj", qualified.getCzsssj() );
+            map.put("glycsj", qualified.getGlycsj() );
+            map.put("passRate",qualified.getPassRate());
+            if ("1".equals(dataFlag)){
+                map.put("date", qualified.getDateTime());
+            }else {
+                map.put("date", qualified.getStationId());
             }
+            windList.add(map);
         }
-        return null;
+        return windList;
     }
 
     @Override

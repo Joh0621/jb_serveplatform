@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * @description 数据质量条数表
@@ -53,5 +53,9 @@ public class Qualified implements Serializable {
      */
     private Integer stationId;
 
-    public Qualified() {}
+    private String hlpt;
+    private String djxt;
+    private String czsssj;
+    private String glycsj;
+    private Double passRate;
 }

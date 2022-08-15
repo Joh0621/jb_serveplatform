@@ -2,7 +2,6 @@ package com.bonc.jibei.service;
 
 import com.bonc.jibei.entity.DataQualityError;
 import com.bonc.jibei.entity.PassRateStatistics;
-import com.bonc.jibei.entity.Qualified;
 
 import java.util.List;
 import java.util.Map;
@@ -42,10 +41,12 @@ public interface DataQualityErrorService {
     PassRateStatistics passRateStatistics(String startTime, String endTime, String type);
 
 
-    List<Map<String,Object>>  selPassRateTrend(String startTime, String endTime, String type);
+    List<Map<String,Object>>  selPassRateTrend(String startTime, String endTime, String type,String dataFlag);
 
 
 
     List<DataQualityError>  selErrorRecord(String dataSource,String errorType, String stationId, String DeviceId);
+
+
 
 }

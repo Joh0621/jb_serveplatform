@@ -35,22 +35,33 @@ public class DataQualityAnsController {
     }
 
     /**
-     * 数据质量合格率趋势
+     * 数据质量合格率趋势/场站数据质量合格率
+     * 根据查询条件区分
      */
     @RequestMapping("PassRateTrend")
     @ResponseBody
-    public Result passRateTrend(String startTime, String endTime, String type) {
-        List<Map<String,Object>> result=dataQualityErrorService.selPassRateTrend( startTime, endTime, type);
+    public Result passRateTrend(String startTime, String endTime, String type,String dataFlag) {
+        List<Map<String,Object>> result=dataQualityErrorService.selPassRateTrend( startTime, endTime, type,dataFlag);
         return Result.ok(result);
     }
 
-/**
- *  异常记录
- */
+    /**
+     *  异常记录
+     */
     @RequestMapping("ErrorRecord")
     @ResponseBody
     public Result ErrorRecord(String dataSource,String errorType, String stationId, String DeviceId ) {
         List<DataQualityError> result=   dataQualityErrorService.selErrorRecord(dataSource,errorType,stationId,DeviceId);
+        return  Result.ok(result);
+    }
+
+    /**
+     *数据质量问题分布
+     */
+    @RequestMapping("ErrorDistributed")
+    @ResponseBody
+    public Result ErrorDistributed(String startTime, String endTime,String stationId , String type) {
+        List<DataQualityError> result=   dataQualityErrorService.selErrorDistributed(startTime,endTime,stationId,stationId);
         return  Result.ok(result);
     }
 }

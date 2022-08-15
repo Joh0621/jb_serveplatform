@@ -67,7 +67,8 @@ public interface DataQualityErrorMapper {
 
     List<Qualified> SelPassRateTrend(@Param("startTime") String startTime,
                                @Param("endTime") String endTime,
-                               @Param("type") String type);
+                               @Param("type") String type,
+                               @Param("dataFlag") String dataFlag);
 
 
 
