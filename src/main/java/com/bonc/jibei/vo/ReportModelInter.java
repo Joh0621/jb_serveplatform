@@ -20,6 +20,10 @@ public class ReportModelInter {
     @ApiModelProperty("报告名称")
     private String reportName;
 
+    @ApiModelProperty("报告最终名称")
+    private String resReportName;
+
+
     @ApiModelProperty("场站类型")
     private Integer stationType;
 

@@ -19,8 +19,8 @@ public interface ReportInterfaceMapper extends RootMapper<ReportInterface> {
      * @param interType
      * @return
      */
-    List<ReportInterface> selectReportInterList(IPage<?> page, @Param("interType") String interType);
-    Integer selectCount(@Param("interType") String interType);
+    List<ReportInterface> selectReportInterList(IPage<?> page, @Param("interType") String interType, @Param("modelName") String modelName);
+    Integer selectCount(@Param("interType") String interType, @Param("modelName") String modelName);
 
     /**
      * 模板报告接口列表

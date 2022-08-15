@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.QualifiedMapper">
+
+    <resultMap id="BaseResultMap" type="com.bonc.jibei.entity.QualifiedEntity" >
+        <result column="id" property="id" />
+        <result column="total_num" property="totalNum" />
+        <result column="qualified_num" property="qualifiedNum" />
+        <result column="un_qualified_num" property="unQualifiedNum" />
+        <result column="date_time" property="dateTime" />
+        <result column="data_source" property="dataSource" />
+        <result column="station_id" property="stationId" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+                total_num,
+                qualified_num,
+                un_qualified_num,
+                date_time,
+                data_source,
+                station_id
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.bonc.jibei.entity.QualifiedEntity">
+        INSERT INTO qualified
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != totalNum and '' != totalNum">
+                total_num,
+            </if>
+            <if test="null != qualifiedNum and '' != qualifiedNum">
+                qualified_num,
+            </if>
+            <if test="null != unQualifiedNum and '' != unQualifiedNum">
+                un_qualified_num,
+            </if>
+            <if test="null != dateTime and '' != dateTime">
+                date_time,
+            </if>
+            <if test="null != dataSource and '' != dataSource">
+                data_source,
+            </if>
+            <if test="null != stationId and '' != stationId">
+                station_id
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="null != totalNum and '' != totalNum">
+                #{totalNum},
+            </if>
+            <if test="null != qualifiedNum and '' != qualifiedNum">
+                #{qualifiedNum},
+            </if>
+            <if test="null != unQualifiedNum and '' != unQualifiedNum">
+                #{unQualifiedNum},
+            </if>
+            <if test="null != dateTime and '' != dateTime">
+                #{dateTime},
+            </if>
+            <if test="null != dataSource and '' != dataSource">
+                #{dataSource},
+            </if>
+            <if test="null != stationId and '' != stationId">
+                #{stationId}
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delete" >
+        DELETE FROM qualified
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.bonc.jibei.entity.QualifiedEntity">
+        UPDATE qualified
+        <set>
+            <if test="null != totalNum and '' != totalNum">total_num = #{totalNum},</if>
+            <if test="null != qualifiedNum and '' != qualifiedNum">qualified_num = #{qualifiedNum},</if>
+            <if test="null != unQualifiedNum and '' != unQualifiedNum">un_qualified_num = #{unQualifiedNum},</if>
+            <if test="null != dateTime and '' != dateTime">date_time = #{dateTime},</if>
+            <if test="null != dataSource and '' != dataSource">data_source = #{dataSource},</if>
+            <if test="null != stationId and '' != stationId">station_id = #{stationId}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+    <select id="load" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM qualified
+        WHERE id = #{id}
+    </select>
+
+    <select id="pageList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM qualified
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="pageListCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM qualified
+    </select>
+
+</mapper>
