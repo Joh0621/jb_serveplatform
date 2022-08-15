@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.DataQualityErrorMapper">
+
+    <resultMap id="BaseResultMap" type="com.bonc.jibei.entity.DataQualityError" >
+        <result column="id" property="id" />
+        <result column="date" property="date" />
+        <result column="start_time" property="startTime" />
+        <result column="end_time" property="endTime" />
+        <result column="station_id" property="stationId" />
+        <result column="data_source" property="dataSource" />
+        <result column="code" property="code" />
+        <result column="error_type" property="errorType" />
+        <result column="num" property="num" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,
+                date,
+                start_time,
+                end_time,
+                station_id,
+                data_source,
+                code,
+                error_type,
+                num
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id" parameterType="com.bonc.jibei.entity.DataQualityError">
+        INSERT INTO data_quality_error
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != date and '' != date">
+                date,
+            </if>
+            <if test="null != startTime and '' != startTime">
+                start_time,
+            </if>
+            <if test="null != endTime and '' != endTime">
+                end_time,
+            </if>
+            <if test="null != stationId and '' != stationId">
+                station_id,
+            </if>
+            <if test="null != dataSource and '' != dataSource">
+                data_source,
+            </if>
+            <if test="null != code and '' != code">
+                code,
+            </if>
+            <if test="null != errorType and '' != errorType">
+                error_type,
+            </if>
+            <if test="null != num and '' != num">
+                num
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="null != date and '' != date">
+                #{date},
+            </if>
+            <if test="null != startTime and '' != startTime">
+                #{startTime},
+            </if>
+            <if test="null != endTime and '' != endTime">
+                #{endTime},
+            </if>
+            <if test="null != stationId and '' != stationId">
+                #{stationId},
+            </if>
+            <if test="null != dataSource and '' != dataSource">
+                #{dataSource},
+            </if>
+            <if test="null != code and '' != code">
+                #{code},
+            </if>
+            <if test="null != errorType and '' != errorType">
+                #{errorType},
+            </if>
+            <if test="null != num and '' != num">
+                #{num}
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delete" >
+        DELETE FROM data_quality_error
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.bonc.jibei.entity.DataQualityError" >
+        UPDATE data_quality_error
+        <set>
+            <if test="null != date and '' != date">date = #{date},</if>
+            <if test="null != startTime and '' != startTime">start_time = #{startTime},</if>
+            <if test="null != endTime and '' != endTime">end_time = #{endTime},</if>
+            <if test="null != stationId and '' != stationId">station_id = #{stationId},</if>
+            <if test="null != dataSource and '' != dataSource">data_source = #{dataSource},</if>
+            <if test="null != code and '' != code">code = #{code},</if>
+            <if test="null != errorType and '' != errorType">error_type = #{errorType},</if>
+            <if test="null != num and '' != num">num = #{num}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+    <select id="load" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM data_quality_error
+        WHERE id = #{id}
+    </select>
+
+    <select id="pageList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM data_quality_error
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="pageListCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM data_quality_error
+    </select>
+
+    <select id="passRateStatistics" resultType="com.bonc.jibei.entity.PassRateStatistics">
+        SELECT
+            SUM( total_num ) AS totalNum,
+            SUM( qualified_num ) AS qualifiedNum,
+            ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS qualifiedRate,
+            cc.type_id
+        FROM
+            jb_qualified jb
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
+        where 1=1
+        <if test="type != null  and type != ''">
+            and   cc.type_id=#{type}
+        </if>
+        GROUP BY cc.type_id
+    </select>
+
+    <select id="SelPassRateTrend" resultType="com.bonc.jibei.entity.Qualified">
+        SELECT
+            *
+        FROM
+            jb_qualified
+    </select>
+
+    <select id="SelErrorRecord" resultType="com.bonc.jibei.entity.DataQualityError">
+        SELECT
+            *
+        FROM
+            jb_data_quality_error
+    </select>
+</mapper>

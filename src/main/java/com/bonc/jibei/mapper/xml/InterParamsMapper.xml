@@ -10,7 +10,8 @@
         inter.inter_name AS interName,
         param.param_type AS paramType,
         param.param_desc AS paramDesc,
-        param.param_name AS paramName
+        param.param_name AS paramName,
+        param.mix_name AS mixName
         FROM
         jb_report_interface inter
         INNER JOIN jb_inter_params param ON inter.id = param.inter_id
@@ -19,7 +20,7 @@
             and param.inter_id=#{interId}
         </if>
 
-        <if test="paramName != null and paramName != ''">
+                <if test="paramName != null and paramName != ''">
             and (param.param_name like concat('%', #{paramName}, '%') or param.param like concat('%', #{paramName}, '%'))
         </if>
         <if test="interName != null and interName != ''">

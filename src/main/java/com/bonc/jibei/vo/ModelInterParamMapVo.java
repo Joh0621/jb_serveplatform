@@ -37,6 +37,9 @@ public class ModelInterParamMapVo {
     @ApiModelProperty("参数名")
     private String paramName;
 
+    @ApiModelProperty("混合参数名")
+    private String mixName;
+
     @ApiModelProperty("参数描述")
     private String paramDesc;
 

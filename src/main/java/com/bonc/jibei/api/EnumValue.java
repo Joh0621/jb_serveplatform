@@ -11,10 +11,14 @@ import java.util.List;
  * @Description: TODO
  */
 public class EnumValue {
-    public static List<Object> getUserTypeName(){
+    public static List<Object> getUserTypeName(Boolean isMix){
         List<Object> keyValueVOS=new ArrayList<>();
         for (InterEnum e: InterEnum.values()) {
             keyValueVOS.add(new KeyValueVO(e.getCode(),e.getName()));
+        }
+        if (isMix!=null&&isMix){
+            //去除混合类型
+            keyValueVOS.remove(8);
         }
         return keyValueVOS;
     }
