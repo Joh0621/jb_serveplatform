@@ -32,7 +32,7 @@ public class NumericalStatisticsVo {
     /**
      * 最高温度
      */
-    private Double maxTrmp;
+    private Double maxTemp;
 
     /**
      * 最低温度
@@ -52,7 +52,7 @@ public class NumericalStatisticsVo {
     /**
      * 最低风速
      */
-    private Double minAvgWindSpeed;
+    private Double minWindSpeed;
 
     /**
      * 地区名

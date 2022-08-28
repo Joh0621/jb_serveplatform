@@ -37,8 +37,8 @@ public class NumericalStatisticsController {
      */
     @RequestMapping("monitoringAnalysis")
     @ResponseBody
-    public Result monitoringAnalysis(String startTime, String endTime,String flag) {
-       Map<String,Object> result=numericalStatisticsService.monitoringAnalysis( startTime, endTime,flag);
+    public Result monitoringAnalysis(String startTime, String endTime,String flag1) {
+       Map<String,Object> result=numericalStatisticsService.monitoringAnalysis( startTime, endTime,"",flag1);
         return Result.ok(result);
     }
 
@@ -50,8 +50,8 @@ public class NumericalStatisticsController {
      */
     @RequestMapping("monitoringAnalysisDq")
     @ResponseBody
-    public Result monitoringAnalysisDq(String startTime, String endTime) {
-        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(startTime, endTime,"1");
+    public Result monitoringAnalysisDq(String startTime, String endTime,String flag1,String flag2) {
+        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(startTime, endTime,"1",flag1);
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> jbList = new ArrayList<>();
         ArrayList<Object> zjkList = new ArrayList<>();
@@ -61,6 +61,25 @@ public class NumericalStatisticsController {
         ArrayList<Object> cdList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
         for (NumericalStatisticsVo vo :numericalStatisticsVos){
+            if (flag1!=null&&flag1!="1"){
+                if ("2".equals(flag1)){
+                    if ("1".equals(flag2)){
+                        vo.setRadiationDose(vo.getAvgTemp());
+                    }else if ("2".equals(flag2)){
+                        vo.setRadiationDose(vo.getMaxTemp());
+                    }else if ("3".equals(flag2)){
+                        vo.setRadiationDose(vo.getMinTemp());
+                    }
+                }else if ("3".equals(flag1)){
+                    if ("1".equals(flag2)){
+                        vo.setRadiationDose(vo.getAvgWindSpeed());
+                    }else if ("2".equals(flag2)){
+                        vo.setRadiationDose(vo.getMaxWindSpeed());
+                    }else if ("3".equals(flag2)){
+                        vo.setRadiationDose(vo.getMinWindSpeed());
+                    }
+                }
+            }
             switch (vo.getAName()) {
                 case "张家口":
                     zjkList.add(vo.getRadiationDose());
@@ -97,20 +116,20 @@ public class NumericalStatisticsController {
      */
     @RequestMapping("radiationDoseDistributed")
     @ResponseBody
-    public Result radiationDoseDistributed(String startTime, String endTime,String flag) {
+    public Result radiationDoseDistributed(String startTime, String endTime,String flag1) {
 
-        Map<String,Object> result=numericalStatisticsService.radiationDoseDistributed( startTime, endTime,"");
+        Map<String,Object> result=numericalStatisticsService.radiationDoseDistributed( startTime, endTime,"",flag1);
         return Result.ok(result);
     }
 
     /**
-     * 水平辐照度概率分布
+     * 水平辐照度概率分布-地区
      */
     @RequestMapping("radiationDoseDistributedDq")
     @ResponseBody
-    public Result radiationDoseDistributedDq(String startTime, String endTime) {
+    public Result radiationDoseDistributedDq(String startTime, String endTime,String flag1) {
 
-        List<RadiationDoseDistributedVo> numericalStatisticsVos = numericalStatisticsMapper.selRadiationDoseDistributed( startTime, endTime,"1");
+        List<RadiationDoseDistributedVo> numericalStatisticsVos = numericalStatisticsMapper.selRadiationDoseDistributed( startTime, endTime,"1",flag1);
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> jbList = new ArrayList<>();
         ArrayList<Object> zjkDayList = new ArrayList<>();

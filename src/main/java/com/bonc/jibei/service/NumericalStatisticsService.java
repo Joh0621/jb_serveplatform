@@ -17,10 +17,10 @@ import java.util.Map;
 public interface NumericalStatisticsService {
 
 
-    Map<String,Object>  monitoringAnalysis(String startTime, String endTime,String flag);
+    Map<String,Object>  monitoringAnalysis(String startTime, String endTime,String flag,String flag1);
 
 
-    Map<String,Object>  radiationDoseDistributed (String startTime, String endTime,String flag);
+    Map<String,Object>  radiationDoseDistributed (String startTime, String endTime,String flag,String flag1);
 
 
     Map<String,Object>  selSunHoursTrend (String startTime, String endTime);

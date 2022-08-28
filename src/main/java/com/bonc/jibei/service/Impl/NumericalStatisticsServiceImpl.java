@@ -18,39 +18,70 @@ public class NumericalStatisticsServiceImpl implements NumericalStatisticsServic
     @Resource
     private NumericalStatisticsMapper numericalStatisticsMapper;
     @Override
-    public Map<String, Object> monitoringAnalysis(String startTime, String endTime,String flag) {
+    public Map<String, Object> monitoringAnalysis(String startTime, String endTime,String flag,String flag1) {
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> spList = new ArrayList<>();
         ArrayList<Object> fzdList = new ArrayList<>();
         ArrayList<Object> tqspList = new ArrayList<>();
         ArrayList<Object> tqfzdList = new ArrayList<>();
-        ArrayList<Object> dqList = new ArrayList<>();
+
+        //温度监测分析
+        ArrayList<Object> tqAvgTempList = new ArrayList<>();
+        ArrayList<Object> avgTempList = new ArrayList<>();
+        ArrayList<Object> maxTempList = new ArrayList<>();
+        ArrayList<Object> minTempList = new ArrayList<>();
+
+        //地面风速监测分析
+        ArrayList<Object> tqAvgWindList = new ArrayList<>();
+        ArrayList<Object> avgWindList = new ArrayList<>();
+        ArrayList<Object> maxWindList = new ArrayList<>();
+        ArrayList<Object> minWindList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(startTime, endTime,flag);
+        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(startTime, endTime,flag,flag1);
         for (NumericalStatisticsVo vo :numericalStatisticsVos){
             spList.add(vo.getRadiationDose() );
             fzdList.add( vo.getPeakIrradiance() );
             xList.add( vo.getYearMonthDate() );
             tqspList.add( vo.getRadiationDose() );
             tqfzdList.add(vo.getPeakIrradiance() );
-            dqList.add(vo.getAName() );
+
+            tqAvgTempList.add(vo.getAvgTemp() );
+            avgTempList.add(vo.getAvgTemp() );
+            maxTempList.add(vo.getMaxTemp() );
+            minTempList.add(vo.getMinTemp() );
+
+            tqAvgWindList.add(vo.getAvgWindSpeed() );
+            avgWindList.add(vo.getAvgWindSpeed() );
+            maxWindList.add(vo.getMaxWindSpeed() );
+            minWindList.add(vo.getMinWindSpeed() );
         }
         map.put("时间",xList);
-        map.put("水平",spList);
-        map.put("同期水平",tqspList);
-        map.put("fzd",fzdList);
-        map.put("tqfzd",tqfzdList);
-        map.put("地区",dqList);
+        map.put("水平总辐射量",spList);
+        map.put("同期水平总辐射量",tqspList);
+        map.put("峰值辐照度",fzdList);
+        map.put("同期峰值辐照度",tqfzdList);
+
+        map.put("平均气温同期",tqAvgTempList);
+        map.put("平均气温",avgTempList);
+        map.put("最高气温",maxTempList);
+        map.put("最低气温",minTempList);
+
+        map.put("平均风速同期",tqAvgWindList);
+        map.put("平均风速",avgWindList);
+        map.put("最高风速",maxWindList);
+        map.put("最低风速",minWindList);
+
         return  map;
     }
 
     @Override
-    public Map<String, Object> radiationDoseDistributed(String startTime, String endTime, String flag) {
+    public Map<String, Object> radiationDoseDistributed(String startTime, String endTime, String flag,String flag1) {
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> dayList = new ArrayList<>();
         ArrayList<Object> rateList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        List<RadiationDoseDistributedVo> radiationDoseDistributedVos = numericalStatisticsMapper.selRadiationDoseDistributed(startTime, endTime, flag);
+        System.out.println(flag1);
+        List<RadiationDoseDistributedVo> radiationDoseDistributedVos = numericalStatisticsMapper.selRadiationDoseDistributed(startTime, endTime, flag,flag1);
         for (RadiationDoseDistributedVo vo :radiationDoseDistributedVos) {
             xList.add(vo.getValue());
             dayList.add(vo.getCnt());

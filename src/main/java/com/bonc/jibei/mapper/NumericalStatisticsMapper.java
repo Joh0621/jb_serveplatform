@@ -26,11 +26,13 @@ public interface NumericalStatisticsMapper {
 
     List<NumericalStatisticsVo>   selMonitoringAnalysis(@Param("startTime") String startTime,
                                                         @Param("endTime") String endTime,
-                                                        @Param("flag") String flag );
+                                                        @Param("flag") String flag ,
+                                                        @Param("flag1") String flag1);
 
     List<RadiationDoseDistributedVo>   selRadiationDoseDistributed(@Param("startTime") String startTime,
                                                                    @Param("endTime") String endTime,
-                                                                   @Param("flag") String flag );
+                                                                   @Param("flag") String flag ,
+                                                                   @Param("flag1") String flag1 );
 
     List<SunHoursTrendVo>   selSunHoursTrend(@Param("startTime") String startTime,
                                              @Param("endTime") String endTime);

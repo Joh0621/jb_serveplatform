@@ -5,20 +5,30 @@
 
     <select id="selMonitoringAnalysis" resultType="com.bonc.jibei.vo.NumericalStatisticsVo">
         SELECT
-            sum( radiation_dose ) AS radiation_dose,
-            sum( peak_irradiance ) AS peak_irradiance,
-            sum( avg_temp ) AS avgTemp,
-            sum( max_temp ) AS maxTemp,
-            sum( min_temp ) AS minTemp,
-            sum( avg_wind_speed ) AS avgWindSpeed,
-            sum( max_wind_speed ) AS maxWindSpeed,
-            sum( min_avg_wind_speed ) AS minAvgWindSpeed,
+
+        <choose>
+            <when test = "flag1=='1'.toString()">
+                sum( radiation_dose ) AS radiation_dose,
+                sum( peak_irradiance ) AS peak_irradiance,
+            </when>
+            <when test = "flag1=='2'.toString()">
+                sum( avg_temp ) AS avgTemp,
+                sum( max_temp ) AS maxTemp,
+                sum( min_temp ) AS minTemp,
+            </when>
+            <when test = "flag1=='3'.toString()">
+                sum( avg_wind_speed ) AS avgWindSpeed,
+                sum( max_wind_speed ) AS maxWindSpeed,
+                sum( min_avg_wind_speed ) AS minWindSpeed,
+            </when>
+        </choose>
+        year_month_date,
             <choose>
                 <when test = "flag=='1'.toString()">
-                    cc.aname ,
+                    cc.aname
                 </when>
             </choose>
-        year_month_date
+
         FROM
             jb_numerical_statistics jb
                 LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = jb.station_id
@@ -27,10 +37,25 @@
             <choose>
         <when test = "flag=='1'.toString()">
             ,cc.aname
+
             UNION
             SELECT
-            round(avg( radiation_dose ),0) AS radiation_dose,
-            round(avg( peak_irradiance ),0)  AS peak_irradiance,
+        <choose>
+            <when test = "flag1=='1'.toString()">
+                round(avg( radiation_dose ),0) AS radiation_dose,
+                round(avg( peak_irradiance ),0)  AS peak_irradiance,
+            </when>
+            <when test = "flag1=='2'.toString()">
+                round(sum( avg_temp ),0)  AS avgTemp,
+                round(sum( max_temp ) ,0) AS maxTemp,
+                round( sum( min_temp ),0)  AS minTemp,
+            </when>
+            <when test = "flag1=='3'.toString()">
+                round(sum( avg_wind_speed ) ,0) AS avgWindSpeed,
+                round(sum( max_wind_speed ),0)  AS maxWindSpeed,
+                round(sum( min_avg_wind_speed ),0)  AS minWindSpeed,
+            </when>
+        </choose>
             year_month_date,
             "冀北" as aname
             FROM
@@ -42,32 +67,43 @@
     </select>
     <select id="selRadiationDoseDistributed" resultType="com.bonc.jibei.vo.RadiationDoseDistributedVo">
             SELECT
-                jb.radiation_value as value,
-                sum( jb.radiation_cnt )  cnt,
-                round(sum( jb.radiation_cnt ) /( SELECT sum( radiation_cnt ) AS cnt FROM jb_radiation_dose_distributed )*100,2) AS rate
+                jb.value as value,
+                sum( jb.cnt )  cnt,
+                round(sum( jb.cnt ) /( SELECT sum(cnt ) AS cnt FROM jb_distributed_radiation_dose )*100,2) AS rate
         <choose>
         <when test = "flag=='1'.toString()">
             ,cc.aname
         </when>
         </choose>
             FROM
-                jb_radiation_dose_distributed jb
+        <choose>
+            <when test = "flag1=='1'.toString()">
+                jb_distributed_radiation_dose
+            </when>
+            <when test = "flag1=='2'.toString()">
+                jb_distributed__avg_temp
+            </when>
+            <when test = "flag1=='3'.toString()">
+                jb_distributed_wind_speed
+            </when>
+        </choose>
+                 jb
                 LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = jb.station_id
             GROUP BY
-                jb.radiation_value
+                jb.value
         <choose>
         <when test = "flag=='1'.toString()">
             ,cc.aname
             UNION
             SELECT
-            jb.radiation_value AS value,
-            sum( jb.radiation_cnt ) cnt,
+            jb.value AS value,
+            sum( jb.cnt ) cnt,
             "" as rate,
             "冀北" as aname
             FROM
-            jb_radiation_dose_distributed jb
+            jb_distributed_radiation_dose jb
             GROUP BY
-            jb.radiation_value
+            jb.value
         </when>
         </choose>
     </select>
