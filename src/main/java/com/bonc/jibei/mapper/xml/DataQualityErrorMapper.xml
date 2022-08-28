@@ -133,18 +133,29 @@
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}
         </if>
+        <if test="startTime != null  and startTime != ''">
+            and   jb.date_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null  and endTime != ''">
+            and   jb.date_time &lt;= #{endTime}
+        </if>
+        <if test="stationId != null  and stationId != ''">
+            and   jb.station_id=#{stationId}
+        </if>
         GROUP BY cc.type_id
     </select>
 
     <select id="SelPassRateTrend" resultType="com.bonc.jibei.entity.Qualified">
         SELECT
-        <if test = "dataFlag=='1'.toString()">
-            date_time,
-        </if>
-        <if test = "dataFlag=='2'.toString()">
-            jb.station_id,
-        </if>
-            SUM( CASE `data_source` WHEN '1' THEN un_qualified_num ELSE 0 END ) AS 'hlpt',
+            <choose>
+                <when test = "dataFlag=='2'.toString()">
+                    jb.station_id,
+                </when>
+                <otherwise>
+                    date_time,
+                </otherwise>
+            </choose>
+                SUM( CASE `data_source` WHEN '1' THEN un_qualified_num ELSE 0 END ) AS 'hlpt',
                 SUM( CASE `data_source` WHEN '2' THEN un_qualified_num ELSE 0 END ) AS 'djxt',
                 SUM( CASE `data_source` WHEN '3' THEN un_qualified_num ELSE 0 END ) AS 'czsssj',
                 SUM( CASE `data_source` WHEN '4' THEN un_qualified_num ELSE 0 END ) AS 'glycsj',
@@ -156,19 +167,94 @@
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}
         </if>
-        GROUP BY
-        <if test = "dataFlag=='1'.toString()">
-            date_time
+        <if test="stationId != null  and stationId != ''">
+            and   jb.station_id=#{stationId}
         </if>
-        <if test = "dataFlag=='2'.toString()">
-            jb.station_id
+        <if test="startTime != null  and startTime != ''">
+            and   jb.date_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null  and endTime != ''">
+            and   jb.date_time &lt;= #{endTime}
+        </if>
+        GROUP BY
+        <choose>
+            <when test = "dataFlag=='2'.toString()">
+                jb.station_id
+            </when>
+            <otherwise>
+                date_time
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="selErrorRecord" resultType="com.bonc.jibei.entity.DataQualityError">
+        SELECT
+            err.*,
+            cc.station_name
+        FROM
+            jb_data_quality_error err
+             LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = err.station_id
+        where 1=1
+        <if test="dataSource != null  and dataSource != ''">
+            and   err.data_source=#{dataSource}
+        </if>
+        <if test="errorType != null  and errorType != ''">
+            and   err.error_type=#{errorType}
+        </if>
+        <if test="stationId != null  and stationId != ''">
+            and   err.station_id=#{stationId}
         </if>
     </select>
 
-    <select id="SelErrorRecord" resultType="com.bonc.jibei.entity.DataQualityError">
+    <select id="selErrorRecordTotal" resultType="int">
         SELECT
-            *
+        count(*) as cnt
         FROM
-            jb_data_quality_error
+        jb_data_quality_error err
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = err.station_id
+        where 1=1
+        <if test="dataSource != null  and dataSource != ''">
+            and   err.data_source=#{dataSource}
+        </if>
+        <if test="errorType != null  and errorType != ''">
+            and   err.error_type=#{errorType}
+        </if>
+        <if test="stationId != null  and stationId != ''">
+            and   err.station_id=#{stationId}
+        </if>
+    </select>
+
+    <select id="selErrorDistributedForData" resultType="com.bonc.jibei.vo.DataQualityErrorVo">
+        SELECT
+            ROUND( SUM( CASE `error_type` WHEN '1' THEN num ELSE 0 END )/ sum( num )* 100, 2 ) AS 'miss_data',
+            ROUND( SUM( CASE `error_type` WHEN '2' THEN num ELSE 0 END )/ sum( num )* 100, 2 ) AS 'dead_data',
+            ROUND( SUM( CASE `error_type` WHEN '3' THEN num ELSE 0 END )/ sum( num )* 100, 2 ) AS 'error_data',
+            data_source
+        FROM
+            jb_data_quality_error err
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = err.station_id
+        where  1=1
+        <if test="type != null  and type != ''">
+            and   cc.type_id=#{type}
+        </if>
+        GROUP BY
+            data_source
+    </select>
+    <select id="selErrorDistributedForError" resultType="com.bonc.jibei.vo.DataQualityErrorVo">
+        SELECT
+        ROUND( SUM( CASE `data_source` WHEN '1' THEN num ELSE 0 END )/ sum( num )* 100, 2 ) AS 'hlpt',
+        ROUND( SUM( CASE `data_source` WHEN '2' THEN num ELSE 0 END )/ sum( num )* 100, 2 ) AS 'djxt',
+        ROUND( SUM( CASE `data_source` WHEN '3' THEN num ELSE 0 END )/ sum( num )* 100, 2 ) AS 'czsssj',
+        ROUND( SUM( CASE `data_source` WHEN '4' THEN num ELSE 0 END )/ sum( num )* 100, 2 ) AS 'glycsj',
+        error_type
+        FROM
+        jb_data_quality_error err
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = err.station_id
+        where  1=1
+        <if test="type != null  and type != ''">
+            and   cc.type_id=#{type}
+        </if>
+        GROUP BY
+        error_type
     </select>
 </mapper>

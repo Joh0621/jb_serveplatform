@@ -1,8 +1,10 @@
 package com.bonc.jibei.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bonc.jibei.entity.DataQualityError;
 import com.bonc.jibei.entity.PassRateStatistics;
 import com.bonc.jibei.entity.Qualified;
+import com.bonc.jibei.vo.DataQualityErrorVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -63,19 +65,36 @@ public interface DataQualityErrorMapper {
 
     List<PassRateStatistics> passRateStatistics(@Param("startTime") String startTime,
                                           @Param("endTime") String endTime,
-                                          @Param("type") String type);
+                                          @Param("type") String type,
+                                           @Param("stationId") String stationId  );
 
     List<Qualified> SelPassRateTrend(@Param("startTime") String startTime,
                                @Param("endTime") String endTime,
                                @Param("type") String type,
+                               @Param("stationId") String stationId,
                                @Param("dataFlag") String dataFlag);
 
 
-
-    List<DataQualityError> SelErrorRecord(@Param("dataSource") String dataSource,
+    List<DataQualityErrorVo> selErrorDistributedForData(@Param("startTime") String startTime,
+                                     @Param("endTime") String endTime,
+                                     @Param("type") String type,
+                                     @Param("stationId") String stationId)
+                                        ;
+    List<DataQualityErrorVo> selErrorDistributedForError(@Param("startTime") String startTime,
+                                                         @Param("endTime") String endTime,
+                                                         @Param("type") String type,
+                                                         @Param("stationId") String stationId);
+    List<DataQualityError> selErrorRecord(IPage<?> page,
+                                          @Param("dataSource") String dataSource,
                                           @Param("errorType") String errorType,
                                           @Param("stationId") String stationId,
                                           @Param("DeviceId") String DeviceId);
+
+    Integer selErrorRecordTotal(@Param("dataSource") String dataSource,
+                                          @Param("errorType") String errorType,
+                                          @Param("stationId") String stationId,
+                                          @Param("DeviceId") String DeviceId);
+
 
 
 }

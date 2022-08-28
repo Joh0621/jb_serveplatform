@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * @description data_quality_error
@@ -31,17 +31,17 @@ public class DataQualityError implements Serializable {
     /**
      * 开始时间
      */
-    private Date startTime;
+    private String startTime;
 
     /**
      * 结束时间
      */
-    private Date endTime;
+    private String endTime;
 
     /**
      * 场站id
      */
-    private Integer stationId;
+    private String stationId;
 
     /**
      * 数据源
@@ -63,5 +63,10 @@ public class DataQualityError implements Serializable {
      */
     private Integer num;
 
-    public DataQualityError() {}
+    /**
+     * 场站名
+     */
+    private String stationName;
+
+
 }

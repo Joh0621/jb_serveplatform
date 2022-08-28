@@ -1,5 +1,6 @@
 package com.bonc.jibei.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bonc.jibei.entity.DataQualityError;
 import com.bonc.jibei.entity.PassRateStatistics;
 
@@ -38,15 +39,19 @@ public interface DataQualityErrorService {
      */
 //    public Map<String,Object> pageList(int offset, int pagesize);
 
-    PassRateStatistics passRateStatistics(String startTime, String endTime, String type);
+    PassRateStatistics passRateStatistics(String startTime, String endTime, String type,String stationId);
 
 
-    List<Map<String,Object>>  selPassRateTrend(String startTime, String endTime, String type,String dataFlag);
+    List<Map<String,Object>>  selPassRateTrend(String startTime, String endTime, String type,String stationId,String dataFlag);
 
 
 
-    List<DataQualityError>  selErrorRecord(String dataSource,String errorType, String stationId, String DeviceId);
+    List<DataQualityError>  selErrorRecord(IPage<?> page,String dataSource, String errorType, String stationId, String DeviceId);
 
 
+    Map<String,Object>  selErrorDistributed(String startTime, String endTime, String type,String stationId);
+
+
+    List<Map<String,Object>>  errorDataStatistics(String startTime, String endTime,String stationId , String dataSource,String errorType,String code);
 
 }

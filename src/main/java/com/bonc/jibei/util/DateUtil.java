@@ -165,5 +165,14 @@ public class DateUtil {
         dateMap.put("endDate",endDateTime);
         return dateMap;
     }
+    /*
+     * 将时间戳转换为时间
+     */
+    public static String stampToDate(Long lt,String formatType){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(formatType);
+        Date date = new Date(lt);
+        String res = simpleDateFormat.format(date);
+        return res;
+    }
 
 }

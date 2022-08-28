@@ -58,4 +58,6 @@ public class Qualified implements Serializable {
     private String czsssj;
     private String glycsj;
     private Double passRate;
+
+
 }
