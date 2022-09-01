@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bonc.jibei.mapper.PerformanceAnalysisMapper">
+
+
+    <select id="seluesOfHoursTrend" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            DATE_FORMAT( data_date, "%Y-%m" ) xData,
+            Round(sum( use_hour ) ,2) yData
+        FROM
+            cloudiip_access_equipment.gb_use_of_hour_jb_test
+        WHERE
+            DATE_FORMAT( data_date, "%Y" )= 2022
+            AND type_id=2
+        GROUP BY
+            DATE_FORMAT( data_date, "%Y-%m")
+    </select>
+
+    <select id="selPrTrend" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            DATE_FORMAT( data_time, "%Y-%m" ) xData,
+            round( avg( VALUE ), 2 ) yData
+        FROM
+            jb_power_generation_efficiency
+        WHERE
+            DATE_FORMAT( data_  time, "%Y" )= 2022
+        GROUP BY
+            DATE_FORMAT(data_time,"%Y-%m")
+    </select>
+
+    <select id="selAccuracyRateTrend" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+    SELECT
+    round(avg(accuracy_rate),2) yData,
+    DATE_FORMAT(date,"%Y-%m") xData
+    from gb_short_accuracy_rate
+    WHERE
+    DATE_FORMAT( date, "%Y" )= 2022
+    GROUP BY
+    DATE_FORMAT(date,"%Y-%m")
+    </select>
+</mapper>
