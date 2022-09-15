@@ -16,6 +16,63 @@
             DATE_FORMAT( data_date, "%Y-%m")
     </select>
 
+
+    <select id="seluesOfHoursTrendDq" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            DATE_FORMAT( data_date, "%Y-%m" ) xData,
+            Round( sum( use_hour ), 2 ) yData,
+            vs.aname yData1
+        FROM
+            cloudiip_access_equipment.gb_use_of_hour_area_test  ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.aid=ht.aid
+        WHERE
+            DATE_FORMAT( data_date, "%Y" )= 2022
+          AND ht.type_id=2
+        GROUP BY
+            ht.aid,
+            DATE_FORMAT( data_date, "%Y-%m" )
+        UNION
+        SELECT
+            DATE_FORMAT( data_date, "%Y-%m" ) xData,
+            Round( sum( use_hour ), 2 ) yData,
+            "冀北" as yData1
+        FROM
+            cloudiip_access_equipment.gb_use_of_hour_area_test  ht
+        WHERE
+            DATE_FORMAT( data_date, "%Y" )= 2022
+          AND ht.type_id=2
+        GROUP BY
+            DATE_FORMAT( data_date, "%Y-%m" )
+    </select>
+
+    <select id="seluesOfHoursTrendDm" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+    SELECT
+    DATE_FORMAT( data_date, "%Y-%m" ) xData,
+    Round( sum( use_hour ), 2 ) yData,
+    vs.s500name  yData1
+    FROM
+        cloudiip_access_equipment.gb_use_of_hour_station_test  ht
+    LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.s500id=ht.s500id
+    WHERE
+    DATE_FORMAT( data_date, "%Y" )= 2022
+    AND vs.type_id=2
+    GROUP BY
+    ht.s500id,
+    DATE_FORMAT( data_date, "%Y-%m" )
+    UNION
+    SELECT
+    DATE_FORMAT( data_date, "%Y-%m" ) xData,
+    Round( sum( use_hour ), 2 ) yData,
+    "冀北" as yData1
+    FROM
+        cloudiip_access_equipment.gb_use_of_hour_station_test  ht
+    LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.s500id=ht.s500id
+    WHERE
+    DATE_FORMAT( data_date, "%Y" )= 2022
+    AND vs.type_id=2
+    GROUP BY
+    DATE_FORMAT( data_date, "%Y-%m" )
+</select>
     <select id="selPrTrend" resultType="com.bonc.jibei.vo.UseOfHoursVo">
         SELECT
             DATE_FORMAT( data_time, "%Y-%m" ) xData,
@@ -23,19 +80,447 @@
         FROM
             jb_power_generation_efficiency
         WHERE
-            DATE_FORMAT( data_  time, "%Y" )= 2022
+            DATE_FORMAT( data_time, "%Y" )= 2022
         GROUP BY
             DATE_FORMAT(data_time,"%Y-%m")
     </select>
 
+    <select id="selPrTrendDq" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            DATE_FORMAT( data_time, "%Y-%m" ) xData,
+            round( avg( VALUE ), 2 ) yData,
+            vs.aname yData1
+        FROM
+            jb_power_generation_efficiency jp
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = jp.station_id
+        WHERE
+            DATE_FORMAT( data_time, "%Y" )= 2022
+        GROUP BY
+            vs.aname,
+            DATE_FORMAT(data_time,"%Y-%m")
+        UNION
+        SELECT
+            DATE_FORMAT( data_time, "%Y-%m" ) xData,
+            round( avg( VALUE ), 2 ) yData,
+            "冀北" as yData1
+        FROM
+            jb_power_generation_efficiency jp
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = jp.station_id
+        WHERE
+            DATE_FORMAT( data_time, "%Y" )= 2022
+        GROUP BY
+            DATE_FORMAT(data_time,"%Y-%m")
+    </select>
+
+    <select id="selPrTrendDqValue" resultType="Map">
+        SELECT
+            MAX( VALUE ) AS max,
+	        MIN( VALUE ) AS min,
+	        round( avg( VALUE ), 2 ) AS avg
+        FROM
+            jb_power_generation_efficiency
+        WHERE
+            DATE_FORMAT( data_time, "%Y" )= 2022
+    </select>
+    <select id="selPrTrendDqName" resultType="java.lang.String">
+        (SELECT vs.station_name xData  from jb_power_generation_efficiency jp
+                                                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = jp.station_id
+         where value =(
+             SELECT
+                 MAX(value)
+             FROM
+                 jb_power_generation_efficiency
+             WHERE
+                 DATE_FORMAT( data_time, "%Y" )= 2022)
+           and
+             DATE_FORMAT( jp.data_time, "%Y" )= 2022
+             limit 1)
+        UNION
+        (SELECT vs.station_name xData  from jb_power_generation_efficiency jp
+                                                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = jp.station_id
+         where value =(
+             SELECT
+                 min(value)
+             FROM
+                 jb_power_generation_efficiency
+
+             WHERE
+                 DATE_FORMAT( data_time, "%Y" )= 2022)
+           and
+             DATE_FORMAT( jp.data_time, "%Y" )= 2022
+             limit 1)
+    </select>
+    <select id="prStationTop10" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            Round( sum( VALUE ), 2 ) xData,
+            vs.station_name as yData
+        FROM
+            jb_power_generation_efficiency  jp
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=jp.station_id
+        WHERE
+            DATE_FORMAT( data_time, "%Y" )= 2022
+          AND vs.type_id=2
+        GROUP BY
+            jp.station_id
+        ORDER BY xData  desc
+            LIMIT 10
+    </select>
+
+    <select id="prCompanyTop10" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            Round( sum( VALUE ), 2 ) xData,
+            js.company AS yData
+        FROM
+            jb_power_generation_efficiency jp
+                LEFT JOIN jb_station js ON js.station_id = jp.station_id
+        WHERE
+            DATE_FORMAT( data_time, "%Y" )= 2022
+        GROUP BY
+            js.company
+        ORDER BY
+            xData DESC
+            LIMIT 10
+    </select>
+
+    <select id="selUesOfHoursStationTop10" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            Round( sum( use_hour ), 2 ) xData,
+            vs.station_name as yData
+        FROM
+            cloudiip_access_equipment.gb_use_of_hour_station_test  ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+        WHERE
+            DATE_FORMAT( data_date, "%Y" )= 2022
+          AND vs.type_id=2
+        GROUP BY
+            ht.station_id
+        ORDER BY xData
+        <if test = "sortType=='1'.toString()">
+            desc
+        </if>
+
+    </select>
+
+    <select id="selUesOfHoursCompanyTop10" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            Round( sum( use_hour ), 2 ) xData,
+            js.company as yData
+        FROM
+            cloudiip_access_equipment.gb_use_of_hour_station_test  ht
+                LEFT JOIN jb_station js ON js.station_id = ht.station_id
+        WHERE
+            DATE_FORMAT( data_date, "%Y" )= 2022
+        GROUP BY
+            js.company
+        ORDER BY xData
+        <if test = "sortType=='1'.toString()">
+            desc
+        </if>
+    </select>
+
     <select id="selAccuracyRateTrend" resultType="com.bonc.jibei.vo.UseOfHoursVo">
-    SELECT
-    round(avg(accuracy_rate),2) yData,
-    DATE_FORMAT(date,"%Y-%m") xData
-    from gb_short_accuracy_rate
-    WHERE
-    DATE_FORMAT( date, "%Y" )= 2022
-    GROUP BY
-    DATE_FORMAT(date,"%Y-%m")
+        SELECT
+            round(avg(power_prediction),2) yData,
+            round(avg(power_prediction_rate),2) yData1,
+            max(power_prediction) yData2,
+            DATE_FORMAT(day,"%Y-%m") xData
+        from jb_power_prediction
+        WHERE
+            DATE_FORMAT( day, "%Y" )= 2022
+        GROUP BY
+            DATE_FORMAT(day,"%Y-%m")
+    </select>
+
+    <select id="AccuracyRateCompany" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+        day xData,
+        round( sum( power_prediction_rate ), 2 ) yData,
+        "冀北" as yData1
+        FROM
+        jb_power_prediction jp
+
+        WHERE 1=1
+        <if test="startTime != null ">
+        day &gt;= #{startTime}
+        </if>
+        <if test="endTime != null ">
+        and day  &lt;= #{endTime}
+        </if>
+        GROUP BY
+        day
+    </select>
+
+
+    <select id="AccuracyRateTop10" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        <choose>
+            <when test = "type=='1'.toString()">
+                SELECT
+                Round( sum( power_prediction_rate ), 2 ) xData,
+                vs.s500name as yData
+                FROM
+                jb_power_prediction  ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+                WHERE
+                DATE_FORMAT( day, "%Y" )= 2022
+                GROUP BY
+                vs.s500id
+                ORDER BY xData
+                <if test = "sortType=='1'.toString()">
+                    desc
+                </if>
+            </when>
+            <when test = "type=='2'.toString()">
+                SELECT
+                Round( sum( power_prediction_rate ), 2 ) xData,
+                vs.station_name as yData
+                FROM
+                jb_power_prediction  ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+                WHERE
+                DATE_FORMAT( day, "%Y" )= 2022
+                GROUP BY
+                ht.station_id
+                ORDER BY xData
+                <if test = "sortType=='1'.toString()">
+                    desc
+                </if>
+            </when>
+            <when test = "type=='3'.toString()">
+                SELECT
+                Round( sum( power_prediction_rate ), 2 ) xData,
+                js.company AS yData
+                FROM
+                jb_power_prediction  jp
+                LEFT JOIN jb_station js ON js.station_id = jp.station_id
+                WHERE
+                DATE_FORMAT( day, "%Y" )= 2022
+                GROUP BY
+                js.company
+                ORDER BY xData
+                <if test = "sortType=='1'.toString()">
+                    desc
+                </if>
+            </when>
+        </choose>
+
+    </select>
+
+
+    <select id="faultInfoType" resultType="java.util.LinkedHashMap">
+        SELECT
+            sum( type_1 ) AS "类型1",
+            sum( type_2 ) AS "类型2",
+            sum( type_3 ) AS "类型3",
+            sum( type_4 ) AS "类型4",
+            sum( type_5 ) AS "类型5",
+            sum( type_6 ) AS "类型6",
+            sum( type_7 ) AS "类型7",
+            sum( type_8 ) AS "类型8",
+            sum( type_9 ) AS "类型9",
+            sum( type_10 ) AS "类型10"
+        FROM
+            jb_fault_info_type
+        WHERE  DATE_FORMAT(  `year_month`, "%Y" )= 2022
+    </select>
+
+
+    <select id="runningStatus" resultType="java.util.LinkedHashMap">
+        SELECT
+            sum( state_1 ) AS "待机 R",
+            sum( state_2 ) AS "发电 S",
+            sum( state_3 ) AS "机组自降额AIP",
+            sum( state_4 ) AS "限电降额IPD",
+            sum( state_5 ) AS "站内计划停运POI",
+            sum( state_6 ) AS "站外计划停运POO",
+            sum( state_7 ) AS "限电停运DR",
+            sum( state_8 ) AS "机组自身原因故障停运ISF",
+            sum( state_9 ) AS "站内受累停运PRI",
+            sum( state_10 ) AS "站外受累停运PRO",
+            sum( state_11 ) AS "通讯中断CO",
+            sum( others ) AS "其他"
+        FROM
+            jb_fault_info
+        WHERE  DATE_FORMAT(  `year_month`, "%Y" )= 2022
+    </select>
+
+    <select id="faultAnalyze" resultType="java.util.LinkedHashMap">
+        <choose>
+            <when test = "type=='1'.toString()">
+                SELECT
+                sum( type_1 ) AS "类型1",
+                sum( type_2 ) AS "类型2",
+                sum( type_3 ) AS "类型3",
+                sum( type_4 ) AS "类型4",
+                sum( type_5 ) AS "类型5",
+                sum( type_6 ) AS "类型6",
+                sum( type_7 ) AS "类型7",
+                sum( type_8 ) AS "类型8",
+                sum( type_9 ) AS "类型9",
+                sum( type_10 ) AS "类型10"
+                FROM
+                jb_fault_info_type  ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+                WHERE
+                    1=1
+                <if test="yearMonth != null and '' != yearMonth">
+                and  DATE_FORMAT( `year_month`, "%Y-%m" )= #{yearMonth}
+                </if>
+                <if test="name != null and '' != name">
+                    and vs.s500name=#{name}
+                </if>
+                <choose>
+                    <when test= "type=='2'.toString()">
+                       and type="2"
+                    </when>
+                    <otherwise>
+                        and type="1"
+                    </otherwise>
+                </choose>
+            </when>
+            <when test = "type=='2'.toString()">
+                SELECT
+                Round( sum( power_prediction_rate ), 2 ) xData,
+                vs.station_name as yData
+                FROM
+                jb_power_prediction  ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+                WHERE
+                DATE_FORMAT( day, "%Y" )= 2022
+                GROUP BY
+                ht.station_id
+                ORDER BY xData
+                <if test = "sortType=='1'.toString()">
+                    desc
+                </if>
+
+            </when>
+            <when test = "type=='3'.toString()">
+                SELECT
+                sum( type_1 ) AS "类型1",
+                sum( type_2 ) AS "类型2",
+                sum( type_3 ) AS "类型3",
+                sum( type_4 ) AS "类型4",
+                sum( type_5 ) AS "类型5",
+                sum( type_6 ) AS "类型6",
+                sum( type_7 ) AS "类型7",
+                sum( type_8 ) AS "类型8",
+                sum( type_9 ) AS "类型9",
+                sum( type_10 ) AS "类型10"
+                FROM
+                jb_fault_info_type  jp
+                LEFT JOIN jb_station js ON js.station_id = jp.station_id
+                WHERE
+                    1=1
+                <if test="yearMonth != null and '' != yearMonth">
+                    and  DATE_FORMAT( `year_month`, "%Y-%m" )= #{yearMonth}
+                </if>
+                <if test="name != null ">
+                    and  js.company=#{name}
+                </if>
+                <choose>
+                    <when test= "type=='2'.toString()">
+                        and type="2"
+                    </when>
+                    <otherwise>
+                        and type="1"
+                    </otherwise>
+                </choose>
+            </when>
+            <when test = "type=='4'.toString()">
+                SELECT
+                sum( type_1 ) AS "类型1",
+                sum( type_2 ) AS "类型2",
+                sum( type_3 ) AS "类型3",
+                sum( type_4 ) AS "类型4",
+                sum( type_5 ) AS "类型5",
+                sum( type_6 ) AS "类型6",
+                sum( type_7 ) AS "类型7",
+                sum( type_8 ) AS "类型8",
+                sum( type_9 ) AS "类型9",
+                sum( type_10 ) AS "类型10"
+                FROM
+                jb_fault_info_type  jp
+                LEFT JOIN jb_station js ON js.station_id = jp.station_id
+                WHERE
+                1=1
+                <if test="yearMonth != null and '' != yearMonth">
+                    and  DATE_FORMAT( `year_month`, "%Y-%m" )= #{yearMonth}
+                </if>
+                <if test="name != null ">
+                    and  js.company=#{name}
+                </if>
+                <choose>
+                    <when test= "type=='2'.toString()">
+                        and type="2"
+                    </when>
+                    <otherwise>
+                        and type="1"
+                    </otherwise>
+                </choose>
+            </when>
+        </choose>
+    </select>
+
+    <select id="faultTop10" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        <choose>
+            <when test = "type=='1'.toString()">
+                SELECT
+                sum( fault_cnt ) AS xData,
+                vs.station_name yData
+                FROM
+                jb_fault_info ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = ht.station_id
+                GROUP BY
+                ht.station_id
+                ORDER BY xData
+                <if test = "sortType=='1'.toString()">
+                    desc
+                </if>
+            </when>
+            <when test = "type=='2'.toString()">
+                SELECT
+                sum( fault_time ) AS xData,
+                vs.station_name yData
+                FROM
+                jb_fault_info ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = ht.station_id
+                GROUP BY
+                ht.station_id
+                ORDER BY xData
+                <if test = "sortType=='1'.toString()">
+                    desc
+                </if>
+            </when>
+            <when test = "type=='3'.toString()">
+                SELECT
+                sum( mrtbf ) AS xData,
+                vs.station_name yData
+                FROM
+                jb_fault_info ht
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = ht.station_id
+                GROUP BY
+                ht.station_id
+                ORDER BY xData
+                <if test = "sortType=='1'.toString()">
+                    desc
+                </if>
+            </when>
+        </choose>
+    </select>
+    <select id="faultAnalyzeDownList" resultType="java.lang.String">
+        <choose>
+            <when test = "type=='1'.toString()">
+                SELECT s500name xData from  cloudiip_access_equipment.v_stations_codes GROUP BY s500name
+            </when>
+            <when test = "type=='2'.toString()">
+                SELECT s500name xData from  jb_station GROUP BY s500name
+            </when>
+            <when test = "type=='3'.toString()">
+                SELECT company xData from  jb_station GROUP BY company
+            </when>
+            <when test = "type=='4'.toString()">
+                SELECT s500name xData from  cloudiip_access_equipment.v_stations_codes GROUP BY s500name
+            </when>
+        </choose>
     </select>
 </mapper>

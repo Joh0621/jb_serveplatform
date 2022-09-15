@@ -51,6 +51,9 @@ public class NumericalStatisticsController {
     @RequestMapping("monitoringAnalysisDq")
     @ResponseBody
     public Result monitoringAnalysisDq(String startTime, String endTime,String flag1,String flag2) {
+        if (flag1==null||"".equals(flag1)) {
+            flag1="1";
+        }
         List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(startTime, endTime,"1",flag1);
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> jbList = new ArrayList<>();
@@ -117,7 +120,9 @@ public class NumericalStatisticsController {
     @RequestMapping("radiationDoseDistributed")
     @ResponseBody
     public Result radiationDoseDistributed(String startTime, String endTime,String flag1) {
-
+        if (flag1==null||"".equals(flag1)) {
+            flag1="1";
+        }
         Map<String,Object> result=numericalStatisticsService.radiationDoseDistributed( startTime, endTime,"",flag1);
         return Result.ok(result);
     }
@@ -128,7 +133,9 @@ public class NumericalStatisticsController {
     @RequestMapping("radiationDoseDistributedDq")
     @ResponseBody
     public Result radiationDoseDistributedDq(String startTime, String endTime,String flag1) {
-
+        if (flag1==null||"".equals(flag1)) {
+            flag1="1";
+        }
         List<RadiationDoseDistributedVo> numericalStatisticsVos = numericalStatisticsMapper.selRadiationDoseDistributed( startTime, endTime,"1",flag1);
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> jbList = new ArrayList<>();
@@ -194,5 +201,6 @@ public class NumericalStatisticsController {
         Map<String,Object> result=numericalStatisticsService.selSunHoursTrend( startTime, endTime);
         return Result.ok(result);
     }
+
 
 }

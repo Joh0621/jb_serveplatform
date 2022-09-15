@@ -22,10 +22,10 @@
                 sum( min_avg_wind_speed ) AS minWindSpeed,
             </when>
         </choose>
-        year_month_date,
+        year_month_date
             <choose>
                 <when test = "flag=='1'.toString()">
-                    cc.aname
+                    ,cc.aname
                 </when>
             </choose>
 
