@@ -14,6 +14,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description NumericalStatistics
@@ -24,13 +25,15 @@ import java.util.List;
 @Repository
 public interface NumericalStatisticsMapper {
 
-    List<NumericalStatisticsVo>   selMonitoringAnalysis(@Param("startTime") String startTime,
-                                                        @Param("endTime") String endTime,
+    List<NumericalStatisticsVo>   selMonitoringAnalysis(@Param("year") String year,
                                                         @Param("flag") String flag ,
                                                         @Param("flag1") String flag1);
 
-    List<RadiationDoseDistributedVo>   selRadiationDoseDistributed(@Param("startTime") String startTime,
-                                                                   @Param("endTime") String endTime,
+    List<NumericalStatisticsVo>   selMonitoringAnalysisDq(@Param("year") String year,
+                                                        @Param("flag1") String flag1);
+
+    List<RadiationDoseDistributedVo>   selRadiationDoseDistributed(
+                                                                   @Param("year") String year,
                                                                    @Param("flag") String flag ,
                                                                    @Param("flag1") String flag1 );
 

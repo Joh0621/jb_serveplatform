@@ -1,10 +1,10 @@
 package com.bonc.jibei.controller;
 
 
-import com.bonc.jibei.api.ErrorTypeEnum;
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.mapper.NumericalStatisticsMapper;
 import com.bonc.jibei.service.NumericalStatisticsService;
+import com.bonc.jibei.util.DateUtil;
 import com.bonc.jibei.vo.NumericalStatisticsVo;
 import com.bonc.jibei.vo.RadiationDoseDistributedVo;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数值统计数据
@@ -31,80 +29,134 @@ public class NumericalStatisticsController {
 
     /**
      * 监测分析-趋势分析
-     * @param startTime
-     * @param endTime
+
      * @return
      */
     @RequestMapping("monitoringAnalysis")
     @ResponseBody
-    public Result monitoringAnalysis(String startTime, String endTime,String flag1) {
-       Map<String,Object> result=numericalStatisticsService.monitoringAnalysis( startTime, endTime,"",flag1);
+    public Result monitoringAnalysis(String year,String flag1) {
+       Map<String,Object> result=numericalStatisticsService.monitoringAnalysis( year,"",flag1);
         return Result.ok(result);
     }
 
     /**
      * 水平总辐射量趋势对比分析
-     * @param startTime
-     * @param endTime
+//  flag1 控制外层 falg2 控制内层
      * @return
      */
     @RequestMapping("monitoringAnalysisDq")
     @ResponseBody
-    public Result monitoringAnalysisDq(String startTime, String endTime,String flag1,String flag2) {
+    public Result monitoringAnalysisDq(String year,String flag1,String flag2) {
         if (flag1==null||"".equals(flag1)) {
             flag1="1";
         }
-        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(startTime, endTime,"1",flag1);
-        ArrayList<Object> xList = new ArrayList<>();
-        ArrayList<Object> jbList = new ArrayList<>();
-        ArrayList<Object> zjkList = new ArrayList<>();
-        ArrayList<Object> tsList = new ArrayList<>();
-        ArrayList<Object> lfList = new ArrayList<>();
-        ArrayList<Object> qhdList = new ArrayList<>();
-        ArrayList<Object> cdList = new ArrayList<>();
+        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysisDq(year,flag1);
+//        List<String> dates = numericalStatisticsVos.stream().distinct().map(NumericalStatisticsVo::getDataTime).collect(Collectors.toList());
+        List<String> xList = new ArrayList<>();
+        List<Double> jbList = new ArrayList<>();
+        List<Double> zjkList = new ArrayList<>();
+        List<Double> tsList = new ArrayList<>();
+        List<Double> lfList = new ArrayList<>();
+        List<Double> qhdList = new ArrayList<>();
+        List<Double> cdList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        for (NumericalStatisticsVo vo :numericalStatisticsVos){
-            if (flag1!=null&&flag1!="1"){
-                if ("2".equals(flag1)){
-                    if ("1".equals(flag2)){
-                        vo.setRadiationDose(vo.getAvgTemp());
-                    }else if ("2".equals(flag2)){
-                        vo.setRadiationDose(vo.getMaxTemp());
-                    }else if ("3".equals(flag2)){
-                        vo.setRadiationDose(vo.getMinTemp());
+        Map<String, Double> collect = null;
+        if (flag1!=null&&flag1!="1"){
+            if ("2".equals(flag1)){
+                if ("1".equals(flag2)){
+                    collect= numericalStatisticsVos.stream().collect(
+                            Collectors.toMap(k->k.getDataTime()+"-"+k.getAName(), NumericalStatisticsVo::getAvgTemp));
+                }else if ("2".equals(flag2)){
+                    collect= numericalStatisticsVos.stream().collect(
+                            Collectors.toMap(k->k.getDataTime()+"-"+k.getAName(), NumericalStatisticsVo::getMaxTemp));
+                }else if ("3".equals(flag2)){
+                    collect= numericalStatisticsVos.stream().collect(
+                            Collectors.toMap(k->k.getDataTime()+"-"+k.getAName(), NumericalStatisticsVo::getMinTemp));
+                }
+            }else if ("3".equals(flag1)){
+                if ("1".equals(flag2)){
+                    collect= numericalStatisticsVos.stream().collect(
+                            Collectors.toMap(k->k.getDataTime()+"-"+k.getAName(), NumericalStatisticsVo::getAvgWindSpeed));
+                }else if ("2".equals(flag2)){
+                    collect= numericalStatisticsVos.stream().collect(
+                            Collectors.toMap(k->k.getDataTime()+"-"+k.getAName(), NumericalStatisticsVo::getMaxWindSpeed));
+                }else if ("3".equals(flag2)){
+                    collect= numericalStatisticsVos.stream().collect(
+                            Collectors.toMap(k->k.getDataTime()+"-"+k.getAName(), NumericalStatisticsVo::getMinWindSpeed));
+                }
+            }else {
+                collect= numericalStatisticsVos.stream().collect(
+                        Collectors.toMap(k->k.getDataTime()+"-"+k.getAName(), NumericalStatisticsVo::getRadiationDose));
+            }
+        }
+
+    if (collect==null){
+        return Result.ok(map);
+    }
+        //所有时间
+//        List<String> dates = numericalStatisticsVos.stream().map(NumericalStatisticsVo::getDataTime).collect(Collectors.toList());
+        List<String> dates=   DateUtil.getMonthOfYear(year);
+//        List<String> dates = numericalStatisticsVos.stream().distinct().collect(Collectors.toList());
+//        List<String> dates = Arrays.asList("05", "06", "07", "08", "09");
+        xList=dates;
+        System.out.println(dates);
+        List<String> dqList = Arrays.asList("-张家口", "-唐山", "-廊坊", "-秦皇岛", "-承德", "-冀北");
+        //组合时间和地区集合
+        List<String> resultList13 = dates.stream().flatMap(str -> dqList.stream().map(str::concat))
+                .collect(Collectors.toList());
+
+        for (String x: resultList13) {
+
+
+                if (collect.get(x) == null) {
+                    String[] split = x.split("-");
+                    switch (split[1]) {
+                        case "张家口":
+                            System.out.println(x);
+                            zjkList.add(null);
+                            break;
+                        case "唐山":
+                            tsList.add(null);
+                            break;
+                        case "廊坊":
+                            lfList.add(null);
+                            break;
+                        case "秦皇岛":
+                            qhdList.add(null);
+                            break;
+                        case "承德":
+                            cdList.add(null);
+                            break;
+                        case "冀北":
+                            jbList.add(null);
+                            break;
                     }
-                }else if ("3".equals(flag1)){
-                    if ("1".equals(flag2)){
-                        vo.setRadiationDose(vo.getAvgWindSpeed());
-                    }else if ("2".equals(flag2)){
-                        vo.setRadiationDose(vo.getMaxWindSpeed());
-                    }else if ("3".equals(flag2)){
-                        vo.setRadiationDose(vo.getMinWindSpeed());
+                } else {
+                    String[] split = x.split("-");
+
+                    switch (split[1]) {
+                        case "张家口":
+                            zjkList.add(collect.get(x));
+                            break;
+                        case "唐山":
+                            tsList.add(collect.get(x));
+                            break;
+                        case "廊坊":
+                            lfList.add(collect.get(x));
+                            break;
+                        case "秦皇岛":
+                            qhdList.add(collect.get(x));
+                            break;
+                        case "承德":
+                            cdList.add(collect.get(x));
+                            break;
+                        case "冀北":
+                            jbList.add(collect.get(x));
+                            break;
                     }
                 }
             }
-            switch (vo.getAName()) {
-                case "张家口":
-                    zjkList.add(vo.getRadiationDose());
-                    xList.add(vo.getYearMonthDate());
-                    break;
-                case "唐山":
-                    tsList.add(vo.getRadiationDose());
-                    break;
-                case "廊坊":
-                    lfList.add(vo.getRadiationDose());
-                    break;
-                case "秦皇岛":
-                    qhdList.add(vo.getRadiationDose());
-                    break;
-                case "承德":
-                    cdList.add(vo.getRadiationDose());
-                    break;
-                case "冀北":
-                    jbList.add(vo.getRadiationDose());
-                    break;
-            }
-        }
+
         map.put("xList",xList);
         map.put("张家口",zjkList);
         map.put("唐山",tsList);
@@ -119,11 +171,11 @@ public class NumericalStatisticsController {
      */
     @RequestMapping("radiationDoseDistributed")
     @ResponseBody
-    public Result radiationDoseDistributed(String startTime, String endTime,String flag1) {
+    public Result radiationDoseDistributed(String year,String flag1) {
         if (flag1==null||"".equals(flag1)) {
             flag1="1";
         }
-        Map<String,Object> result=numericalStatisticsService.radiationDoseDistributed( startTime, endTime,"",flag1);
+        Map<String,Object> result=numericalStatisticsService.radiationDoseDistributed( year,"",flag1);
         return Result.ok(result);
     }
 
@@ -132,12 +184,15 @@ public class NumericalStatisticsController {
      */
     @RequestMapping("radiationDoseDistributedDq")
     @ResponseBody
-    public Result radiationDoseDistributedDq(String startTime, String endTime,String flag1) {
+    public Result radiationDoseDistributedDq(String year ,String flag1,String flag) {
         if (flag1==null||"".equals(flag1)) {
             flag1="1";
         }
-        List<RadiationDoseDistributedVo> numericalStatisticsVos = numericalStatisticsMapper.selRadiationDoseDistributed( startTime, endTime,"1",flag1);
-        ArrayList<Object> xList = new ArrayList<>();
+        if (flag1=="1"){
+            flag="1";
+        }
+        List<RadiationDoseDistributedVo> numericalStatisticsVos = numericalStatisticsMapper.selRadiationDoseDistributed( year,flag,flag1);
+        List<String> xList = new ArrayList<>();
         ArrayList<Object> jbList = new ArrayList<>();
         ArrayList<Object> zjkDayList = new ArrayList<>();
         ArrayList<Object> tsDayList = new ArrayList<>();
@@ -150,33 +205,112 @@ public class NumericalStatisticsController {
         ArrayList<Object> qhdRateList = new ArrayList<>();
         ArrayList<Object> cdRateList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        for (RadiationDoseDistributedVo vo :numericalStatisticsVos){
-            switch (vo.getAName()) {
-                case "张家口":
-                    zjkDayList.add(vo.getCnt());
-                    zjkRateList.add(vo.getRate());
-                    xList.add(vo.getValue());
-                    break;
-                case "唐山":
-                    tsDayList.add(vo.getCnt());
-                    tsRateList.add(vo.getRate());
-                    break;
-                case "廊坊":
-                    lfDayList.add(vo.getCnt());
-                    lfRateList.add(vo.getRate());
-                    break;
-                case "秦皇岛":
-                    qhdDayList.add(vo.getCnt());
-                    qhdRateList.add(vo.getRate());
-                    break;
-                case "承德":
-                    cdDayList.add(vo.getCnt());
-                    cdRateList.add(vo.getRate());
-                    break;
-                case "冀北":
-                    jbList.add(vo.getCnt());
-                    break;
+        Map<String, Integer> collectCnt = numericalStatisticsVos.stream().collect(
+                Collectors.toMap(k -> k.getValue() + "-" + k.getAName(), RadiationDoseDistributedVo::getCnt));
+        Map<String, Double> collectRate= numericalStatisticsVos.stream().collect(
+                Collectors.toMap(k->k.getValue()+"-"+k.getAName(), RadiationDoseDistributedVo::getRate));
+        List<String> dates = numericalStatisticsVos.stream().distinct().map(RadiationDoseDistributedVo::getValue).collect(Collectors.toList());
+        List<String> datesValue = dates.stream().distinct().collect(Collectors.toList());
+        xList=datesValue;
+        //地区集合
+        List<String> dqList = Arrays.asList("-张家口", "-唐山", "-廊坊", "-秦皇岛", "-承德", "-冀北");
+        //组合时间和地区集合
+        List<String> resultList13 = xList.stream().flatMap(str -> dqList.stream().map(str::concat))
+                .collect(Collectors.toList());
+        System.out.println(resultList13);
+        for (String x: resultList13) {
+            if (collectCnt.get(x) == null) {
+                String[] split = x.split("-");
+                switch (split[1]) {
+                    case "张家口":
+                        zjkDayList.add(null);
+                        break;
+                    case "唐山":
+                        tsDayList.add(null);
+                        break;
+                    case "廊坊":
+                        lfDayList.add(null);
+                        break;
+                    case "秦皇岛":
+                        qhdDayList.add(null);
+                        break;
+                    case "承德":
+                        cdDayList.add(null);
+                        break;
+                    case "冀北":
+                        jbList.add(null);
+                        break;
+                }
+            } else {
+                String[] split = x.split("-");
+
+                switch (split[1]) {
+                    case "张家口":
+                        zjkDayList.add(collectCnt.get(x));
+                        break;
+                    case "唐山":
+                        tsDayList.add(collectCnt.get(x));
+                        break;
+                    case "廊坊":
+                        lfDayList.add(collectCnt.get(x));
+                        break;
+                    case "秦皇岛":
+                        qhdDayList.add(collectCnt.get(x));
+                        break;
+                    case "承德":
+                        cdDayList.add(collectCnt.get(x));
+                        break;
+                    case "冀北":
+                        jbList.add(collectCnt.get(x));
+                        break;
+                }
             }
+            if (collectRate.get(x) == null) {
+                String[] split = x.split("-");
+                switch (split[1]) {
+                    case "张家口":
+                        System.out.println(x);
+                        zjkRateList.add(null);
+                        break;
+                    case "唐山":
+                        tsRateList.add(null);
+                        break;
+                    case "廊坊":
+                        lfRateList.add(null);
+                        break;
+                    case "秦皇岛":
+                        qhdRateList.add(null);
+                        break;
+                    case "承德":
+                        cdRateList.add(null);
+                        break;
+                    case "冀北":
+                        jbList.add(null);
+                        break;
+                }
+
+            } else {
+                String[] split = x.split("-");
+
+                switch (split[1]) {
+                    case "张家口":
+                        zjkRateList.add(collectRate.get(x));
+                        break;
+                    case "唐山":
+                        tsRateList.add(collectRate.get(x));
+                        break;
+                    case "廊坊":
+                        lfRateList.add(collectRate.get(x));
+                        break;
+                    case "秦皇岛":
+                        qhdRateList.add(collectRate.get(x));
+                        break;
+                    case "承德":
+                        cdRateList.add(collectRate.get(x));
+                        break;
+                }
+            }
+
         }
         map.put("xList",xList);
         map.put("冀北天数",jbList);

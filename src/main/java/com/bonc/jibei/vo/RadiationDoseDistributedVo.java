@@ -30,7 +30,7 @@ public class RadiationDoseDistributedVo implements Serializable {
     /**
      * 水平辐照度
      */
-    private Double value;
+    private String value;
 
     /**
      * 个数

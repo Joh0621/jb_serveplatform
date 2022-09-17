@@ -1,6 +1,5 @@
 package com.bonc.jibei.service.Impl;
 
-import com.bonc.jibei.mapper.DataQualityErrorMapper;
 import com.bonc.jibei.mapper.NumericalStatisticsMapper;
 import com.bonc.jibei.service.NumericalStatisticsService;
 import com.bonc.jibei.vo.NumericalStatisticsVo;
@@ -18,7 +17,7 @@ public class NumericalStatisticsServiceImpl implements NumericalStatisticsServic
     @Resource
     private NumericalStatisticsMapper numericalStatisticsMapper;
     @Override
-    public Map<String, Object> monitoringAnalysis(String startTime, String endTime,String flag,String flag1) {
+    public Map<String, Object> monitoringAnalysis(String year,String flag,String flag1) {
         ArrayList<Object> xList = new ArrayList<>();
         if (flag1==null||"".equals(flag1)) {
             flag="1";
@@ -44,26 +43,26 @@ public class NumericalStatisticsServiceImpl implements NumericalStatisticsServic
 
         Map<String, Object> map = new HashMap<>();
         System.out.println(flag1);
-        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(startTime, endTime,flag,flag1);
+        List<NumericalStatisticsVo> numericalStatisticsVos = numericalStatisticsMapper.selMonitoringAnalysis(year,flag,flag1);
         for (NumericalStatisticsVo vo :numericalStatisticsVos){
-            xList.add(vo.getYearMonthDate());
+            xList.add(vo.getDataTime());
         if ("1".equals(flag1)) {
             spList.add(vo.getRadiationDose());
             fzdList.add(vo.getPeakIrradiance());
-            tqspList.add(vo.getRadiationDose());
-            tqfzdList.add(vo.getPeakIrradiance());
+            tqspList.add(vo.getRadiationDoseTq());
+            tqfzdList.add(vo.getPeakIrradianceTq());
         }
             if ("2".equals(flag1)) {
                 tqAvgTempList.add(vo.getAvgTemp());
                 avgTempList.add(vo.getAvgTemp());
-                maxTempList.add(vo.getMaxTemp());
-                minTempList.add(vo.getMinTemp());
+                maxTempList.add(vo.getMaxTempTq());
+                minTempList.add(vo.getMinTempTq());
             }
             if ("3".equals(flag1)) {
                 tqAvgWindList.add(vo.getAvgWindSpeed());
                 avgWindList.add(vo.getAvgWindSpeed());
-                maxWindList.add(vo.getMaxWindSpeed());
-                minWindList.add(vo.getMinWindSpeed());
+                maxWindList.add(vo.getMaxWindSpeedTq());
+                minWindList.add(vo.getMinWindSpeedTq());
             }
         }
         map.put("时间",xList);
@@ -89,14 +88,14 @@ public class NumericalStatisticsServiceImpl implements NumericalStatisticsServic
     }
 
     @Override
-    public Map<String, Object> radiationDoseDistributed(String startTime, String endTime, String flag,String flag1) {
+    public Map<String, Object> radiationDoseDistributed(String year, String flag, String flag1) {
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> dayList = new ArrayList<>();
         ArrayList<Object> rateList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        System.out.println(flag1);
-        List<RadiationDoseDistributedVo> radiationDoseDistributedVos = numericalStatisticsMapper.selRadiationDoseDistributed(startTime, endTime, flag,flag1);
+        List<RadiationDoseDistributedVo> radiationDoseDistributedVos = numericalStatisticsMapper.selRadiationDoseDistributed( year, flag,flag1);
         for (RadiationDoseDistributedVo vo :radiationDoseDistributedVos) {
+            System.out.println(vo.getValue());
             xList.add(vo.getValue());
             dayList.add(vo.getCnt());
             rateList.add(vo.getRate());
