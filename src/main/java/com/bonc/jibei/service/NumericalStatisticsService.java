@@ -21,6 +21,6 @@ public interface NumericalStatisticsService {
     Map<String,Object>  radiationDoseDistributed ( String year,String flag,String flag1);
 
 
-    Map<String,Object>  selSunHoursTrend (String startTime, String endTime);
+    Map<String,Object>  selSunHoursTrend (String year);
 
 }

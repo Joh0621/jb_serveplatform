@@ -8,10 +8,15 @@ import com.bonc.jibei.vo.SunHoursTrendVo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class NumericalStatisticsServiceImpl implements NumericalStatisticsService {
     @Resource
@@ -94,11 +99,29 @@ public class NumericalStatisticsServiceImpl implements NumericalStatisticsServic
         ArrayList<Object> rateList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
         List<RadiationDoseDistributedVo> radiationDoseDistributedVos = numericalStatisticsMapper.selRadiationDoseDistributed( year, flag,flag1);
-        for (RadiationDoseDistributedVo vo :radiationDoseDistributedVos) {
-            System.out.println(vo.getValue());
-            xList.add(vo.getValue());
-            dayList.add(vo.getCnt());
-            rateList.add(vo.getRate());
+       //集合的cnt和
+        double sum = radiationDoseDistributedVos.stream().mapToDouble(RadiationDoseDistributedVo::getCnt).sum();
+
+//        for (RadiationDoseDistributedVo vo :radiationDoseDistributedVos) {
+//            xList.add(vo.getValue());
+//            dayList.add(vo.getCnt());
+//            rateList.add(vo.getRate());
+//        }
+        double rate=100;
+        for (int i = 0; i <radiationDoseDistributedVos.size() ; i++) {
+            xList.add(radiationDoseDistributedVos.get(i).getValue());
+            dayList.add(radiationDoseDistributedVos.get(i).getCnt());
+            DecimalFormat df = new DecimalFormat("0.00");
+            df.setRoundingMode(RoundingMode.UP);
+            if (i==0){
+                 rate=100;
+                rateList.add(rate);
+            }else {
+                double v = radiationDoseDistributedVos.get(i-1).getCnt() / sum*100;
+                 rate= Double.parseDouble(df.format(rate-v));
+                rateList.add(rate);
+            }
+
         }
         map.put("xList",xList);
         map.put("dayList",dayList);
@@ -107,20 +130,20 @@ public class NumericalStatisticsServiceImpl implements NumericalStatisticsServic
     }
 
     @Override
-    public Map<String, Object> selSunHoursTrend(String startTime, String endTime) {
+    public Map<String, Object> selSunHoursTrend(String year) {
         ArrayList<Object> xList = new ArrayList<>();
         ArrayList<Object> over3List = new ArrayList<>();
         ArrayList<Object> over6List = new ArrayList<>();
         ArrayList<Object> over3TqList = new ArrayList<>();
         ArrayList<Object> over6TqList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        List<SunHoursTrendVo> radiationDoseDistributedVos = numericalStatisticsMapper.selSunHoursTrend(startTime, endTime);
+        List<SunHoursTrendVo> radiationDoseDistributedVos = numericalStatisticsMapper.selSunHoursTrend(year);
         for (SunHoursTrendVo vo :radiationDoseDistributedVos) {
             xList.add(vo.getAName());
             over3List.add(vo.getOver3());
             over6List.add(vo.getOver6());
-            over3TqList.add(vo.getOver3());
-            over6TqList.add(vo.getOver6());
+            over3TqList.add(vo.getOver3Tq());
+            over6TqList.add(vo.getOver6Tq());
         }
         map.put("xList",xList);
         map.put("over3List",over3List);

@@ -9,6 +9,9 @@ import java.util.*;
 public interface PerformanceAnalysisMapper {
     List<UseOfHoursVo> seluesOfHoursTrend(@Param("year") String year);
 
+
+    UseOfHoursVo  powerGenerationIndex(@Param("year") String year,
+                         @Param("type") String type);
     List<UseOfHoursVo> seluesOfHoursTrendDq(@Param("year") String year);
 
     List<UseOfHoursVo> seluesOfHoursTrendDm(@Param("year") String year);
@@ -23,6 +26,9 @@ public interface PerformanceAnalysisMapper {
 
     List<UseOfHoursVo> selPrTrendDq(@Param("year") String year);
 
+
+    List<UseOfHoursVo> selAvgPrAnalysis(@Param("year") String year,
+                                                 @Param("type") String type );
     Map<String, Object> selPrTrendDqValue(@Param("year") String year);
 
     List<String> selPrTrendDqName(@Param("year") String year);
@@ -53,7 +59,12 @@ public interface PerformanceAnalysisMapper {
                                                @Param("name") String name,
                                                @Param("dataType") String dataType);
 
-    List<UseOfHoursVo> faultTop10(@Param("YearMonth") String YearMonth,
+
+
+    String faultAnalyzeMTBF(@Param("yearMonth") String yearMonth,
+                                               @Param("type") String type,
+                                               @Param("name") String name);
+    List<UseOfHoursVo> faultTop10(@Param("yearMonth") String yearMonth,
                                   @Param("type") String type,
                                   @Param("sortType") String sortType);
 

@@ -25,13 +25,13 @@ public class PerformanceAnalysisController {
 
     /**
      * 等效利用小时数趋势
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("uesOfHoursTrend")
     @ResponseBody
-    public Result uesOfHoursTrend( String Year) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrend(Year);
+    public Result uesOfHoursTrend( String year) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrend(year);
 
         Map<String, Object> map = new HashMap<>();
         ArrayList<Object> xList = new ArrayList<>();
@@ -50,16 +50,15 @@ public class PerformanceAnalysisController {
 
     /**
      * 发电性能指标
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("powerGenerationIndex")
     @ResponseBody
-    public Result powerGenerationIndex( String Year) {
+    public Result powerGenerationIndex( String year) {
         Map<String, Object> map = new HashMap<>();
-        ArrayList<Object> xList = new ArrayList<>();
-        ArrayList<Object> yList = new ArrayList<>();
-
+        //type 1:等效利用小时数,发电能效PR 2:功率预测准确度 3: 1:故障次数 2:故障检修时间 4:平均故障间隔时间
+        performanceAnalysisMapper.powerGenerationIndex(year,"1");
         map.put("等效利用小时数",98.2);
         map.put("平均故障间隔时间",1000);
         map.put("发电能效PR",85.4);
@@ -70,13 +69,13 @@ public class PerformanceAnalysisController {
     }
     /**
      * 等效利用小时数趋势-地区
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("uesOfHoursTrendDq")
     @ResponseBody
-    public Result uesOfHoursTrendDq( String Year) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrendDq(Year);
+    public Result uesOfHoursTrendDq( String year) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrendDq(year);
 
         Map<String, Object> map = new HashMap<>();
         ArrayList<Object> xList = new ArrayList<>();
@@ -121,13 +120,13 @@ public class PerformanceAnalysisController {
 
     /**
      * 等效利用小时数趋势-断面
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("uesOfHoursTrendDm")
     @ResponseBody
-    public Result uesOfHoursTrendDm( String Year) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrendDm(Year);
+    public Result uesOfHoursTrendDm( String year) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrendDm(year);
 
         Map<String, Object> map = new HashMap<>();
         List<String> yData1List=useOfHoursVos.stream().map(UseOfHoursVo::getYData1).distinct().collect(Collectors.toList());
@@ -149,14 +148,14 @@ public class PerformanceAnalysisController {
 
     /**
      * 等效利用小时数场站排名
-     * @param Year
+     * @param year
      * @param sortType 正序排列 0 ，倒序排列 1
      * @return
      */
     @RequestMapping("uesOfHoursStationTop10")
     @ResponseBody
-    public Result selUesOfHoursStationTop10( String Year,String sortType) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selUesOfHoursStationTop10(Year,sortType);
+    public Result selUesOfHoursStationTop10( String year,String sortType) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selUesOfHoursStationTop10(year,sortType);
         ArrayList<Object> xList = new ArrayList<>();
         for (UseOfHoursVo vo: useOfHoursVos){
             Map<String, Object> map = new HashMap<>();
@@ -169,13 +168,13 @@ public class PerformanceAnalysisController {
 
     /**
      * 等效利用小时数场站排名
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("uesOfHoursCompanyTop10")
     @ResponseBody
-    public Result selUesOfHoursCompanyTop10( String Year,String sortType) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selUesOfHoursCompanyTop10(Year,sortType);
+    public Result selUesOfHoursCompanyTop10( String year,String sortType) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selUesOfHoursCompanyTop10(year,sortType);
         ArrayList<Object> xList = new ArrayList<>();
         for (UseOfHoursVo vo: useOfHoursVos){
             Map<String, Object> map = new HashMap<>();
@@ -188,13 +187,13 @@ public class PerformanceAnalysisController {
 
     /**
      * 发电能效PR趋势
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("prTrend")
     @ResponseBody
-    public Result selPrTrend( String Year) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selPrTrend(Year);
+    public Result selPrTrend( String year) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selPrTrend(year);
 
         Map<String, Object> map = new HashMap<>();
         ArrayList<Object> xList = new ArrayList<>();
@@ -210,15 +209,15 @@ public class PerformanceAnalysisController {
 
     /**
      * 发电能效PR趋势地区
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("prTrendDq")
     @ResponseBody
-    public Result prTrendDq( String Year) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selPrTrendDq(Year);
-        Map<String, Object> stringObjectMap = performanceAnalysisMapper.selPrTrendDqValue(Year);
-        List<String> Names = performanceAnalysisMapper.selPrTrendDqName(Year);
+    public Result prTrendDq( String year) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selPrTrendDq(year);
+        Map<String, Object> stringObjectMap = performanceAnalysisMapper.selPrTrendDqValue(year);
+        List<String> Names = performanceAnalysisMapper.selPrTrendDqName(year);
         Map<String, Object> result = selTrend(useOfHoursVos);
         result.put("max",stringObjectMap.get("max"));
         result.put("min",stringObjectMap.get("min"));
@@ -227,16 +226,36 @@ public class PerformanceAnalysisController {
         result.put("minName",Names.get(1));
         return Result.ok(result);
     }
+    /**
+     * 地区平均PR多维分析
+     * @param year
+      * @param type 1:电站地形类型 2:逆变器类型 3:支架类型 4:组件功率等级
+     * @return
+     */
 
+    @RequestMapping("selAvgPrAnalysis")
+    @ResponseBody
+    public Result selAvgPrAnalysis( String year,String type) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selAvgPrAnalysis(year,type);
+        Map<String, Object> stringObjectMap = performanceAnalysisMapper.selPrTrendDqValue(year);
+        List<String> Names = performanceAnalysisMapper.selPrTrendDqName(year);
+        Map<String, Object> result = selTrend(useOfHoursVos);
+        result.put("max",stringObjectMap.get("max"));
+        result.put("min",stringObjectMap.get("min"));
+        result.put("avg",stringObjectMap.get("avg"));
+        result.put("maxName",Names.get(0));
+        result.put("minName",Names.get(1));
+        return Result.ok(result);
+    }
     /**
      * 发电能效PR-场站排名
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("prStationTop10")
     @ResponseBody
-    public Result prStationTop10( String Year,String sortType) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.prStationTop10(Year,sortType);
+    public Result prStationTop10( String year,String sortType) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.prStationTop10(year,sortType);
         ArrayList<Object> xList = new ArrayList<>();
         for (UseOfHoursVo vo: useOfHoursVos){
             Map<String, Object> map = new HashMap<>();
@@ -248,13 +267,13 @@ public class PerformanceAnalysisController {
     }
     /**
      * 发电能效PR-集团排名
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("prCompanyTop10")
     @ResponseBody
-    public Result prCompanyTop10( String Year,String sortType) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.prCompanyTop10(Year,sortType);
+    public Result prCompanyTop10( String year,String sortType) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.prCompanyTop10(year,sortType);
         ArrayList<Object> xList = new ArrayList<>();
         for (UseOfHoursVo vo: useOfHoursVos){
             Map<String, Object> map = new HashMap<>();
@@ -270,8 +289,8 @@ public class PerformanceAnalysisController {
      */
     @RequestMapping("AccuracyRateTrend")
     @ResponseBody
-    public Result selAccuracyRateTrend( String Year) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selAccuracyRateTrend(Year);
+    public Result selAccuracyRateTrend( String year) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.selAccuracyRateTrend(year);
 
         Map<String, Object> map = new HashMap<>();
         ArrayList<Object> xList = new ArrayList<>();
@@ -314,14 +333,14 @@ public class PerformanceAnalysisController {
 
     /**
      * 功率预测准确率排名
-     * @param Year
+     * @param year
      *  @param type 1 断面 2：场站 3：集团
      * @return
      */
     @RequestMapping("AccuracyRateTop10")
     @ResponseBody
-    public Result AccuracyRateTop10( String Year,String type,String sortType) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.AccuracyRateTop10(Year,type,sortType);
+    public Result AccuracyRateTop10( String year,String type,String sortType) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.AccuracyRateTop10(year,type,sortType);
         ArrayList<Object> xList = new ArrayList<>();
         for (UseOfHoursVo vo: useOfHoursVos){
             Map<String, Object> map = new HashMap<>();
@@ -334,13 +353,13 @@ public class PerformanceAnalysisController {
 
     /**
      * 故障分析
-     * @param Year
+     * @param year
      * @return
      */
     @RequestMapping("faultInfoType")
     @ResponseBody
-    public Result faultInfoType( String Year) {
-        LinkedHashMap<String, Object> map = performanceAnalysisMapper.faultInfoType(Year);
+    public Result faultInfoType( String year) {
+        LinkedHashMap<String, Object> map = performanceAnalysisMapper.faultInfoType(year);
         ArrayList<Object> yList1 = new ArrayList<>();
         Map<String, Object> resultMap = new HashMap<>();
         //数值集合
@@ -364,13 +383,13 @@ public class PerformanceAnalysisController {
 
     /**
      * 地区场站运行状态分布
-     * @param YearMonth
+     * @param yearMonth
      * @return
      */
     @RequestMapping("runningStatus")
     @ResponseBody
-    public Result runningStatus( String YearMonth) {
-        LinkedHashMap<String, Double> map = performanceAnalysisMapper.runningStatus(YearMonth);
+    public Result runningStatus( String yearMonth) {
+        LinkedHashMap<String, Double> map = performanceAnalysisMapper.runningStatus(yearMonth);
         ArrayList<Object> resultList = new ArrayList<>();
         //数值集合
         ArrayList<Double> yList = new ArrayList(map.values());
@@ -406,7 +425,7 @@ public class PerformanceAnalysisController {
         LinkedHashMap<String, Object> map = performanceAnalysisMapper.faultAnalyze(yearMonth,type,name,dataType);
         LinkedHashMap<String, Object> mapCnt = performanceAnalysisMapper.faultAnalyze(yearMonth,type,name,"2");
         //查询MTBF
-
+      String MTBF  =performanceAnalysisMapper.faultAnalyzeMTBF(yearMonth,type,name);
         Map<String, Object>  result =  new HashMap<>();
 
         ArrayList<Object> resultList = new ArrayList<>();
@@ -453,7 +472,7 @@ public class PerformanceAnalysisController {
             }
         }
 
-        result.put("MTBF",500);
+        result.put("MTBF",MTBF);
         result.put("时长",resultList);
         result.put("次数",resultListCnt);
         return Result.ok(result);
@@ -491,7 +510,7 @@ public class PerformanceAnalysisController {
         return Result.ok(useOfHoursVos);
     }
     public  Map<String, Object> selTrend(List<UseOfHoursVo> useOfHoursVos ) {
-//        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrendDm(Year);
+//        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.seluesOfHoursTrendDm(year);
 
         Map<String, Object> map = new HashMap<>();
         List<String> yData1List=useOfHoursVos.stream().map(UseOfHoursVo::getYData1).distinct().collect(Collectors.toList());

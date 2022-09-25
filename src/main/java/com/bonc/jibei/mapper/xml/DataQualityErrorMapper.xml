@@ -128,7 +128,7 @@
             cc.type_id
         FROM
             jb_qualified jb
-        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.danji_code=jb.station_id
         where 1=1
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}
@@ -162,7 +162,7 @@
                 ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS pass_rate
         FROM
             jb_qualified jb
-        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.danji_code=jb.station_id
         where 1=1
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}

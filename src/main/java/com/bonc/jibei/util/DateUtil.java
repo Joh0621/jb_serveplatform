@@ -174,5 +174,37 @@ public class DateUtil {
         String res = simpleDateFormat.format(date);
         return res;
     }
+    /*
+     * 获取今年月份集合
+     */
+    public static List<String> getMonthOfYear(String year) {
 
+        Calendar calendar = Calendar.getInstance();
+        List<String> list = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("MM");
+        //判断是否本年
+        if(year.equals(String.valueOf(calendar.get(Calendar.YEAR)))){
+            System.out.println("222");
+            String firstday = format.format(calendar.getTime());
+            System.out.println(firstday);
+            for (int i = 1; i <= Double.valueOf(firstday); i++) {
+                if (i < 10) {
+                    String month = "0" + i;
+                    list.add(month);
+                }
+
+            }
+        }else {
+            list = Arrays.asList("01","02","03","04","05","06","07","08","09","10","11","12");
+        }
+        Date date = null;
+        try {
+            date = format.parse(year);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return list;
+    }
 }
