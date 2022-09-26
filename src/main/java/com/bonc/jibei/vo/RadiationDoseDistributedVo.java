@@ -35,7 +35,7 @@ public class RadiationDoseDistributedVo implements Serializable {
     /**
      * 个数
      */
-    private Integer cnt;
+    private Double cnt;
 
     /**
      * 场站id

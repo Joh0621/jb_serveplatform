@@ -43,7 +43,7 @@ public class DataQualityAnsController {
     private DataQualityErrorMapper dataQualityErrorMapper;
     /**
      * @catalog  数据质量合格率统计
-     *
+     * @type 1:风电 2：光伏
      * */
     @GetMapping("passRateStatistics")
 //    @ResponseBody

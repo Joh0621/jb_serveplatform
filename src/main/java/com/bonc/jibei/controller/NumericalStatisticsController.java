@@ -205,7 +205,7 @@ public class NumericalStatisticsController {
         ArrayList<Object> qhdRateList = new ArrayList<>();
         ArrayList<Object> cdRateList = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
-        Map<String, Integer> collectCnt = numericalStatisticsVos.stream().collect(
+        Map<String, Double> collectCnt = numericalStatisticsVos.stream().collect(
                 Collectors.toMap(k -> k.getValue() + "-" + k.getAName(), RadiationDoseDistributedVo::getCnt));
         Map<String, Double> collectRate= numericalStatisticsVos.stream().collect(
                 Collectors.toMap(k->k.getValue()+"-"+k.getAName(), RadiationDoseDistributedVo::getRate));
@@ -331,8 +331,8 @@ public class NumericalStatisticsController {
      */
     @RequestMapping("selSunHoursTrend")
     @ResponseBody
-    public Result selSunHoursTrend(String startTime, String endTime) {
-        Map<String,Object> result=numericalStatisticsService.selSunHoursTrend( startTime, endTime);
+    public Result selSunHoursTrend(String year) {
+        Map<String,Object> result=numericalStatisticsService.selSunHoursTrend( year);
         return Result.ok(result);
     }
 

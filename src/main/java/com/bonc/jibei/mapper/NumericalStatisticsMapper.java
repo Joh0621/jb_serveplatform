@@ -37,7 +37,6 @@ public interface NumericalStatisticsMapper {
                                                                    @Param("flag") String flag ,
                                                                    @Param("flag1") String flag1 );
 
-    List<SunHoursTrendVo>   selSunHoursTrend(@Param("startTime") String startTime,
-                                             @Param("endTime") String endTime);
+    List<SunHoursTrendVo>   selSunHoursTrend(@Param("year") String year);
 
 }
