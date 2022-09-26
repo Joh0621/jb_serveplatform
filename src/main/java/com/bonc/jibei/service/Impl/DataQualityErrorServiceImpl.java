@@ -21,10 +21,12 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,7 +81,6 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
 
     @Override
     public PassRateStatistics passRateStatistics(String startTime, String endTime, String type,String stationId) {
-        List<Map<String, Object>> list = new ArrayList<>();
         List<PassRateStatistics> passRateStatisticsList = dataQualityErrorMapper.passRateStatistics(startTime, endTime, type,stationId);
         PassRateStatistics PassRateStatistics = new PassRateStatistics();
         Integer total = 0;
@@ -93,11 +94,13 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
                 PassRateStatistics.setQualifiedNum(QualifiedNum);
                 //总合格率
                 PassRateStatistics.setQualifiedRate( Double.valueOf( NumberUtil.round((Double.valueOf(QualifiedNum)/total*100), 2).toString()));
+                if (ps.getTypeId()!=null&&!"".equals(ps.getTypeId())){
                if (ps.getTypeId().equals(1)){
                    PassRateStatistics.setWindQualifiedRate(ps.getQualifiedRate());
                }else if (ps.getTypeId().equals(2)){
                    PassRateStatistics.setPVQualifiedRate(ps.getQualifiedRate());
                }
+            }
             }else {
                 BeanUtil.copyProperties(ps,PassRateStatistics);
                 if (ps.getTypeId().equals(1)){
@@ -112,15 +115,19 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
     }
 
     @Override
-    public List<Map<String, Object>> selPassRateTrend(String startTime, String endTime, String type, String stationId,String dataFlag) {
+    public List<Map<String, Object>>  selPassRateTrend(String startTime, String endTime, String type, String stationId,String dataFlag) {
         List<Qualified> qualifieds = dataQualityErrorMapper.SelPassRateTrend(startTime, endTime, type,stationId,dataFlag);
         List<Map<String,Object>> windList = new ArrayList<>();
+        //保留2为小数
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
         for (Qualified qualified:qualifieds){
             Map<String, Object> map = new HashMap<>();
-            map.put("hlpt",qualified.getHlpt() );
-            map.put("djxt", qualified.getDjxt() );
-            map.put("czsssj", qualified.getCzsssj() );
-            map.put("glycsj", qualified.getGlycsj() );
+            double sum=qualified.getHlpt()+qualified.getDjxt()+qualified.getCzsssj()+ qualified.getGlycsj();
+            map.put("hlpt",df.format(qualified.getHlpt()/sum*100) );
+            map.put("djxt", df.format(qualified.getDjxt()/sum*100) );
+            map.put("czsssj", df.format(qualified.getCzsssj()/sum*100) );
+            map.put("glycsj", df.format(qualified.getGlycsj()/sum*100) );
             map.put("passRate",qualified.getPassRate());
             if (dataFlag==null||"".equals(dataFlag)||"1".equals(dataFlag)){
                 map.put("date", qualified.getDateTime());

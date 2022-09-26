@@ -13,11 +13,11 @@ import java.util.*;
  */
 public class DateUtil {
     /**
-    * 获取当前日期所在季度的开始日期和结束日期
-    * 季度一年四季， 第一季度：1月-3月， 第二季度：4月-6月， 第三季度：7月-9月， 第四季度：10月-12月
-    * @param isFirst  true表示查询本季度开始日期  false表示查询本季度结束日期
-    * @return
-    */
+     * 获取当前日期所在季度的开始日期和结束日期
+     * 季度一年四季， 第一季度：1月-3月， 第二季度：4月-6月， 第三季度：7月-9月， 第四季度：10月-12月
+     * @param isFirst  true表示查询本季度开始日期  false表示查询本季度结束日期
+     * @return
+     */
     public static LocalDate getDateQrt(Boolean isFirst){
         LocalDate today=LocalDate.now();
         LocalDate resDate = LocalDate.now();
@@ -31,9 +31,9 @@ public class DateUtil {
             resDate = LocalDate.of(today.getYear(), firstMonthOfQuarter, 1);
         } else {
             resDate = LocalDate.of(today.getYear(), endMonthOfQuarter, endMonthOfQuarter.length(today.isLeapYear()));
-      }
-            return resDate;
-     }
+        }
+        return resDate;
+    }
     //获取当前季度
     public static String getQuarterByDate(String date) throws ParseException {
         if(date == ""|| "".equals(date)){
@@ -55,12 +55,12 @@ public class DateUtil {
             return year + "年第四季度";
         }else{
             return "";
-         }
-     }
+        }
+    }
 
     /**
-    * 获取上一季度所在年份
-    **/
+     * 获取上一季度所在年份
+     **/
     public static Integer lastQrtYear() {
         int n= LocalDate.now().getMonthValue();
         int y=LocalDate.now().getYear();
@@ -174,5 +174,37 @@ public class DateUtil {
         String res = simpleDateFormat.format(date);
         return res;
     }
+    /*
+     * 获取今年月份集合
+     */
+    public static List<String> getMonthOfYear(String year) {
 
+        Calendar calendar = Calendar.getInstance();
+        List<String> list = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("MM");
+        //判断是否本年
+        if(year.equals(String.valueOf(calendar.get(Calendar.YEAR)))){
+            System.out.println("222");
+            String firstday = format.format(calendar.getTime());
+            System.out.println(firstday);
+            for (int i = 1; i <= Double.valueOf(firstday); i++) {
+                if (i < 10) {
+                    String month = "0" + i;
+                    list.add(month);
+                }
+
+            }
+        }else {
+            list = Arrays.asList("01","02","03","04","05","06","07","08","09","10","11","12");
+        }
+        Date date = null;
+        try {
+            date = format.parse(year);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return list;
+    }
 }

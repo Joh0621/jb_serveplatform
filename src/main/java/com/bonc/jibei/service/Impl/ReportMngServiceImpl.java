@@ -77,7 +77,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
         //上季度 开始时间和结束时间
         String startdate = DateUtil.lastQrtStart();
         String enddate = DateUtil.lastQrtEnd();
-        JSONObject jsonstr = JsonUtil.createJson(reportMng.getStationId(), reportMng.getStationType(), modelId, startdate + " 00:00:00", enddate + " 23:59:59", reportMng.getId());
+        JSONObject jsonstr = JsonUtil.createJson(reportMng.getStationId(), reportMng.getStationType(), modelId, startdate + " 00:00:00", enddate + " 23:59:59", reportMng.getId(),"");
         //调用接口 生成报告文件
         String reportUrl = reportService.generate(jsonstr);
 
@@ -118,7 +118,7 @@ public class ReportMngServiceImpl extends ServiceImpl<ReportMngMapper, ReportMng
         Integer modelId = reportMng.getModelId();
         //获得已知季度的 开始时间和结束时间
         Map<String, String> d = DateUtil.getStartByYearQrt(reportMng.getReportYear(), reportMng.getReportQuarter());
-        JSONObject jsonstr = JsonUtil.createJson(reportMng.getStationId(), reportMng.getStationType(), modelId, d.get("startDate"), d.get("endDate"), reportMng.getId());
+        JSONObject jsonstr = JsonUtil.createJson(reportMng.getStationId(), reportMng.getStationType(), modelId, d.get("startDate"), d.get("endDate"), reportMng.getId(),"");
         //调用接口 生成报告文件
         LOGGER.info("generate report : " + reportMng.getStationId());
         // 调用生成报告

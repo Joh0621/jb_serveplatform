@@ -53,10 +53,10 @@ public class Qualified implements Serializable {
      */
     private Integer stationId;
 
-    private String hlpt;
-    private String djxt;
-    private String czsssj;
-    private String glycsj;
+    private Integer hlpt;
+    private Integer djxt;
+    private Integer czsssj;
+    private Integer glycsj;
     private Double passRate;
 
 
