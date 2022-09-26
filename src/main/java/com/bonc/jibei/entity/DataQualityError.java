@@ -49,6 +49,15 @@ public class DataQualityError implements Serializable {
     private String dataSource;
 
     /**
+     * 表编码
+     */
+    private String tableNO;
+
+    /**
+     * 表编码
+     */
+    private String deviceId;
+    /**
      * 编码
      */
     private String code;

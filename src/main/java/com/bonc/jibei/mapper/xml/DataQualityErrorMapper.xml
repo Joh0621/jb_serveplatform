@@ -193,7 +193,7 @@
             cc.station_name
         FROM
             jb_data_quality_error err
-             LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',jb.station_id ,'%')
+             LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',err.station_id ,'%')
         where 1=1
         <if test="dataSource != null  and dataSource != ''">
             and   err.data_source=#{dataSource}
@@ -211,7 +211,7 @@
         count(*) as cnt
         FROM
         jb_data_quality_error err
-        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',jb.station_id ,'%')
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',err.station_id ,'%')
         where 1=1
         <if test="dataSource != null  and dataSource != ''">
             and   err.data_source=#{dataSource}
