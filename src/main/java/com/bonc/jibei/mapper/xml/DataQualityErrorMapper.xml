@@ -122,13 +122,13 @@
 
     <select id="passRateStatistics" resultType="com.bonc.jibei.entity.PassRateStatistics">
         SELECT
-            SUM( total_num ) AS totalNum,
-            SUM( qualified_num ) AS qualifiedNum,
-            ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS qualifiedRate,
-            cc.type_id
+        SUM( total_num ) AS totalNum,
+        SUM( qualified_num ) AS qualifiedNum,
+        ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS qualifiedRate,
+        cc.type_id
         FROM
-            jb_qualified jb
-        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.danji_code  LIKE CONCAT('%',jb.station_id ,'%')
+        jb_qualified jb
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
         where 1=1
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}
@@ -140,35 +140,35 @@
             and   jb.date_time &lt;= #{endTime}
         </if>
         <if test="stationId != null  and stationId != ''">
-            and   cc.station_id=#{stationId}
+            and   jb.station_id=#{stationId}
         </if>
         GROUP BY cc.type_id
     </select>
 
     <select id="SelPassRateTrend" resultType="com.bonc.jibei.entity.Qualified">
         SELECT
-            <choose>
-                <when test = "dataFlag=='2'.toString()">
-                    cc.station_name  as station_id,
-                </when>
-                <otherwise>
-                    date_time,
-                </otherwise>
-            </choose>
-                SUM( CASE `data_source` WHEN '1' THEN un_qualified_num ELSE 0 END ) AS 'hlpt',
-                SUM( CASE `data_source` WHEN '2' THEN un_qualified_num ELSE 0 END ) AS 'djxt',
-                SUM( CASE `data_source` WHEN '3' THEN un_qualified_num ELSE 0 END ) AS 'czsssj',
-                SUM( CASE `data_source` WHEN '4' THEN un_qualified_num ELSE 0 END ) AS 'glycsj',
-                ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS pass_rate
+        <choose>
+            <when test = "dataFlag=='2'.toString()">
+                jb.station_id,
+            </when>
+            <otherwise>
+                date_time,
+            </otherwise>
+        </choose>
+        SUM( CASE `data_source` WHEN '1' THEN un_qualified_num ELSE 0 END ) AS 'hlpt',
+        SUM( CASE `data_source` WHEN '2' THEN un_qualified_num ELSE 0 END ) AS 'djxt',
+        SUM( CASE `data_source` WHEN '3' THEN un_qualified_num ELSE 0 END ) AS 'czsssj',
+        SUM( CASE `data_source` WHEN '4' THEN un_qualified_num ELSE 0 END ) AS 'glycsj',
+        ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS pass_rate
         FROM
-            jb_qualified jb
-        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc  on cc.danji_code  LIKE CONCAT('%',jb.station_id ,'%')
+        jb_qualified jb
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
         where 1=1
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}
         </if>
         <if test="stationId != null  and stationId != ''">
-            and   cc.station_id=#{stationId}
+            and   jb.station_id=#{stationId}
         </if>
         <if test="startTime != null  and startTime != ''">
             and   jb.date_time &gt;= #{startTime}
@@ -179,7 +179,7 @@
         GROUP BY
         <choose>
             <when test = "dataFlag=='2'.toString()">
-                cc.station_id
+                jb.station_id
             </when>
             <otherwise>
                 date_time
@@ -189,11 +189,11 @@
 
     <select id="selErrorRecord" resultType="com.bonc.jibei.entity.DataQualityError">
         SELECT
-            err.*,
-            cc.station_name
+        err.*,
+        cc.station_name
         FROM
-            jb_data_quality_error err
-             LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',err.station_id ,'%')
+        jb_data_quality_error err
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = err.station_id
         where 1=1
         <if test="dataSource != null  and dataSource != ''">
             and   err.data_source=#{dataSource}
@@ -211,7 +211,7 @@
         count(*) as cnt
         FROM
         jb_data_quality_error err
-        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',err.station_id ,'%')
+        LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = err.station_id
         where 1=1
         <if test="dataSource != null  and dataSource != ''">
             and   err.data_source=#{dataSource}
@@ -240,13 +240,13 @@
         jb_data_quality_error
         GROUP BY
         station_id,data_source,error_type
-        )a LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',a.station_id ,'%')
+        )a LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = err.station_id
         where  1=1
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}
         </if>
         GROUP BY
-            data_source
+        data_source
     </select>
     <select id="selErrorDistributedForError" resultType="com.bonc.jibei.vo.DataQualityErrorVo">
         SELECT
@@ -266,7 +266,7 @@
         jb_data_quality_error
         GROUP BY
         station_id,data_source,error_type
-        )a LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  LIKE CONCAT('%',a.station_id ,'%')
+        )a LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.danji_code  ON cc.station_id = err.station_id
         where  1=1
         <if test="type != null  and type != ''">
             and   cc.type_id=#{type}
