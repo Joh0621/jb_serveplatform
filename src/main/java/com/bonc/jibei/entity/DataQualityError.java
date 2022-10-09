@@ -62,6 +62,8 @@ public class DataQualityError implements Serializable {
      */
     private String code;
 
+    private String codeDesc;
+
     /**
      * 异常类型
      */
@@ -77,5 +79,8 @@ public class DataQualityError implements Serializable {
      */
     private String stationName;
 
+    private Integer cnt;
+
+    private  String tableName;
 
 }

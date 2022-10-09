@@ -207,4 +207,16 @@ public class DateUtil {
 
         return list;
     }
+    /*
+     * 增加/减少时间 0 增加 1 减少
+     */
+    public static String addTime(String flag,int num,String time) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date parse = format.parse(time);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(parse);
+        cal.add(Calendar.MINUTE,"0".equals(flag)?num:0-num);
+        parse= cal.getTime();
+        return format.format(parse);
+    }
 }

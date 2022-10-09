@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.bonc.jibei.entity.DataQualityError;
 import com.bonc.jibei.entity.PassRateStatistics;
 import com.bonc.jibei.entity.Qualified;
+import com.bonc.jibei.entity.Station;
 import com.bonc.jibei.vo.DataQualityErrorVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -64,22 +65,32 @@ public interface DataQualityErrorMapper {
 
 
     List<PassRateStatistics> passRateStatistics(@Param("startTime") String startTime,
-                                          @Param("endTime") String endTime,
-                                          @Param("type") String type,
-                                           @Param("stationId") String stationId  );
+                                                @Param("endTime") String endTime,
+                                                @Param("type") String type,
+                                                @Param("stationId") String stationId  );
 
+    String passRateStatisticsSortJb(@Param("startTime") String startTime,
+                                    @Param("endTime") String endTime,
+                                    @Param("type") String type,
+                                    @Param("stationId") String stationId  );
+
+
+    String passRateStatisticsSortPm(@Param("startTime") String startTime,
+                                    @Param("endTime") String endTime,
+                                    @Param("type") String type,
+                                    @Param("stationId") String stationId  );
     List<Qualified> SelPassRateTrend(@Param("startTime") String startTime,
-                               @Param("endTime") String endTime,
-                               @Param("type") String type,
-                               @Param("stationId") String stationId,
-                               @Param("dataFlag") String dataFlag);
+                                     @Param("endTime") String endTime,
+                                     @Param("type") String type,
+                                     @Param("stationId") String stationId,
+                                     @Param("dataFlag") String dataFlag);
 
 
     List<DataQualityErrorVo> selErrorDistributedForData(@Param("startTime") String startTime,
-                                     @Param("endTime") String endTime,
-                                     @Param("type") String type,
-                                     @Param("stationId") String stationId)
-                                        ;
+                                                        @Param("endTime") String endTime,
+                                                        @Param("type") String type,
+                                                        @Param("stationId") String stationId)
+            ;
     List<DataQualityErrorVo> selErrorDistributedForError(@Param("startTime") String startTime,
                                                          @Param("endTime") String endTime,
                                                          @Param("type") String type,
@@ -88,13 +99,27 @@ public interface DataQualityErrorMapper {
                                           @Param("dataSource") String dataSource,
                                           @Param("errorType") String errorType,
                                           @Param("stationId") String stationId,
-                                          @Param("DeviceId") String DeviceId);
+                                          @Param("DeviceId") String DeviceId,
+                                          @Param("startTime") String startTime,
+                                          @Param("endTime") String endTime);
 
-    Integer selErrorRecordTotal(@Param("dataSource") String dataSource,
-                                          @Param("errorType") String errorType,
-                                          @Param("stationId") String stationId,
-                                          @Param("DeviceId") String DeviceId);
+    DataQualityError selErrorRecordTotal(@Param("dataSource") String dataSource,
+                                         @Param("errorType") String errorType,
+                                         @Param("stationId") String stationId,
+                                         @Param("DeviceId") String DeviceId,
+                                         @Param("startTime") String startTime,
+                                         @Param("endTime") String endTime);
 
 
+    List<Station> selStation(
+            @Param("type") String type,
+            @Param("aname") String aname);
+
+    List<String> selDevice( @Param("stationId") String stationId,
+                            @Param("dataSource") String dataSource,
+                            @Param("errorType") String errorType,
+                            @Param("type") String type);
+
+    DataQualityError  errorDataStatisticsTablieName (@Param("id") String id);
 
 }

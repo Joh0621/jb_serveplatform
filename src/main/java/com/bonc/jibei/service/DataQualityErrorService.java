@@ -46,12 +46,12 @@ public interface DataQualityErrorService {
 
 
 
-    List<DataQualityError>  selErrorRecord(IPage<?> page,String dataSource, String errorType, String stationId, String DeviceId);
+    List<DataQualityError>  selErrorRecord(IPage<?> page,String dataSource, String errorType, String stationId, String DeviceIdString ,String startTime, String endTime);
 
 
     Map<String,Object>  selErrorDistributed(String startTime, String endTime, String type,String stationId);
 
 
-    List<Map<String,Object>>  errorDataStatistics(String startTime, String endTime,String stationId , String dataSource,String errorType,String code);
+    List<Map<String,Object>>  errorDataStatistics(String id);
 
 }

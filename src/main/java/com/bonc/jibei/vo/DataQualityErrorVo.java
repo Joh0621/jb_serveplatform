@@ -21,7 +21,7 @@ public class DataQualityErrorVo {
     /**
      * 结束时间
      */
-    private Date endTime;
+    private String endTime;
 
     /**
      * 场站id

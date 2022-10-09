@@ -51,12 +51,12 @@ public class Qualified implements Serializable {
     /**
      * 场站id
      */
-    private Integer stationId;
+    private String stationId;
 
-    private Integer hlpt;
-    private Integer djxt;
-    private Integer czsssj;
-    private Integer glycsj;
+    private Double hlpt;
+    private Double djxt;
+    private Double czsssj;
+    private Double glycsj;
     private Double passRate;
 
 

@@ -68,12 +68,13 @@ public class DataQualityAnsController {
      */
     @RequestMapping("errorRecord")
     @ResponseBody
-    public Result errorRecord(@ApiIgnore Page<InterParams> page,String dataSource, String errorType, String stationId, String DeviceId ) {
+    public Result errorRecord(@ApiIgnore Page<InterParams> page,String dataSource, String errorType, String stationId, String DeviceId,String startTime, String endTime ) {
         Page<DataQualityError> jpage = new Page<>(page.getCurrent(), page.getSize());
         jpage.setSearchCount(false);
-        List<DataQualityError> result=   dataQualityErrorService.selErrorRecord(jpage,dataSource,errorType,stationId,DeviceId);
+        List<DataQualityError> result=   dataQualityErrorService.selErrorRecord(jpage,dataSource,errorType,stationId,DeviceId, startTime,  endTime);
         jpage.setRecords(result);
-        jpage.setTotal(dataQualityErrorMapper.selErrorRecordTotal(dataSource, errorType, stationId, DeviceId));
+        jpage.setTotal(dataQualityErrorMapper.selErrorRecordTotal(dataSource, errorType, stationId, DeviceId,startTime,  endTime).getCnt());
+        jpage.setCountId(String.valueOf(dataQualityErrorMapper.selErrorRecordTotal(dataSource, errorType, stationId, DeviceId,startTime,  endTime).getNum()));
         return Result.of(jpage);
     }
 
@@ -89,20 +90,42 @@ public class DataQualityAnsController {
 
     /**
      * 异常数据统计
-     * @param startTime
-     * @param endTime
-     * @param stationId
-     * @param dataSource
+
+     * @param id
      * @return
      */
     @RequestMapping("errorDataStatistics")
     @ResponseBody
-    public Result errorDataStatistics(String startTime, String endTime,String stationId , String dataSource,String errorType,String code) {
-        List<Map<String, Object>> result=   dataQualityErrorService.errorDataStatistics(startTime,endTime,stationId,dataSource,errorType,code);
+    public Result errorDataStatistics(String id ) {
+        List<Map<String, Object>> result=   dataQualityErrorService.errorDataStatistics(id);
         return  Result.ok(result);
     }
 
+    /**
+     *
+     * @param type 1 风电场站 2:光伏场站
+     *  @param aname 1 风电场站 2:光伏场站
+     * @return
+     */
+    @RequestMapping("selStation")
+    @ResponseBody
+    public Result selStation(String type,String aname) {
+        List<Station> result=   dataQualityErrorMapper.selStation(type,aname);
+        return  Result.ok(result);
+    }
 
+    /**
+     *
+     * @param dataSource 1 风电场站 2:光伏场站
+     *  @param errorType 1 风电场站 2:光伏场站
+     * @return
+     */
+    @RequestMapping("selDevice")
+    @ResponseBody
+    public Result selDevice(String dataSource,String errorType,String stationId,String type) {
+        List<String> result=   dataQualityErrorMapper.selDevice(dataSource,errorType,stationId,type);
+        return  Result.ok(result);
+    }
 //    @RequestMapping("errorDataStatisticsDetail")
 //    @ResponseBody
 //    public Result errorDataStatisticsDetail(String startTime, String endTime,String stationId , String dataSource,String errorType) {

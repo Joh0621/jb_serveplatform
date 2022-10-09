@@ -27,11 +27,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 /**
  * @description data_quality_error
@@ -83,24 +82,26 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
     public PassRateStatistics passRateStatistics(String startTime, String endTime, String type,String stationId) {
         List<PassRateStatistics> passRateStatisticsList = dataQualityErrorMapper.passRateStatistics(startTime, endTime, type,stationId);
         PassRateStatistics PassRateStatistics = new PassRateStatistics();
-        Integer total = 0;
-        Integer QualifiedNum = 0;
+        Double total = 0.00;
+        Double QualifiedNum = 0.00;
+        DecimalFormat df = new DecimalFormat("#0.00");
+        df.setRoundingMode(RoundingMode.HALF_UP);
         for (PassRateStatistics ps:passRateStatisticsList){
-          //传入参数为全部时
+            //传入参数为全部时
             if (type==null||"".equals(type)||type.equals(0)){
                 total+=ps.getTotalNum();
                 QualifiedNum+=ps.getQualifiedNum();
                 PassRateStatistics.setTotalNum(total);
-                PassRateStatistics.setQualifiedNum(QualifiedNum);
+                PassRateStatistics.setQualifiedNum(Double.valueOf(df.format(QualifiedNum)));
                 //总合格率
                 PassRateStatistics.setQualifiedRate( Double.valueOf( NumberUtil.round((Double.valueOf(QualifiedNum)/total*100), 2).toString()));
                 if (ps.getTypeId()!=null&&!"".equals(ps.getTypeId())){
-               if (ps.getTypeId().equals(1)){
-                   PassRateStatistics.setWindQualifiedRate(ps.getQualifiedRate());
-               }else if (ps.getTypeId().equals(2)){
-                   PassRateStatistics.setPVQualifiedRate(ps.getQualifiedRate());
-               }
-            }
+                    if (ps.getTypeId().equals(1)){
+                        PassRateStatistics.setWindQualifiedRate(ps.getQualifiedRate());
+                    }else if (ps.getTypeId().equals(2)){
+                        PassRateStatistics.setPVQualifiedRate(ps.getQualifiedRate());
+                    }
+                }
             }else {
                 BeanUtil.copyProperties(ps,PassRateStatistics);
                 if (ps.getTypeId().equals(1)){
@@ -111,6 +112,18 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
 
             }
         }
+        if (stationId!=null&&!"".equals(stationId)){
+            //冀北排名
+            String jbpm = dataQualityErrorMapper.passRateStatisticsSortJb(startTime, endTime, "", stationId);
+            if (!"".equals(jbpm)){
+                PassRateStatistics.setJbpm(jbpm);
+            }
+            //风电/光伏排名
+            String pm = dataQualityErrorMapper.passRateStatisticsSortPm(startTime, endTime, type, stationId);
+            if (!"".equals(pm)){
+                PassRateStatistics.setPm(pm);
+            }
+        }
         return PassRateStatistics;
     }
 
@@ -119,15 +132,14 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
         List<Qualified> qualifieds = dataQualityErrorMapper.SelPassRateTrend(startTime, endTime, type,stationId,dataFlag);
         List<Map<String,Object>> windList = new ArrayList<>();
         //保留2为小数
-        DecimalFormat df = new DecimalFormat("0.00");
-        df.setRoundingMode(RoundingMode.HALF_UP);
+//        DecimalFormat df = new DecimalFormat("#0.0000");
+//        df.setRoundingMode(RoundingMode.HALF_UP);
         for (Qualified qualified:qualifieds){
             Map<String, Object> map = new HashMap<>();
-            double sum=qualified.getHlpt()+qualified.getDjxt()+qualified.getCzsssj()+ qualified.getGlycsj();
-            map.put("hlpt",df.format(qualified.getHlpt()/sum*100) );
-            map.put("djxt", df.format(qualified.getDjxt()/sum*100) );
-            map.put("czsssj", df.format(qualified.getCzsssj()/sum*100) );
-            map.put("glycsj", df.format(qualified.getGlycsj()/sum*100) );
+            map.put("hlpt",qualified.getHlpt() );
+            map.put("djxt", qualified.getDjxt() );
+            map.put("czsssj", qualified.getCzsssj() );
+            map.put("glycsj", qualified.getGlycsj());
             map.put("passRate",qualified.getPassRate());
             if (dataFlag==null||"".equals(dataFlag)||"1".equals(dataFlag)){
                 map.put("date", qualified.getDateTime());
@@ -140,8 +152,8 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
     }
 
     @Override
-    public List<DataQualityError> selErrorRecord(IPage<?> page,String dataSource, String errorType, String stationId, String DeviceId) {
-        List<DataQualityError> dataQualityErrors = dataQualityErrorMapper.selErrorRecord(page,dataSource, errorType, stationId, DeviceId);
+    public List<DataQualityError> selErrorRecord(IPage<?> page,String dataSource, String errorType, String stationId, String DeviceId,String startTime, String endTime) {
+        List<DataQualityError> dataQualityErrors = dataQualityErrorMapper.selErrorRecord(page,dataSource, errorType, stationId, DeviceId, startTime,  endTime);
         for (DataQualityError err:dataQualityErrors){
 
             if (err.getErrorType()!=null&&err.getErrorType()!="") {
@@ -252,13 +264,14 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
 
     @SneakyThrows
     @Override
-    public List<Map<String, Object>> errorDataStatistics(String startTime, String endTime, String stationId, String dataSource, String errorType,  String code) {
-//        dataQualityErrorMapper.errorDataStatistics(startTime, endTime, stationId, dataSource,errorType,code);
+    public List<Map<String, Object>> errorDataStatistics( String id) {
 //        List<Influx> influxList = influxDBClient.query("SELECT *  FROM iot_tmp   limit 10", Influx.class);
         //假如数据源是场站实时数据，就去influxdb查询
-        String type="";
+        DataQualityError   vo =dataQualityErrorMapper.errorDataStatisticsTablieName(id);
+
+        String startTime = vo.getStartTime();
         List<Map<String, Object>> list = new ArrayList<>();
-        if ("3".equals(dataSource)) {
+        if ("3".equals(vo.getDataSource())) {
             String value = "SELECT * FROM \"iot_ncepri\" WHERE time > now() - 5m limit 100 tz('Asia/Shanghai') ";
             List<Influx> influxList = influxDBClient.query(value, Influx.class);
             if(null!=influxList&&influxList.size()>0){
@@ -271,51 +284,58 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
                     list.add(map);
                 }
             }
-        }else if ("1".equals(dataSource)){
-            String table="";
-            String cxjg="";
-            String cxtj="";
-            if(null!=errorType&&"".equals(errorType)){
-                if ("1".equals(dataSource)){
-                    //海量平台
-                    table="src_hlpt_calcpoint_d";
-                }else if ("2".equals(dataSource)){
-                    //单机-光伏
-                    if ("2".equals(type)){
-                        table="src_danji_sun_format_d";
-                        cxtj="station='' and gfid='1#INY'";
-                    }else {
-                        //单机-风电
-                        table="src_danji_wind_format_d";
-                        cxtj="station='' and fjid='49#FJ'";
-                    }
-                }else if ("4".equals(dataSource)){
-                    //功率预测-光伏
-                    cxtj="tag=''";
-                    if ("2".equals(type)){
-                        table="src_glyc_sungrnx_d";
-                    }else {
-                        //功率预测-风电
-                        table="src_glyc_windgnrx_d";
-                    }
-
-                }
-            }
-//         String sql="select datatime as time,spd as value from src.src_danji_wind_format_d a where a.fjid='49#FJ' ";
-            Class.forName("org.apache.hive.jdbc.HiveDriver");
-            Connection connection = DriverManager.getConnection("jdbc:hive2://24.43.105.36:10000/src", "hadoop", "hadoop");
-            Statement statement = connection.createStatement();
-            System.out.println("++++++++++++++");
-            ResultSet rs = statement.executeQuery("SELECT  from_unixtime(unix_timestamp(a.ddate),'yyyy-MM-dd HH:mm:ss') as x1,      a.value as y1 ,     round(cast(b.value as double ),2) as  y2         FROM src.src_glyc_windgnrx_d a     left join src.src_hlpt_calcpoint_d b      on REGEXP_REPLACE( REGEXP_REPLACE(REGEXP_REPLACE(a.ddate,'-','') ,':',''),' ','')=CONCAT (b.ddate,b.ttime,'00')      where  a.tag ='dawindfore70' and a.day=REGEXP_REPLACE(SUBSTR('2022-03-13 00:00:00',0,10) ,'-','')     and  b.id ='121878665217709300' and b.day=REGEXP_REPLACE(SUBSTR('2022-03-14 00:00:00',0,10) ,'-','')     ORDER  by  a.ddate \n");
-            while (rs.next()){
-                String value = rs.getString("y1");
-                System.out.println("aaaaa"+value);
-            }
-            statement.close();
-            connection.close();
-            list = hiveConfig.query("SELECT  from_unixtime(unix_timestamp(a.ddate),'yyyy-MM-dd HH:mm:ss') as x1,      a.value as y1 ,     round(cast(b.value as double ),2) as  y2         FROM src.src_glyc_windgnrx_d a     left join src.src_hlpt_calcpoint_d b      on REGEXP_REPLACE( REGEXP_REPLACE(REGEXP_REPLACE(a.ddate,'-','') ,':',''),' ','')=CONCAT (b.ddate,b.ttime,'00')      where  a.tag ='dawindfore70' and a.day=REGEXP_REPLACE(SUBSTR('2022-03-13 00:00:00',0,10) ,'-','')     and  b.id ='121878665217709300' and b.day=REGEXP_REPLACE(SUBSTR('2022-03-14 00:00:00',0,10) ,'-','')     ORDER  by  a.ddate \n");
-
         }
+//        }else if ("1".equals(vo.getDataSource())){
+//            String table="";
+//            String cxjg="";
+//            String cxtj="";
+//            if(null!=errorType&&"".equals(errorType)){
+//                if ("1".equals(dataSource)){
+//                    //海量平台
+//                    table="src_hlpt_calcpoint_d";
+//                }else if ("2".equals(dataSource)){
+//                    //单机-光伏
+//                    if ("2".equals(type)){
+//                        table="src_danji_sun_format_d";
+//                        cxtj="station='' and gfid='1#INY'";
+//                    }else {
+//                        //单机-风电
+//                        table="src_danji_wind_format_d";
+//                        cxtj="station='' and fjid='49#FJ'";
+//                    }
+//                }else if ("4".equals(dataSource)){
+//                    //功率预测-光伏
+//                    cxtj="tag=''";
+//                    if ("2".equals(type)){
+//                        table="src_glyc_sungrnx_d";
+//                    }else {
+//                        //功率预测-风电
+//                        table="src_glyc_windgnrx_d";
+//                    }
+//
+//                }
+//            }
+
+        String deviceId="2#FJ";
+//            stationId="ZHONGBAO";
+//            deviceId="2#FJ";
+//            startTime="2022-09-22 14:05:00";
+//            endTime="2022-09-22 14:09:00";
+//         String sql="select datatime as time,spd as value from src.src_danji_wind_format_d a where a.fjid='49#FJ' ";
+        Class.forName("org.apache.hive.jdbc.HiveDriver");
+//            Connection connection = DriverManager.getConnection("jdbc:hive2://24.43.105.36:10000/src", "hadoop", "hadoop");
+//            Statement statement = connection.createStatement();
+//            System.out.println("++++++++++++++");
+//            ResultSet rs = statement.executeQuery("SELECT  from_unixtime(unix_timestamp(a.ddate),'yyyy-MM-dd HH:mm:ss') as x1,      a.value as y1 ,     round(cast(b.value as double ),2) as  y2         FROM src.src_glyc_windgnrx_d a     left join src.src_hlpt_calcpoint_d b      on REGEXP_REPLACE( REGEXP_REPLACE(REGEXP_REPLACE(a.ddate,'-','') ,':',''),' ','')=CONCAT (b.ddate,b.ttime,'00')      where  a.tag ='dawindfore70' and a.day=REGEXP_REPLACE(SUBSTR('2022-03-13 00:00:00',0,10) ,'-','')     and  b.id ='121878665217709300' and b.day=REGEXP_REPLACE(SUBSTR('2022-03-14 00:00:00',0,10) ,'-','')     ORDER  by  a.ddate  ");
+//            while (rs.next()){
+//                String value = rs.getString("y1");
+//                System.out.println("aaaaa"+value);
+//            }
+//            statement.close();
+//            connection.close();
+
+        list = hiveConfig.query("SELECT datatime x1,  pwrat y1 from  src."+vo.getTableName()+" where station='"+vo.getStationId()+"' and fjid='"+vo.getDeviceId()+"' and  day=REGEXP_REPLACE(SUBSTR('"+vo.getDate()+"', 0, 10) , '-', '')  and  datatime>= '"+DateUtil.addTime("1",2,vo.getStartTime())+"' and  datatime<= '"+DateUtil.addTime("0",2,vo.getEndTime())+"' ");
+
         //否则就查询Hive
 //        System.out.println(influxList);
         return list;
