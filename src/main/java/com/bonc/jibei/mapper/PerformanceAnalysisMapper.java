@@ -12,7 +12,21 @@ public interface PerformanceAnalysisMapper {
 
     UseOfHoursVo  powerGenerationIndex(@Param("year") String year,
                          @Param("type") String type);
+
+    UseOfHoursVo  powerGenerationIndexCz(@Param("startTime") String startTime,
+                                         @Param("endTime") String endTime,
+                                       @Param("type") String type,
+                                         @Param("stationId") String stationId);
+
+    UseOfHoursVo  powerGenerationIndexCzSortDm(@Param("startTime") String startTime,
+                                               @Param("endTime") String endTime,
+                                         @Param("type") String type,
+                                         @Param("stationId") String stationId);
+
     List<UseOfHoursVo> seluesOfHoursTrendDq(@Param("year") String year);
+
+    List<UseOfHoursVo> uesOfHoursTrendCz(@Param("yearMonth") String yearMonth,
+                                         @Param("stationId") String stationId);
 
     List<UseOfHoursVo> seluesOfHoursTrendDm(@Param("year") String year);
 

@@ -20,20 +20,204 @@
     <select id="powerGenerationIndex" resultType="com.bonc.jibei.vo.UseOfHoursVo">
         <choose>
             <when test = "type=='1'.toString()">
-                SELECT AVG(utilize_hour) xdata ,avg(pr_value) yData FROM  jb_power_generation_efficiency
+                SELECT Round( AVG(utilize_hour),2) xdata ,Round( avg(pr_value),2) yData FROM  jb_power_generation_efficiency
+                where 1=1
+                <if test="year != null and '' != year">
+                  and  DATE_FORMAT( data_time, "%Y" )= #{year}
+                </if>
             </when>
             <when test = "type=='2'.toString()">
-                SELECT AVG(power_prediction_rate) xdata FROM jb_power_prediction
+                SELECT Round( AVG(power_prediction_rate)*100,2) xdata FROM jb_power_prediction
+                    where 1=1
+                <if test="year != null and '' != year">
+                  and  DATE_FORMAT( data_time, "%Y" )= #{year}
+                </if>
             </when>
             <when test = "type=='3'.toString()">
-                SELECT AVG(fault_total) xdata,type yData FROM jb_fault_info_type  GROUP BY type
+                SELECT Round( AVG(fault_total),2) xdata,type yData FROM jb_fault_info_type
+                 WHERE type=1
+                <if test="type != null and '' != type">
+                    and  DATE_FORMAT( `year_month`, "%Y" )= #{year}
+                </if>
             </when>
             <when test = "type=='4'.toString()">
-                SELECT AVG(fault_total) FROM jb_fault_info_type WHERE type=2
+                SELECT Round( AVG(fault_total),2) xdata FROM jb_fault_info_type WHERE type=2
+                <if test="type != null and '' != type">
+                    and  DATE_FORMAT( `year_month`, "%Y" )= #{year}
+                </if>
             </when>
         </choose>
     </select>
 
+    <select id="powerGenerationIndexCz" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT dd.sort_jb,dd.xdata
+        FROM
+            (
+                SELECT concat(@r:=@r+1, "") sort_jb, d1.*
+                FROM (
+                         SELECT d.*
+                         FROM (
+                         <choose>
+                                <when test = "type=='1'.toString()">
+                                         SELECT
+                                    Round( AVG(utilize_hour),2)  xdata,station_id
+                                        FROM
+                                        jb_power_generation_efficiency
+                                    where 1=1
+                                    <if test="startTime != null ">
+                                        and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
+                                    </if>
+                                    <if test="endTime != null ">
+                                        and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
+                                    </if>
+                                </when>
+                                 <when test = "type=='2'.toString()">
+                                    SELECT Round( avg(pr_value),2) xData,station_id FROM  jb_power_generation_efficiency
+                                     where 1=1
+                                     <if test="startTime != null ">
+                                         and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
+                                     </if>
+                                     <if test="endTime != null ">
+                                         and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
+                                     </if>
+                                 </when>
+                             <when test = "type=='3'.toString()">
+                                 SELECT Round( AVG(power_prediction_rate)*100,2) xdata,station_id FROM jb_power_prediction
+                                 where 1=1
+                                 <if test="startTime != null ">
+                                     and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
+                                 </if>
+                                 <if test="endTime != null ">
+                                     and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
+                                 </if>
+                             </when>
+                             <when test = "type=='4'.toString()">
+                                 SELECT Round( AVG(fault_total),2) xdata,station_id  FROM jb_fault_info_type
+                                 WHERE 1=1
+                                 <if test="startTime != null ">
+                                     and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                                 </if>
+                                 <if test="endTime != null ">
+                                     and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                                 </if>
+                             </when>
+                             <when test = "type=='5'.toString()">
+                                 SELECT Round( AVG(fault_total),2) xdata ,station_id FROM jb_fault_info_type WHERE type=1
+                                 <if test="startTime != null ">
+                                     and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                                 </if>
+                                 <if test="endTime != null ">
+                                     and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                                 </if>
+                             </when>
+                             <when test = "type=='6'.toString()">
+                                 SELECT Round( AVG(fault_total),2) xdata ,station_id FROM jb_fault_info_type WHERE type=2
+                                 <if test="startTime != null ">
+                                     and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                                 </if>
+                                 <if test="endTime != null ">
+                                     and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                                 </if>
+                             </when>
+                         </choose>
+                                  GROUP BY station_id
+                                  ORDER BY	xdata DESC
+                              )d
+                     )d1, (SELECT @r:=0) a
+            )dd
+        WHERE 1=1
+          and   dd.station_id=#{stationId}
+    </select>
+
+    <select id="powerGenerationIndexCzSortDm" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT dd.sort_dm
+        FROM
+        (
+        SELECT concat(@r:=@r+1, "") sort_dm, d1.*
+        FROM (
+        SELECT d.*
+        FROM (
+        <choose>
+            <when test = "type=='1'.toString()">
+                SELECT
+                Round( AVG(utilize_hour),2)  xdata,jb.station_id,vs.s500id
+                FROM
+                jb_power_generation_efficiency jb
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=jb.station_id
+                where    vs.s500id=(SELECT s500id from cloudiip_access_equipment.v_stations_codes where station_id=#{stationId} )
+                <if test="startTime != null ">
+                    and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
+                </if>
+                <if test="endTime != null ">
+                    and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
+                </if>
+            </when>
+            <when test = "type=='2'.toString()">
+                SELECT Round( avg(pr_value),2) xData,jb.station_id,vs.s500id FROM  jb_power_generation_efficiency jb
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=jb.station_id
+                where    vs.s500id=(SELECT s500id from cloudiip_access_equipment.v_stations_codes where station_id=#{stationId} )
+                <if test="startTime != null ">
+                    and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
+                </if>
+                <if test="endTime != null ">
+                    and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
+                </if>
+            </when>
+            <when test = "type=='3'.toString()">
+                SELECT Round( AVG(power_prediction_rate)*100,2) xdata,jb.station_id,vs.s500id FROM jb_power_prediction jb
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=jb.station_id
+                where    vs.s500id=(SELECT s500id from cloudiip_access_equipment.v_stations_codes where station_id=#{stationId} )
+                <if test="startTime != null ">
+                    and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
+                </if>
+                <if test="endTime != null ">
+                    and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
+                </if>
+            </when>
+            <when test = "type=='4'.toString()">
+                SELECT Round( AVG(fault_total),2) xdata,jb.station_id,vs.s500id  FROM jb_fault_info_type jb
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=jb.station_id
+                where    vs.s500id=(SELECT s500id from cloudiip_access_equipment.v_stations_codes where station_id=#{stationId} )
+                <if test="startTime != null ">
+                    and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                </if>
+                <if test="endTime != null ">
+                    and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                </if>
+            </when>
+            <when test = "type=='5'.toString()">
+                SELECT Round( AVG(fault_total),2) xdata ,jb.station_id,vs.s500id FROM jb_fault_info_type  jb
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=jb.station_id
+                where    vs.s500id=(SELECT s500id from cloudiip_access_equipment.v_stations_codes where station_id=#{stationId} )
+                and type=1
+                <if test="startTime != null ">
+                    and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                </if>
+                <if test="endTime != null ">
+                    and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                </if>
+            </when>
+            <when test = "type=='6'.toString()">
+                SELECT Round( AVG(fault_total),2) xdata ,jb.station_id,vs.s500id FROM jb_fault_info_type   jb
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=jb.station_id
+                where    vs.s500id=(SELECT s500id from cloudiip_access_equipment.v_stations_codes where station_id=#{stationId} )
+                and type=2
+                <if test="startTime != null ">
+                    and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                </if>
+                <if test="endTime != null ">
+                    and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                </if>
+            </when>
+        </choose>
+        GROUP BY station_id
+        ORDER BY	xdata DESC
+        )d
+        )d1, (SELECT @r:=0) a
+        )dd
+        WHERE 1=1
+        and   dd.station_id=#{stationId}
+    </select>
     <select id="seluesOfHoursTrendDq" resultType="com.bonc.jibei.vo.UseOfHoursVo">
         SELECT
             DATE_FORMAT( data_time, "%Y-%m" ) xData,
@@ -63,7 +247,38 @@
         GROUP BY
             DATE_FORMAT( data_time, "%Y-%m" )
     </select>
-
+    <select id="uesOfHoursTrendCz" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT aa.xData,aa.yData,bb.yData1 ,cc.yData2 from (
+                                                               (SELECT
+                                                                    DATE_FORMAT( data_time, "%Y-%m" ) xData,
+                                                                    Round( sum( utilize_hour ), 2 ) yData
+                                                                FROM
+                                                                    jb_power_generation_efficiency  ht
+                                                                        LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+                                                                WHERE 1=1
+                                                                  and    ht.station_id=#{stationId}
+                                                                GROUP BY
+                                                                    DATE_FORMAT( data_time, "%Y-%m" )
+                                                               ) aa
+                                                                   LEFT JOIN
+                                                                   (SELECT DATE_FORMAT( data_time, "%Y-%m" ) xData1,Round( sum( utilize_hour )/count(DISTINCT(ht.station_id)) , 2 )yData1
+                                                                    FROM
+                                                                        jb_power_generation_efficiency  ht LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+                                                                    WHERE 1=1
+                                                                    GROUP BY
+                                                                        DATE_FORMAT( data_time, "%Y-%m" )
+                                                                   )bb on aa.xData=bb.xData1
+                                                                   LEFT JOIN
+                                                                   (SELECT  xData xData2,max(yData) yData2 from (
+                                                                                                                    SELECT DATE_FORMAT( data_time, "%Y-%m" ) xData,Round( sum( utilize_hour ), 2 ) yData,ht.station_id
+                                                                                                                    FROM jb_power_generation_efficiency  ht
+                                                                                                                             LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
+                                                                                                                    WHERE 1=1
+                                                                                                                    GROUP BY ht.station_id, DATE_FORMAT( data_time, "%Y-%m" )
+                                                                                                                )d GROUP BY xData
+                                                                   ) cc on aa.xData=cc.xData2
+                                                               )
+    </select>
     <select id="seluesOfHoursTrendDm" resultType="com.bonc.jibei.vo.UseOfHoursVo">
     SELECT
     DATE_FORMAT( data_time, "%Y-%m" ) xData,
@@ -312,7 +527,10 @@
             DATE_FORMAT(data_time,"%Y-%m") xData
         from jb_power_prediction
         WHERE
-            DATE_FORMAT( data_time, "%Y" )= 2022
+            1=1
+        <if test="year != null and '' != year">
+            and   DATE_FORMAT( data_time, "%Y" )= #{year}
+        </if>
         GROUP BY
             DATE_FORMAT(data_time,"%Y-%m")
     </select>
@@ -324,10 +542,9 @@
         "冀北" as yData1
         FROM
         jb_power_prediction jp
-
         WHERE 1=1
         <if test="startTime != null ">
-            data_time &gt;= #{startTime}
+         and   data_time &gt;= #{startTime}
         </if>
         <if test="endTime != null ">
         and data_time  &lt;= #{endTime}

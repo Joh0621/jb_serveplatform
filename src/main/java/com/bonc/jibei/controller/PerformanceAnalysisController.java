@@ -58,13 +58,43 @@ public class PerformanceAnalysisController {
     public Result powerGenerationIndex( String year) {
         Map<String, Object> map = new HashMap<>();
         //type 1:等效利用小时数,发电能效PR 2:功率预测准确度 3: 1:故障次数 2:故障检修时间 4:平均故障间隔时间
-        performanceAnalysisMapper.powerGenerationIndex(year,"1");
-        map.put("等效利用小时数",98.2);
-        map.put("平均故障间隔时间",1000);
-        map.put("发电能效PR",85.4);
-        map.put("故障次数",1100);
-        map.put("故障检修时间",2000);
-        map.put("功率预测准确度",98);
+        map.put("等效利用小时数",performanceAnalysisMapper.powerGenerationIndex(year, "1").getXData());
+        map.put("平均故障间隔时间",performanceAnalysisMapper.powerGenerationIndex(year, "4").getXData());
+        map.put("发电能效PR",performanceAnalysisMapper.powerGenerationIndex(year, "1").getYData());
+        map.put("故障次数",performanceAnalysisMapper.powerGenerationIndex(year, "3").getXData());
+        map.put("故障检修时间",performanceAnalysisMapper.powerGenerationIndex(year, "3").getYData());
+        map.put("功率预测准确度",performanceAnalysisMapper.powerGenerationIndex(year, "2").getXData());
+        return Result.ok(map);
+    }
+    /**
+     * 发电性能指标-场站
+     * @param year
+     * @return
+     */
+    @RequestMapping("powerGenerationIndexCz")
+    @ResponseBody
+    public Result powerGenerationIndexCz(String startTime,String endTime,String stationId) {
+        Map<String, Object> map = new HashMap<>();
+        //type 1:等效利用小时数,发电能效PR 2:功率预测准确度 3: 1:故障次数 2:故障检修时间 4:平均故障间隔时间
+        map.put("等效利用小时数",performanceAnalysisMapper.powerGenerationIndexCz(startTime,endTime ,"1",stationId));
+        map.put("平均故障间隔时间",performanceAnalysisMapper.powerGenerationIndexCz(startTime,endTime , "6",stationId));
+        map.put("发电能效PR",performanceAnalysisMapper.powerGenerationIndexCz(startTime,endTime , "2",stationId));
+        map.put("故障次数",performanceAnalysisMapper.powerGenerationIndexCz(startTime,endTime , "4",stationId));
+        map.put("故障检修时间",performanceAnalysisMapper.powerGenerationIndexCz(startTime,endTime , "5",stationId));
+        map.put("功率预测准确度",performanceAnalysisMapper.powerGenerationIndexCz(startTime,endTime , "3",stationId));
+        return Result.ok(map);
+    }
+    @RequestMapping("powerGenerationIndexCzDm")
+    @ResponseBody
+    public Result powerGenerationIndexCzDm( String startTime,String endTime,String stationId) {
+        Map<String, Object> map = new HashMap<>();
+        //type 1:等效利用小时数,发电能效PR 2:功率预测准确度 3: 1:故障次数 2:故障检修时间 4:平均故障间隔时间
+        map.put("等效利用小时数",performanceAnalysisMapper.powerGenerationIndexCzSortDm(startTime,endTime , "1",stationId));
+        map.put("平均故障间隔时间",performanceAnalysisMapper.powerGenerationIndexCzSortDm(startTime,endTime , "6",stationId));
+        map.put("发电能效PR",performanceAnalysisMapper.powerGenerationIndexCzSortDm(startTime,endTime , "2",stationId));
+        map.put("故障次数",performanceAnalysisMapper.powerGenerationIndexCzSortDm(startTime,endTime , "4",stationId));
+        map.put("故障检修时间",performanceAnalysisMapper.powerGenerationIndexCzSortDm(startTime,endTime , "5",stationId));
+        map.put("功率预测准确度",performanceAnalysisMapper.powerGenerationIndexCzSortDm(startTime,endTime , "3",stationId));
         return Result.ok(map);
     }
     /**
@@ -118,6 +148,56 @@ public class PerformanceAnalysisController {
         return Result.ok(map);
     }
 
+    /**
+     * 等效利用小时数趋势-地区
+     * @param year
+     * @return
+     */
+    @RequestMapping("uesOfHoursTrendCz")
+    @ResponseBody
+    public Result uesOfHoursTrendCz( String startTime,String endTime) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.uesOfHoursTrendCz(startTime,endTime);
+
+        Map<String, Object> map = new HashMap<>();
+        ArrayList<Object> xList = new ArrayList<>();
+        ArrayList<Object> jbList = new ArrayList<>();
+        ArrayList<Object> zjkList = new ArrayList<>();
+        ArrayList<Object> tsList = new ArrayList<>();
+        ArrayList<Object> lfList = new ArrayList<>();
+        ArrayList<Object> qhdList = new ArrayList<>();
+        ArrayList<Object> cdList = new ArrayList<>();
+        for (UseOfHoursVo vo: useOfHoursVos){
+            switch (vo.getYData1()) {
+                case "张家口":
+                    zjkList.add(vo.getYData());
+                    xList.add(vo.getXData());
+                    break;
+                case "唐山":
+                    tsList.add(vo.getYData());
+                    break;
+                case "廊坊":
+                    lfList.add(vo.getYData());
+                    break;
+                case "秦皇岛":
+                    qhdList.add(vo.getYData());
+                    break;
+                case "承德":
+                    cdList.add(vo.getYData());
+                    break;
+                case "冀北":
+                    jbList.add(vo.getYData());
+                    break;
+            }
+        }
+        map.put("xList",xList);
+        map.put("张家口",zjkList);
+        map.put("唐山",tsList);
+        map.put("廊坊",lfList);
+        map.put("秦皇岛",qhdList);
+        map.put("承德",cdList);
+        map.put("冀北",jbList);
+        return Result.ok(map);
+    }
     /**
      * 等效利用小时数趋势-断面
      * @param year

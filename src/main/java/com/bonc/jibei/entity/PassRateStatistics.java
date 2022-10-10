@@ -7,12 +7,12 @@ public class PassRateStatistics {
     /**
      * 接入数量
      */
-    private Integer totalNum;
+    private Double totalNum;
 
     /**
      * 合格数
      */
-    private Integer qualifiedNum;
+    private Double qualifiedNum;
 
     /**
      * 总合格率
@@ -32,4 +32,11 @@ public class PassRateStatistics {
      * 光伏/光电类型
      */
     private  Integer typeId;
+
+    //光伏或者风电排名
+    private  String pm;
+    //冀北排名
+    private  String jbpm;
+
+    private  String czpm;
 }
