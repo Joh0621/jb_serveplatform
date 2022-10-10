@@ -155,47 +155,27 @@ public class PerformanceAnalysisController {
      */
     @RequestMapping("uesOfHoursTrendCz")
     @ResponseBody
-    public Result uesOfHoursTrendCz( String startTime,String endTime) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.uesOfHoursTrendCz(startTime,endTime);
+    public Result uesOfHoursTrendCz( String startTime,String endTime,String stationId) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.uesOfHoursTrendCz(startTime,endTime,stationId);
 
         Map<String, Object> map = new HashMap<>();
         ArrayList<Object> xList = new ArrayList<>();
-        ArrayList<Object> jbList = new ArrayList<>();
-        ArrayList<Object> zjkList = new ArrayList<>();
-        ArrayList<Object> tsList = new ArrayList<>();
-        ArrayList<Object> lfList = new ArrayList<>();
-        ArrayList<Object> qhdList = new ArrayList<>();
-        ArrayList<Object> cdList = new ArrayList<>();
+        //场站数据
+        ArrayList<Object> czList = new ArrayList<>();
+        //冀北平均
+        ArrayList<Object> avgList = new ArrayList<>();
+        //最优值
+        ArrayList<Object> bestList = new ArrayList<>();
         for (UseOfHoursVo vo: useOfHoursVos){
-            switch (vo.getYData1()) {
-                case "张家口":
-                    zjkList.add(vo.getYData());
-                    xList.add(vo.getXData());
-                    break;
-                case "唐山":
-                    tsList.add(vo.getYData());
-                    break;
-                case "廊坊":
-                    lfList.add(vo.getYData());
-                    break;
-                case "秦皇岛":
-                    qhdList.add(vo.getYData());
-                    break;
-                case "承德":
-                    cdList.add(vo.getYData());
-                    break;
-                case "冀北":
-                    jbList.add(vo.getYData());
-                    break;
-            }
+            xList.add(vo.getXData());
+            czList.add(vo.getYData());
+            avgList.add(vo.getYData1());
+            bestList.add(vo.getYData2());
         }
         map.put("xList",xList);
-        map.put("张家口",zjkList);
-        map.put("唐山",tsList);
-        map.put("廊坊",lfList);
-        map.put("秦皇岛",qhdList);
-        map.put("承德",cdList);
-        map.put("冀北",jbList);
+        map.put("场站数据",czList);
+        map.put("冀北数据",avgList);
+        map.put("最优数据",bestList);
         return Result.ok(map);
     }
     /**

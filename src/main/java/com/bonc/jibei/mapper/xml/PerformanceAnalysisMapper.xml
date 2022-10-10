@@ -256,7 +256,7 @@
                                                                     jb_power_generation_efficiency  ht
                                                                         LEFT JOIN cloudiip_access_equipment.v_stations_codes vs on vs.station_id=ht.station_id
                                                                 WHERE 1=1
-                                                                  and    ht.station_id=#{stationId}
+                                                                  and    ht.station_id=1430
                                                                 GROUP BY
                                                                     DATE_FORMAT( data_time, "%Y-%m" )
                                                                ) aa

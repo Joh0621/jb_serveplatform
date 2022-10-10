@@ -25,7 +25,8 @@ public interface PerformanceAnalysisMapper {
 
     List<UseOfHoursVo> seluesOfHoursTrendDq(@Param("year") String year);
 
-    List<UseOfHoursVo> uesOfHoursTrendCz(@Param("yearMonth") String yearMonth,
+    List<UseOfHoursVo> uesOfHoursTrendCz(@Param("startTime") String startTime,
+                                         @Param("endTime") String endTime,
                                          @Param("stationId") String stationId);
 
     List<UseOfHoursVo> seluesOfHoursTrendDm(@Param("year") String year);
