@@ -36,13 +36,13 @@
             <when test = "type=='3'.toString()">
                 SELECT Round( AVG(fault_total),2) xdata,type yData FROM jb_fault_info_type
                  WHERE type=1
-                <if test="type != null and '' != type">
+                <if test="year != null and '' != year">
                     and  DATE_FORMAT( `year_month`, "%Y" )= #{year}
                 </if>
             </when>
             <when test = "type=='4'.toString()">
                 SELECT Round( AVG(fault_total),2) xdata FROM jb_fault_info_type WHERE type=2
-                <if test="type != null and '' != type">
+                <if test="year != null and '' != year">
                     and  DATE_FORMAT( `year_month`, "%Y" )= #{year}
                 </if>
             </when>

@@ -2,4 +2,71 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bonc.jibei.mapper.AbnormalAiagnosisMapper">
 
+    <select id="powerUnitEvaluation" resultType="com.bonc.jibei.entity.powerUnitEvaluation">
+        SELECT
+            power_unit,
+            sum( Gg_value ) AS Gg,
+            sum( MRTBF_value ) AS MRTBF,
+            sum( complex_value ) AS complex
+        FROM
+            jb_power_unit_data
+        where 1=1
+        <if test="stationId != null  and stationId != ''">
+            and   station_id=#{stationId}
+        </if>
+        <if test="yearMonth != null and '' != yearMonth">
+            and  DATE_FORMAT( `data_time`, "%Y-%m" )= #{yearMonth}
+        </if>
+        GROUP BY
+            power_unit
+    </select>
+
+    <select id="powerUnitPower" resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT
+            power_unit yData1,
+            ghi_value xData,
+            avg( power_value )  yData
+        FROM
+            jb_power_unit_kw
+        where 1=1
+        <if test="stationId != null  and stationId != ''">
+            and   station_id=#{stationId}
+        </if>
+        <if test="yearMonth != null and '' != yearMonth">
+            and  DATE_FORMAT( `data_time`, "%Y-%m" )= #{yearMonth}
+        </if>
+        <if test="powerUnit != null and '' != powerUnit">
+            and   power_unit in
+            <foreach collection="powerUnit" index="index" item="item" open="(" separator="," close=")">
+                           #{item}
+            </foreach>
+        </if>
+        GROUP BY
+            power_unit,
+            ghi_value
+    </select>
+    
+    <select id="powerInverterErrorPosition"   resultType="com.bonc.jibei.entity.powerInverter">
+        select  * from powerinverterError
+    </select>
+
+
+    <select id="powerInverterErrorStatistics"   resultType="com.bonc.jibei.vo.powerInverterStatusVo">
+        SELECT
+            sum( CASE WHEN conversion_efficiency > 85 THEN 1 ELSE 0 END ) conversionEfficiencyStatus,
+            sum( CASE WHEN inverter_loss > 15 THEN 1 ELSE 0 END ) inverterLossStatus,
+            sum( CASE WHEN temp > 43 THEN 1 ELSE 0 END ) tempStatus,
+            sum( direct_status ) directStatus,
+            sum( three_phase_current_imbalance_status ) threeStatus,
+            sum( overall_status ) overallStatus ,
+            COUNT(overall_status) sumStatus
+        FROM
+            jb_power_inverter_data
+    </select>
+    <select id="powerInverterconversionEfficiency"  resultType="com.bonc.jibei.vo.UseOfHoursVo">
+    SELECT avg(conversion_efficiency)  yData,data_time xData from jb_power_inverter_data where inverter='NBQ002' GROUP BY data_time
+    </select>
+    <select id="powerInverterPower"  resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT sum(power_value)  xData,inverter yData from jb_power_inverter_data GROUP BY inverter
+    </select>
 </mapper>
