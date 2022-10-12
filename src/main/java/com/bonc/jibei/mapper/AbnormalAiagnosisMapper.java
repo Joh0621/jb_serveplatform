@@ -32,5 +32,9 @@ public interface AbnormalAiagnosisMapper {
                                           @Param("stationId") String stationId
 
     );
+    List<UseOfHoursVo> powerInverterFaultCnt(@Param("yearMonth") String yearMonth,
+                                          @Param("stationId") String stationId
+
+    );
 
 }

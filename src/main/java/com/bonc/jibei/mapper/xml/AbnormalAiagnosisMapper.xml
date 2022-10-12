@@ -69,4 +69,10 @@
     <select id="powerInverterPower"  resultType="com.bonc.jibei.vo.UseOfHoursVo">
         SELECT sum(power_value)  xData,inverter yData from jb_power_inverter_data GROUP BY inverter
     </select>
+
+
+    <select id="powerInverterFaultCnt"  resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        SELECT sum(fault_cnt)  xData,device_id yData from jb_status_info  GROUP BY device_id
+    </select>
+
 </mapper>

@@ -131,4 +131,24 @@ public class AbnormalAiagnosisController {
         return Result.ok(xList);
     }
 
+    /**
+     * 逆变器故障次数排名TOP10
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerInverterFaultCnt")
+    @ResponseBody
+    public Result powerInverterFaultCnt(String yearMonth,String stationId) {
+        List<UseOfHoursVo> useOfHoursVos = abnormalAiagnosisMapper.powerInverterFaultCnt(yearMonth, stationId);
+        ArrayList<Object> xList = new ArrayList<>();
+        for (UseOfHoursVo vo: useOfHoursVos){
+            Map<String, Object> map = new HashMap<>();
+            map.put("yData",vo.getYData());
+            map.put("xData",vo.getXData());
+            xList.add(map);
+        }
+        return Result.ok(xList);
+    }
+
 }
