@@ -1,6 +1,8 @@
 package com.bonc.jibei.controller;
 
 import com.bonc.jibei.api.Result;
+import com.bonc.jibei.entity.powerComponentsString;
+import com.bonc.jibei.entity.powerInverterWarning;
 import com.bonc.jibei.mapper.AbnormalAiagnosisMapper;
 import com.bonc.jibei.vo.UseOfHoursVo;
 import com.bonc.jibei.vo.powerInverterStatusVo;
@@ -149,6 +151,74 @@ public class AbnormalAiagnosisController {
             xList.add(map);
         }
         return Result.ok(xList);
+    }
+
+    /**
+     * 逆变器健康预警监测
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerInverterWarning")
+    @ResponseBody
+    public Result powerInverterWarning(String yearMonth,String stationId) {
+        return Result.ok(abnormalAiagnosisMapper.powerInverterWarning(yearMonth, stationId));
+    }
+
+    /**
+     * 逆变器健康预警监测
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerInverterWarningDetail")
+    @ResponseBody
+    public Result powerInverterWarningDetail(String inverter,String warningTime,String warningType,String warningDesc) {
+        return Result.ok(abnormalAiagnosisMapper.powerInverterWarningDetail(inverter, warningTime,warningType,warningDesc));
+    }
+
+    /**
+     * 发电异常组串统计
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerComponentsStringStatistics")
+    @ResponseBody
+    public Result powerComponentsStringStatistics(String yearMonth,String stationId) {
+        List<powerComponentsString> powerComponentsStrings = abnormalAiagnosisMapper.powerComponentsStringStatistics(yearMonth, stationId);
+        ArrayList<Object> xList = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        for (powerComponentsString vo: powerComponentsStrings){
+            if ("0".equals(vo.getStatus())) {
+                map.put("异常", vo.getComponentsString());
+            } else {
+                map.put("正常", vo.getComponentsString());
+            }
+
+
+        }
+        return Result.ok(map);
+    }
+
+    @RequestMapping("powerComponentsStringTop5")
+    @ResponseBody
+    public Result powerComponentsStringTop5(String yearMonth,String stationId) {
+        List<UseOfHoursVo> useOfHoursVos = abnormalAiagnosisMapper.powerComponentsStringTop5(yearMonth, stationId);
+        ArrayList<Object> xList = new ArrayList<>();
+        for (UseOfHoursVo vo: useOfHoursVos){
+            Map<String, Object> map = new HashMap<>();
+            map.put("yData",vo.getYData());
+            map.put("xData",vo.getXData());
+            xList.add(map);
+        }
+        return Result.ok(xList);
+    }
+
+    @RequestMapping("powerComponentsStringList")
+    @ResponseBody
+    public Result powerComponentsStringList(String yearMonth,String stationId) {
+        return Result.ok(abnormalAiagnosisMapper.powerComponentsStringList(yearMonth, stationId));
     }
 
 }
