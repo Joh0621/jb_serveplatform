@@ -91,8 +91,8 @@
         gpt.type_name
         FROM
         gb_codes gc
-        LEFT JOIN gb_property gp ON gp.id = gc.code_detail
-        LEFT JOIN gb_property_type gpt ON gp.type_code = gpt.type_code
+        LEFT JOIN cloudiip_access_equipment.gb_property gp ON gp.id = gc.code_detail
+        LEFT JOIN cloudiip_access_equipment.gb_property_type gpt ON gp.type_code = gpt.type_code
         WHERE
         gc.data_sources =4
     </select>
@@ -123,19 +123,19 @@
                     IFNULL( gpt.type_name, gct.code_name ) AS typeName
                 FROM
                     gb_codes gb
-                        LEFT JOIN gb_property gp ON gb.code_detail = gp.id
-                        LEFT JOIN gb_property_type gpt ON gp.type_code = gpt.type_code
+                        LEFT JOIN cloudiip_access_equipment.gb_property gp ON gb.code_detail = gp.id
+                        LEFT JOIN cloudiip_access_equipmentg.b_property_type gpt ON gp.type_code = gpt.type_code
                         LEFT JOIN gb_code_type gct ON gb.code_id = gct.code_id
                 WHERE
                     gb.id = #{id}
             ) dd ON gbb.id = dd.pid
-                LEFT JOIN gb_property gpp ON gbb.code_detail = gpp.id
-                LEFT JOIN gb_property_type gpt ON gpp.type_code = gpt.type_code
+                LEFT JOIN cloudiip_access_equipmentg.gb_property gpp ON gbb.code_detail = gpp.id
+                LEFT JOIN cloudiip_access_equipmentg.gb_property_type gpt ON gpp.type_code = gpt.type_code
                 LEFT JOIN gb_code_type gct ON gbb.code_id = gct.code_id
     </select>
 
     <select id="stationdownList" resultType="com.bonc.jibei.entity.Property">
-        SELECT id,pro_name from gb_property
+        SELECT id,pro_name from cloudiip_access_equipmentg.gb_property
         <if test="id != null and id == '2'.toString()">
             where type_code=4
         </if>

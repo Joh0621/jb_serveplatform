@@ -62,7 +62,7 @@
         FROM
         gb_codes cc
         LEFT JOIN gb_code_type tt ON tt.code_id = cc.code_id
-        LEFT JOIN gb_property gpp ON cc.code_detail = gpp.id
+        LEFT JOIN cloudiip_access_equipmentg.gb_property gpp ON cc.code_detail = gpp.id
         WHERE
         1 = 1
         <if test="pid != null  and pid != ''">
@@ -197,11 +197,11 @@
             49)
         </if>
         <if test="dropDownType != null and dropDownType == '4'.toString()">
-            SELECT id, pro_name as codeDetail from gb_property 	where
+            SELECT id, pro_name as codeDetail from cloudiip_access_equipmentg.gb_property 	where
             type_code=2
         </if>
         <if test="dropDownType != null and dropDownType == '5'.toString()">
-            SELECT id, pro_name as codeDetail from gb_property 	where
+            SELECT id, pro_name as codeDetail from cloudiip_access_equipmentg.gb_property 	where
             type_code=5
         </if>
         <if test="dropDownType != null and dropDownType == '6'.toString()">
@@ -220,7 +220,7 @@
             SELECT * from gb_codes where pid=296
         </if>
         <if test="dropDownType != null and dropDownType == '11'.toString()">
-            SELECT id, pro_name as codeDetail from gb_property 	where
+            SELECT id, pro_name as codeDetail from cloudiip_access_equipmentg.gb_property 	where
             type_code=4
         </if>
     </select>
@@ -386,7 +386,7 @@
         FROM
             gb_codes gc
                 LEFT JOIN gb_code_type gct ON gc.code_id = gct.code_id
-                LEFT JOIN gb_property gpp ON gc.code_detail = cast( gpp.id AS CHAR )
+                LEFT JOIN cloudiip_access_equipmentg.gb_property gpp ON gc.code_detail = cast( gpp.id AS CHAR )
         WHERE
             gc.data_sources = 5
         group by  gc.pid
