@@ -1,6 +1,8 @@
 package com.bonc.jibei.mapper;
 
+import com.bonc.jibei.entity.powerComponentsString;
 import com.bonc.jibei.entity.powerInverter;
+import com.bonc.jibei.entity.powerInverterWarning;
 import com.bonc.jibei.entity.powerUnitEvaluation;
 import com.bonc.jibei.vo.UseOfHoursVo;
 import com.bonc.jibei.vo.powerInverterStatusVo;
@@ -36,5 +38,31 @@ public interface AbnormalAiagnosisMapper {
                                           @Param("stationId") String stationId
 
     );
+
+    List<powerInverterWarning> powerInverterWarning(@Param("yearMonth") String yearMonth,
+                                                    @Param("stationId") String stationId
+
+    );
+
+    List<powerInverterWarning> powerInverterWarningDetail(@Param("inverter") String inverter,
+                                                    @Param("warningTime") String warningTime,
+                                                          @Param("warningType") String warningType,
+                                                          @Param("warningDesc") String warningDesc
+
+    );
+
+    List<powerComponentsString> powerComponentsStringStatistics(@Param("yearMonth") String yearMonth,
+                                                                @Param("stationId") String stationId
+
+    );
+  List<UseOfHoursVo> powerComponentsStringTop5(@Param("yearMonth") String yearMonth,
+                                                              @Param("stationId") String stationId
+
+  );
+  List<powerComponentsString> powerComponentsStringList(@Param("yearMonth") String yearMonth,
+                                                              @Param("stationId") String stationId
+
+  );
+
 
 }

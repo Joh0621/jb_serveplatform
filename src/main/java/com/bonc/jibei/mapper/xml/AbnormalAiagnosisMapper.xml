@@ -75,4 +75,46 @@
         SELECT sum(fault_cnt)  xData,device_id yData from jb_status_info  GROUP BY device_id
     </select>
 
+
+    <select id="powerInverterWarning"  resultType="com.bonc.jibei.entity.powerInverterWarning">
+        SELECT inverter,warning_time,warning_type,warning_desc FROM jb_power_inverter_warning GROUP BY inverter,warning_time,warning_type,warning_desc
+            WHERE 1=1
+        <if test="stationId != null and '' != stationId">
+            station_id=#{stationId}
+        </if>
+    </select>
+
+    <select id="powerInverterWarningDetail"  resultType="com.bonc.jibei.entity.powerInverterWarning">
+        SELECT  *  FROM jb_power_inverter_warning
+        WHERE 1=1
+        <if test="inverter != null and '' != inverter">
+         and   inverter=#{inverter}
+        </if>
+        <if test="warningTime != null and '' != warningTime">
+            and   warning_time=#{warningTime}
+        </if>
+        <if test="warningType != null and '' != warningType">
+            and   warning_type=#{warningType}
+        </if>
+        <if test="warningDesc != null and '' != warningDesc">
+            and   warning_desc=#{warningDesc}
+        </if>
+    </select>
+
+    <select id="powerComponentsStringStatistics"  resultType="com.bonc.jibei.entity.powerComponentsString">
+        SELECT STATUS,
+               count( components_string ) AS componentsString
+        FROM
+            jb_power_components_string
+        GROUP BY
+            STATUS
+    </select>
+    <select id="powerComponentsStringTop5"  resultType="com.bonc.jibei.vo.UseOfHoursVo">
+    SELECT power_unit yData,count(status) xData from jb_power_components_string GROUP BY power_unit
+    </select>
+
+    <select id="powerComponentsStringList"  resultType="com.bonc.jibei.entity.powerComponentsString">
+        SELECT power_unit ,inverter,components_string from jb_power_components_string
+    </select>
+
 </mapper>
