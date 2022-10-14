@@ -2,6 +2,7 @@ package com.bonc.jibei.controller;
 
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.entity.powerComponentsString;
+import com.bonc.jibei.entity.powerComponentsStringRe;
 import com.bonc.jibei.entity.powerInverterWarning;
 import com.bonc.jibei.mapper.AbnormalAiagnosisMapper;
 import com.bonc.jibei.vo.UseOfHoursVo;
@@ -201,6 +202,12 @@ public class AbnormalAiagnosisController {
         return Result.ok(map);
     }
 
+    /**
+     * 发电异常组串数  TOP5
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
     @RequestMapping("powerComponentsStringTop5")
     @ResponseBody
     public Result powerComponentsStringTop5(String yearMonth,String stationId) {
@@ -215,10 +222,51 @@ public class AbnormalAiagnosisController {
         return Result.ok(xList);
     }
 
+    /**
+     * 发电异常组串列表
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
     @RequestMapping("powerComponentsStringList")
     @ResponseBody
     public Result powerComponentsStringList(String yearMonth,String stationId) {
         return Result.ok(abnormalAiagnosisMapper.powerComponentsStringList(yearMonth, stationId));
+    }
+
+
+    /**
+     * 发电异常组串定位
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerComponentsStringLocation")
+    @ResponseBody
+    public Result powerComponentsStringLocation(String yearMonth,String stationId) {
+        List<powerComponentsString> powerComponentsStrings = abnormalAiagnosisMapper.powerComponentsStringLocation(yearMonth, stationId);
+        Map<String, List<powerComponentsString>> map = powerComponentsStrings.stream().collect(
+                Collectors.groupingBy(
+                        model -> model.getPowerUnit()
+                ));
+        Map<String,powerComponentsStringRe> mapRe=new HashMap<>();
+
+        for (Map.Entry<String, List<powerComponentsString>> entry : map.entrySet()) {
+            powerComponentsStringRe powerComponentsStringRe = new powerComponentsStringRe();
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+
+            Integer xMax=0;
+            Integer yMax=0;
+            for ( powerComponentsString value : entry.getValue()) {
+                String[] split = value.getComponentsStringLocation().split("-");
+                xMax=Integer.valueOf( split[0])>xMax?Integer.valueOf( split[0]):xMax;
+                yMax=Integer.valueOf( split[1])>yMax?Integer.valueOf( split[1]):yMax;
+            }
+            powerComponentsStringRe.setLlocation(xMax+"-"+yMax);
+            powerComponentsStringRe.setPowerComponentsString(entry.getValue());
+            mapRe.put(entry.getKey(),powerComponentsStringRe);
+        }
+        return Result.ok(mapRe);
     }
 
 }

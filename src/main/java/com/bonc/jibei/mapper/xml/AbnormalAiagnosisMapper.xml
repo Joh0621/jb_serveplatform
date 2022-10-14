@@ -117,4 +117,10 @@
         SELECT power_unit ,inverter,components_string from jb_power_components_string
     </select>
 
+
+    <select id="powerComponentsStringLocation"  resultType="com.bonc.jibei.entity.powerComponentsString">
+        SELECT a.power_unit,a.inverter,a.components_string, IFNULL(b.`status`,0) status,a.components_string_location from jb_photovoltaic_org  a
+       LEFT JOIN  jb_power_components_string  b on a.power_unit=b.power_unit and a.inverter=b.inverter and  a.components_string=b.components_string
+    </select>
+
 </mapper>

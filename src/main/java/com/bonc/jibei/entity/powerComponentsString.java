@@ -10,5 +10,7 @@ public class powerComponentsString {
     private  String inverter;
     private  String componentsString;
 
+    private  String componentsStringLocation;
     private  String status;
+
 }

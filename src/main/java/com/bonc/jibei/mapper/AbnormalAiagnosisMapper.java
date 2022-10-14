@@ -64,5 +64,11 @@ public interface AbnormalAiagnosisMapper {
 
   );
 
+  List<powerComponentsString> powerComponentsStringLocation(@Param("yearMonth") String yearMonth,
+                                                        @Param("stationId") String stationId
+
+  );
+
+
 
 }
