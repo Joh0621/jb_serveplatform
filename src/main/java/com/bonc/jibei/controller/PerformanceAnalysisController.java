@@ -147,16 +147,62 @@ public class PerformanceAnalysisController {
         map.put("冀北",jbList);
         return Result.ok(map);
     }
+    /**
+     *
+     * 场站发电状况综合评价-场站
+     */
+    @RequestMapping("powerGenerationOverviewCz")
+    @ResponseBody
+    public Result powerGenerationOverview( String startTime,String endTime,String stationId) {
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.powerGenerationOverview(startTime,endTime,stationId);
+        Map<String, Double> result3 = useOfHoursVos.stream().collect(
+                Collectors.toMap(x -> x.getXData(), x -> Double.valueOf(x.getYData())));
+        ArrayList<Double> yList = new ArrayList(result3.values());
+        //求和得总数
+        Double sum = yList.stream().reduce(Double::sum).orElse(0.00);
+        result3.put("综合评分", sum);
+        return  Result.ok(result3);
+    }
 
     /**
-     * 等效利用小时数趋势-地区
+     * 等效利用小时数趋势-场站
      * @param year
      * @return
      */
     @RequestMapping("uesOfHoursTrendCz")
     @ResponseBody
-    public Result uesOfHoursTrendCz( String startTime,String endTime,String stationId) {
-        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.uesOfHoursTrendCz(startTime,endTime,stationId);
+    public Result uesOfHoursTrendCz( String startTime,String endTime,String stationId,String type) {
+        //分类查询表和字段
+        String table="";
+        String param="";
+        String time="";
+        //1表现小时数趋势 2:发电能效公关趋势
+        if (type==null||"1".equals(type)||"".equals(type)){
+            table="jb_power_generation_efficiency";
+            param="utilize_hour";
+            time="data_time";
+        }else  if("2".equals(type)){
+            table="jb_power_generation_efficiency";
+            param="pr_value";
+            time="data_time";
+        }else  if("3".equals(type)){
+            table="jb_power_prediction";
+            param="power_prediction_rate";
+            time="data_time";
+        }else  if("4".equals(type)){
+            table="jb_status_info";
+            param="fault_cnt";
+            time="yearmonth";
+        }else  if("5".equals(type)){
+            table="jb_status_info";
+            param="fault_time";
+            time="yearmonth";
+        }else  if("6".equals(type)){
+            table="jb_status_info";
+            param="mrtbf";
+            time="yearmonth";
+        }
+        List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.uesOfHoursTrendCz(startTime,endTime,stationId,table,param,time);
 
         Map<String, Object> map = new HashMap<>();
         ArrayList<Object> xList = new ArrayList<>();

@@ -1,10 +1,8 @@
 package com.bonc.jibei.mapper;
 
-import com.bonc.jibei.entity.powerComponentsString;
-import com.bonc.jibei.entity.powerInverter;
-import com.bonc.jibei.entity.powerInverterWarning;
-import com.bonc.jibei.entity.powerUnitEvaluation;
+import com.bonc.jibei.entity.*;
 import com.bonc.jibei.vo.UseOfHoursVo;
+import com.bonc.jibei.vo.powerComponentsVo;
 import com.bonc.jibei.vo.powerInverterStatusVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -69,6 +67,25 @@ public interface AbnormalAiagnosisMapper {
 
   );
 
+  List<powerComponents> powerComponentsLocation(@Param("yearMonth") String yearMonth,
+                                                            @Param("stationId") String stationId
+
+  );
+
+  List<UseOfHoursVo> powerComponentsErrorDistributed(@Param("yearMonth") String yearMonth,
+                                               @Param("stationId") String stationId
+
+  );
+
+  List<powerComponentsVo> powerComponentsErrorList(@Param("yearMonth") String yearMonth,
+                                                   @Param("stationId") String stationId
+
+  );
+
+  List<powerComponents> powerComponentsErrorLocation(@Param("yearMonth") String yearMonth,
+                                                            @Param("stationId") String stationId
+
+  );
 
 
 }

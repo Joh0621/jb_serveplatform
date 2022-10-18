@@ -122,5 +122,36 @@
         SELECT a.power_unit,a.inverter,a.components_string, IFNULL(b.`status`,0) status,a.components_string_location from jb_photovoltaic_org  a
        LEFT JOIN  jb_power_components_string  b on a.power_unit=b.power_unit and a.inverter=b.inverter and  a.components_string=b.components_string
     </select>
+    <select id="powerComponentsLocation"  resultType="com.bonc.jibei.entity.powerComponents">
+    SELECT
+    a.power_unit,
+    a.inverter,
+    a.components_string,
+    case when ISNULL(b.`error_type`) then 0 else 1 end STATUS,
+    a.components_string_location
+    FROM
+    jb_photovoltaic_org a
+    LEFT JOIN jb_power_components b ON a.power_unit = b.power_unit
+    AND a.inverter = b.inverter
+    AND a.components = b.components
+    </select>
+    <select id="powerComponentsErrorDistributed"  resultType="com.bonc.jibei.vo.UseOfHoursVo">
+        select
+            ROUND(count(error_type) /(SELECT COUNT(error_type) from jb_power_components)*100,2) error_type,
+            error_type
+        from jb_power_components GROUP BY  error_type
+    </select>
 
+    <select id="powerComponentsErrorList" resultType="com.bonc.jibei.vo.powerComponentsVo">
+    select
+    count(error_type)  errorCnt,
+    error_type,
+    count(DISTINCT(components)) components
+    from jb_power_components GROUP BY  error_type
+    </select>
+
+    <select id="powerComponentsErrorLocation"  resultType="com.bonc.jibei.entity.powerComponents">
+        SELECT a.power_unit,a.inverter,a.components_string, IFNULL(b.`status`,0) status,a.components_string_location from jb_photovoltaic_org  a
+                                                                                                                              LEFT JOIN  jb_power_components b on a.power_unit=b.power_unit and a.inverter=b.inverter and  a.components_string=b.components_string
+    </select>
 </mapper>

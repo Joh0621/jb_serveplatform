@@ -1,6 +1,7 @@
 package com.bonc.jibei.mapper;
 
 import com.bonc.jibei.vo.NumericalStatisticsVo;
+import com.bonc.jibei.vo.SortVo;
 import com.bonc.jibei.vo.UseOfHoursVo;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,21 +14,28 @@ public interface PerformanceAnalysisMapper {
     UseOfHoursVo  powerGenerationIndex(@Param("year") String year,
                          @Param("type") String type);
 
-    UseOfHoursVo  powerGenerationIndexCz(@Param("startTime") String startTime,
-                                         @Param("endTime") String endTime,
-                                       @Param("type") String type,
-                                         @Param("stationId") String stationId);
+    SortVo powerGenerationIndexCz(@Param("startTime") String startTime,
+                                  @Param("endTime") String endTime,
+                                  @Param("type") String type,
+                                  @Param("stationId") String stationId);
 
-    UseOfHoursVo  powerGenerationIndexCzSortDm(@Param("startTime") String startTime,
+    SortVo  powerGenerationIndexCzSortDm(@Param("startTime") String startTime,
                                                @Param("endTime") String endTime,
                                          @Param("type") String type,
                                          @Param("stationId") String stationId);
 
     List<UseOfHoursVo> seluesOfHoursTrendDq(@Param("year") String year);
 
+    List<UseOfHoursVo> powerGenerationOverview(@Param("startTime") String startTime,
+                                  @Param("endTime") String endTime,
+                                  @Param("stationId") String stationId);
+
     List<UseOfHoursVo> uesOfHoursTrendCz(@Param("startTime") String startTime,
                                          @Param("endTime") String endTime,
-                                         @Param("stationId") String stationId);
+                                         @Param("stationId") String stationId,
+                                         @Param("table") String table,
+                                         @Param("param") String param,
+                                         @Param("time") String time);
 
     List<UseOfHoursVo> seluesOfHoursTrendDm(@Param("year") String year);
 

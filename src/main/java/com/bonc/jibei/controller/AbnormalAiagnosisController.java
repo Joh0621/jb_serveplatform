@@ -1,11 +1,11 @@
 package com.bonc.jibei.controller;
 
 import com.bonc.jibei.api.Result;
-import com.bonc.jibei.entity.powerComponentsString;
-import com.bonc.jibei.entity.powerComponentsStringRe;
-import com.bonc.jibei.entity.powerInverterWarning;
+import com.bonc.jibei.entity.*;
 import com.bonc.jibei.mapper.AbnormalAiagnosisMapper;
+import com.bonc.jibei.vo.RadiationDoseDistributedVo;
 import com.bonc.jibei.vo.UseOfHoursVo;
+import com.bonc.jibei.vo.powerComponentsVo;
 import com.bonc.jibei.vo.powerInverterStatusVo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -264,6 +264,80 @@ public class AbnormalAiagnosisController {
             }
             powerComponentsStringRe.setLlocation(xMax+"-"+yMax);
             powerComponentsStringRe.setPowerComponentsString(entry.getValue());
+            mapRe.put(entry.getKey(),powerComponentsStringRe);
+        }
+        return Result.ok(mapRe);
+    }
+
+
+    /**
+     * 组件故障类型分布
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerComponentsErrorDistributed")
+    @ResponseBody
+    public Result powerComponentsErrorDistributed(String yearMonth,String stationId) {
+        List<UseOfHoursVo> useOfHoursVos = abnormalAiagnosisMapper.powerComponentsErrorDistributed(yearMonth, stationId);
+        ArrayList<Object> xList = new ArrayList<>();
+        for (UseOfHoursVo vo: useOfHoursVos){
+            Map<String, Object> map = new HashMap<>();
+            map.put("yData",vo.getYData());
+            map.put("xData",vo.getXData());
+            xList.add(map);
+        }
+        return Result.ok(xList);
+    }
+
+    /**
+     *
+     * 组件故障统计
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerComponentsErrorList")
+    @ResponseBody
+    public Result powerComponentsErrorList(String yearMonth,String stationId) {
+        List<powerComponentsVo> useOfHoursVos = abnormalAiagnosisMapper.powerComponentsErrorList(yearMonth, stationId);
+        ArrayList<Object> xList = new ArrayList<>();
+        double sum = useOfHoursVos.stream().mapToDouble(powerComponentsVo::getComponentsErrotCnt).sum();
+        for (powerComponentsVo vo: useOfHoursVos){
+           vo.setComponentsErrotRate(vo.getComponentsErrotCnt()/sum);
+        }
+        return Result.ok(useOfHoursVos);
+    }
+
+    /**
+     * 发电异常组件定位
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerComponentsLocation")
+    @ResponseBody
+    public Result powerComponentsLocation(String yearMonth,String stationId) {
+        List<powerComponents> powerComponents = abnormalAiagnosisMapper.powerComponentsLocation(yearMonth, stationId);
+        Map<String, List<powerComponents>> map = powerComponents.stream().collect(
+                Collectors.groupingBy(
+                        model -> model.getPowerUnit()
+                ));
+        Map<String,powerComponentsRe> mapRe=new HashMap<>();
+
+        for (Map.Entry<String, List<powerComponents>> entry : map.entrySet()) {
+            powerComponentsRe powerComponentsStringRe = new powerComponentsRe();
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+
+            Integer xMax=0;
+            Integer yMax=0;
+            for ( powerComponents value : entry.getValue()) {
+                String[] split = value.getComponents().split("-");
+                xMax=Integer.valueOf( split[0])>xMax?Integer.valueOf( split[0]):xMax;
+                yMax=Integer.valueOf( split[1])>yMax?Integer.valueOf( split[1]):yMax;
+            }
+            powerComponentsStringRe.setLlocation(xMax+"-"+yMax);
+            powerComponentsStringRe.setPowerComponents(entry.getValue());
             mapRe.put(entry.getKey(),powerComponentsStringRe);
         }
         return Result.ok(mapRe);
