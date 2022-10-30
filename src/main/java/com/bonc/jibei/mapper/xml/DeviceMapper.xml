@@ -62,7 +62,7 @@
         FROM
         gb_codes cc
         LEFT JOIN gb_code_type tt ON tt.code_id = cc.code_id
-        LEFT JOIN cloudiip_access_equipmentg.gb_property gpp ON cc.code_detail = gpp.id
+        LEFT JOIN gb_property gpp ON cc.code_detail = gpp.id
         WHERE
         1 = 1
         <if test="pid != null  and pid != ''">
@@ -197,11 +197,11 @@
             49)
         </if>
         <if test="dropDownType != null and dropDownType == '4'.toString()">
-            SELECT id, pro_name as codeDetail from cloudiip_access_equipmentg.gb_property 	where
+            SELECT id, pro_name as codeDetail from gb_property 	where
             type_code=2
         </if>
         <if test="dropDownType != null and dropDownType == '5'.toString()">
-            SELECT id, pro_name as codeDetail from cloudiip_access_equipmentg.gb_property 	where
+            SELECT id, pro_name as codeDetail from gb_property 	where
             type_code=5
         </if>
         <if test="dropDownType != null and dropDownType == '6'.toString()">
@@ -220,7 +220,7 @@
             SELECT * from gb_codes where pid=296
         </if>
         <if test="dropDownType != null and dropDownType == '11'.toString()">
-            SELECT id, pro_name as codeDetail from cloudiip_access_equipmentg.gb_property 	where
+            SELECT id, pro_name as codeDetail from gb_property 	where
             type_code=4
         </if>
     </select>
@@ -251,9 +251,9 @@
         <if test="modelCode != null and modelCode != ''">
             and  gb.model_code = #{modelCode}
         </if>
-        <if test="pid != null and pid != ''">
-            and  gb.pid = #{pid}
-        </if>
+<!--        <if test="pid != null and pid != ''">-->
+<!--            and  gb.pid = #{pid}-->
+<!--        </if>-->
     </select>
 
     <select id="getDeviceBasicInfo" resultType="com.bonc.jibei.vo.DeviceModelVo"  parameterType="String">
@@ -263,7 +263,6 @@
         gcc.code_id CODE,
         gctt.code_name codeName,
         gb.code_value AS codeValue ,
-
         <if test="deviceType != null  and deviceType != ''">
             gb.is_show as isShow,
         </if>
@@ -327,7 +326,8 @@
     </insert>
     <update id="updateDeviceModelShow"  parameterType="com.bonc.jibei.vo.DeviceModelVo">
         UPDATE `gb_device_model`
-        SET `pid` = #{pid}, `model_code` = #{modelCode}, `device_company` = #{deviceCompany}, `category` = #{category}, `code` = #{code}, `code_value` = #{codeValue}, `create` = #{create}, `create_time` = #{createTime}, `device_type` = #{deviceType}, `is_show` = #{isShow}
+        SET
+        `model_code` = #{modelCode}, `device_company` = #{deviceCompany}, `category` = #{category}, `code` = #{code}, `code_value` = #{codeValue}, `create` = #{create}, `create_time` = #{createTime}, `device_type` = #{deviceType}, `is_show` = #{isShow}
         WHERE `id` = #{id};
 
     </update>
@@ -348,10 +348,17 @@
         INSERT INTO `gb_codes` (`id`, `pid`, `code_id`, `code_detail`, `data_sources`)
         select #{id}, #{pid}, #{codeId},#{codeDetail}, #{dataSources}
             WHERE not exists (select * from gb_codes
-                      where pid = #{pid}
-                        and code_id=#{codeId}
-                        and code_detail=#{codeDetail}
-                        and data_sources=#{dataSources}
+                      where  1=1
+        <if test="pid != null and pid != ''">
+            and pid=#{pid}
+        </if>
+        <if test="codeDetail != null and codeDetail != ''">
+            and code_detail=#{codeDetail}
+        </if>
+        <if test="dataSources != null and dataSources != ''">
+            and data_sources=#{dataSources}
+        </if>
+
                 );
     </insert>
 
@@ -386,7 +393,7 @@
         FROM
             gb_codes gc
                 LEFT JOIN gb_code_type gct ON gc.code_id = gct.code_id
-                LEFT JOIN cloudiip_access_equipmentg.gb_property gpp ON gc.code_detail = cast( gpp.id AS CHAR )
+                LEFT JOIN gb_property gpp ON gc.code_detail = cast( gpp.id AS CHAR )
         WHERE
             gc.data_sources = 5
         group by  gc.pid

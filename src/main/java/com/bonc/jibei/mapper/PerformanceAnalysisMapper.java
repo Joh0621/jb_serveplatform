@@ -76,7 +76,7 @@ public interface PerformanceAnalysisMapper {
 
     LinkedHashMap<String, Object> faultInfoType(@Param("year") String year);
     LinkedHashMap<String, Double> runningStatus(@Param("yearMonth") String yearMonth);
-
+    List<Map<Object, Object>> runningStatusCz(@Param("yearMonth") String yearMonth);
     LinkedHashMap<String, Object> faultAnalyze(@Param("yearMonth") String yearMonth,
                                                @Param("type") String type,
                                                @Param("name") String name,

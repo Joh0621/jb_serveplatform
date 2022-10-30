@@ -2,6 +2,7 @@ package com.bonc.jibei.controller;
 
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.bonc.jibei.api.Result;
@@ -9,18 +10,28 @@ import com.bonc.jibei.api.ResultCode;
 import com.bonc.jibei.entity.*;
 import com.bonc.jibei.mapper.DeviceTypeMapper;
 import com.bonc.jibei.mapper.TreeMapper;
+import com.bonc.jibei.util.TemplateExcelUtils;
 import com.bonc.jibei.vo.*;
 import com.bonc.jibei.mapper.DeviceMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -184,7 +195,7 @@ public class DeviceController {
     @ApiOperation(value = "设备型号管理_查询设备信息/编辑列表信息")
     @ApiImplicitParams({
     })
-    @PostMapping("devicemodel/getDeviceInfo")
+    @GetMapping("devicemodel/getDeviceInfo")
     public Result getDeviceInfo(@RequestBody DeviceModelVo deviceModelVo) {
         List<DeviceModelVo> deviceInfo = deviceMapper.getDeviceInfo(deviceModelVo);
         //返回结果根据Category分类
@@ -228,7 +239,7 @@ public class DeviceController {
             CodeType codeType = new CodeType();
             codeType.setCodeName(deviceModel.getDeviceType());
             //根据型号名字查询型号id
-            Code code1 = deviceMapper.selModelCode("256", deviceModel.getDeviceType(), "");
+            Code code1 = deviceMapper.selModelCode(256, deviceModel.getDeviceType(), null);
 //            codeType = deviceMapper.selectIdByName(codeType);
 //            codeType.setCodeId(288);
             if (deviceModel.getModelName() != null) {
@@ -239,6 +250,10 @@ public class DeviceController {
                 code.setCodeId(49);
                 code.setCodeDetail(deviceModel.getModelName());
                 flag1 = deviceMapper.insertCode(code);
+                //如果没插入说明有数据
+                if (0==flag1){
+                    code = deviceMapper.selModelCode(code.getCodeId(), code.getCodeDetail(), code.getDataSources());
+                }
                 deviceModel.setModelCode(String.valueOf(code.getId()));
 
             }
@@ -249,6 +264,10 @@ public class DeviceController {
                 code.setCodeId(48);
                 code.setCodeDetail(deviceModel.getDeviceCompanyName());
                 flag2 = deviceMapper.insertCode(code);
+                //如果没插入说明有数据
+                if (0==flag2){
+                    code = deviceMapper.selModelCode(code.getCodeId(), code.getCodeDetail(), code.getDataSources());
+                }
                 deviceModel.setDeviceCompany(String.valueOf(code.getId()));
             }
             //判断型号是否已有
@@ -445,7 +464,7 @@ public class DeviceController {
         System.out.println(deviceModelListVo);
         for (DeviceModelVo vo : deviceModelListVo.getIdsList()
         ) {
-          deviceMapper.updateDeviceModelShow(vo);
+            deviceMapper.updateDeviceModelShow(vo);
         }
         return Result.of(Result.ok());
     }
@@ -553,13 +572,13 @@ public class DeviceController {
             else if (info.getCzbasicDQ()!=null&&!info.getCzbasicDQ().contains(czbasicDQ)){
                 list.remove(i);
             }
-           else if (info.getCzbasicName()!=null&&!info.getCzbasicName().contains(czbasicNAME)){
+            else if (info.getCzbasicName()!=null&&!info.getCzbasicName().contains(czbasicNAME)){
                 list.remove(i);
             }
         }
-            jpage.setRecords(list);
-            jpage.setTotal(list.size());
-            return Result.of(jpage);
+        jpage.setRecords(list);
+        jpage.setTotal(list.size());
+        return Result.of(jpage);
     }
 
 
@@ -579,11 +598,11 @@ public class DeviceController {
         // 插入地区属性
         if(basecInfo.getCzbasicDQ()!=null&&!basecInfo.getCzbasicDQ().equals("")){
             Code code = new Code();
-           code.setPid(8889);
-           code.setCodeId(262);
-           code.setCodeDetail( basecInfo.getCzbasicDQ());
-           code.setDataSources(4);
-          deviceMapper.insertCode(code);
+            code.setPid(8889);
+            code.setCodeId(262);
+            code.setCodeDetail( basecInfo.getCzbasicDQ());
+            code.setDataSources(4);
+            deviceMapper.insertCode(code);
 //          code.setId(null);
 //          code.setDataSources(5);
 //          deviceMapper.insertCode(code);
@@ -593,7 +612,7 @@ public class DeviceController {
         // 插入场站类型属性
         if(basecInfo.getCzbasicLX()!=null&&!basecInfo.getCzbasicLX().equals("")){
             //根据地区信息查询地区id
-            Code code1 = deviceMapper.selModelCode(null,basecInfo.getCzbasicDQ(),"4");
+            Code code1 = deviceMapper.selModelCode(null,basecInfo.getCzbasicDQ(),4);
             Code code = new Code();
             code.setPid(code1.getId());
             code.setCodeId(269);
@@ -607,7 +626,7 @@ public class DeviceController {
             return Result.error(500,"请输入场站类型信息");
         }
         if (basecInfo.getCzbasicName()!=null&&!basecInfo.getCzbasicName().equals("")){
-            Code code1 = deviceMapper.selModelCode(null,basecInfo.getCzbasicLX(),"4");
+            Code code1 = deviceMapper.selModelCode(null,basecInfo.getCzbasicLX(),4);
             Code code = new Code();
             code.setPid(code1.getId());
             code.setCodeId(293);
@@ -623,7 +642,7 @@ public class DeviceController {
             code.setId(null);
             deviceMapper.insertCode(code);
         }
-        Code code = deviceMapper.selModelCode(null,basecInfo.getCzbasicName(),"5");
+        Code code = deviceMapper.selModelCode(null,basecInfo.getCzbasicName(),5);
         Integer pid = code.getId();
         if (basecInfo.getCzbasicZJRL()!=null&&!basecInfo.getCzbasicZJRL().equals("")){
             Code codeZJRL = new Code();
@@ -862,7 +881,7 @@ public class DeviceController {
     public Result stationDel( String id) {
         //查询设备树场站id
         Code code = deviceMapper.selectById(id);
-        Code code1 = deviceMapper.selModelCode(String.valueOf(code.getCodeId()), code.getCodeDetail(), null);
+        Code code1 = deviceMapper.selModelCode(code.getCodeId(), code.getCodeDetail(), null);
         //删除场站
         deviceMapper.deleteById(id);
         //删除场站基本信息
@@ -871,6 +890,87 @@ public class DeviceController {
         //删除设备树场站信息
         deviceMapper.delCzInfo(String.valueOf(code1.getId()),"4");
         return Result.of(Result.ok());
+    }
+
+
+    @GetMapping("download")
+    public void download(HttpServletResponse response) throws IOException {
+        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String fileName = URLEncoder.encode("测试", "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+
+        EasyExcel.write(response.getOutputStream(), DownloadData.class).sheet("模板").doWrite(data());
+    }
+    /**
+     *
+     */
+    @GetMapping("outErrorDistributed11")
+    @ApiOperation(value = "daochu")
+    @ResponseBody
+    public void outErrorDistributed11(HttpServletResponse response) throws Exception {
+        DeviceModelVo deviceModelVo = new DeviceModelVo();
+        deviceModelVo.setDeviceCompany("8866");
+        deviceModelVo.setDeviceType("风电机组");
+        deviceModelVo.setModelCode("8864");
+        List<DeviceModelVo> deviceInfo = deviceMapper.getDeviceInfo(deviceModelVo);
+        //返回结果根据Category分类
+        Map<String, List<DeviceModelVo>> map = deviceInfo.stream().collect(
+                Collectors.groupingBy(
+                        model -> model.getCategoryName()
+                ));
+        List<DeviceModelVo> result = new ArrayList<>();
+        // 预设Excel表格
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        // 设置sheet名
+        HSSFSheet sheet = workbook.createSheet("1");
+        HSSFRow qualityRow1 = sheet.createRow(0);
+        Cell cell = qualityRow1.createCell(0);
+        HSSFCellStyle styleHeaderCell = workbook.createCellStyle();
+        styleHeaderCell.setAlignment(HorizontalAlignment.CENTER);
+        int i = 0;
+        for(String key : map.keySet()){
+            qualityRow1.createCell(i).setCellValue(    key);
+            i++;
+            result = map.get(key);
+//            for (int j = 0; i < map.get(key).size(); j++) {
+//
+//            }
+        }
+//        qualityRow1.createCell(0).setCellValue("缺数");
+//        qualityRow1.createCell(1).setCellValue("死数");
+//        qualityRow1.createCell(2).setCellValue("错数");
+
+
+        String fileName = URLEncoder.encode("123.xls", "UTF-8");
+
+        String fileName="报表";
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        fileName = URLEncoder.encode(fileName, "UTF-8");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+        ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
+
+        List<Student> studentList=new ArrayList<Student>();
+        Student student=new Student("1","张三","2000-01-01");
+        studentList.add(student);
+        //这里 需要指定写用哪个class去写
+        WriteSheet writeSheet = EasyExcel.writerSheet(0, "学生信息1").head(Student.class).build();
+        excelWriter.write(studentList, writeSheet);
+        writeSheet = EasyExcel.writerSheet(1, "学生信息2").head(Student.class).build();
+        excelWriter.write(studentList, writeSheet);
+        //千万别忘记finish 会帮忙关闭流
+        excelWriter.finish();
+
+
+//        response.setContentType("application/octet-stream");
+//        response.setCharacterEncoding("utf-8");
+//        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+//        response.flushBuffer();
+//        workbook.write(response.getOutputStream());
     }
 
 //    @ApiOperation(value = "场站基本信息台账_导出数据")

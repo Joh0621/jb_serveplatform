@@ -517,6 +517,39 @@ public class PerformanceAnalysisController {
         return Result.ok(resultList);
     }
 
+    /**
+     * 场站运行状态分布
+     * @param yearMonth
+     * @return
+     */
+    @RequestMapping("runningStatusCz")
+    @ResponseBody
+    public Result runningStatusCz( String yearMonth) {
+        List<Map<Object, Object>> list = performanceAnalysisMapper.runningStatusCz(yearMonth);
+
+        Map<Object, Object> result3 = list.stream().collect(
+                Collectors.toMap(x -> x.keySet(), x -> x.values()));
+        ArrayList<Object> resultList = new ArrayList<>();
+//        //数值集合
+//        ArrayList<Double> yList = new ArrayList(map.values());
+//        ArrayList<Object> xList = new ArrayList(map.keySet());
+//        xList.add("总和");
+//        //求和得总数
+//        Double sum = yList.stream().reduce(Double::sum).orElse(0.00);
+//        yList.add(sum);
+//        for (int i=0;i<yList.size();i++){
+//            if (yList.get(i)!=null){
+//                Map<String, Object> xMap = new HashMap<>();
+//                DecimalFormat df = new DecimalFormat("0.00");
+//                df.setRoundingMode(RoundingMode.HALF_UP);
+//                xMap.put("name",xList.get(i).toString());
+//                xMap.put("value",df.format(yList.get(i)/sum*100));
+//                resultList.add(xMap);
+//            }
+//        }
+        return Result.ok(resultList);
+    }
+
 
     /**
      * 地区逆变器故障多维分析

@@ -655,9 +655,65 @@
             sum( state_11 ) AS "通讯中断CO",
             sum( others ) AS "其他"
         FROM
-            jb_fault_info
-        WHERE  DATE_FORMAT(  `year_month`, "%Y" )= 2022
+            jb_status_info
+        WHERE  DATE_FORMAT(  `yearmonth`, "%Y" )= 2022
     </select>
+    <select id="runningStatusCz" resultType="java.util.Map">
+        SELECT
+            "本站" as name,
+            sum( state_1 ) AS "待机 R",
+            sum( state_2 ) AS "发电 S",
+            sum( state_3 ) AS "机组自降额AIP",
+            sum( state_4 ) AS "限电降额IPD",
+            sum( state_5 ) AS "站内计划停运POI",
+            sum( state_6 ) AS "站外计划停运POO",
+            sum( state_7 ) AS "限电停运DR",
+            sum( state_8 ) AS "机组自身原因故障停运ISF",
+            sum( state_9 ) AS "站内受累停运PRI",
+            sum( state_10 ) AS "站外受累停运PRO",
+            sum( state_11 ) AS "通讯中断CO",
+            sum( others ) AS "其他"
+        FROM
+            jb_status_info
+        WHERE  DATE_FORMAT(  `yearmonth`, "%Y" )= 2022
+        UNION ALL
+        SELECT
+            "冀北" as name,
+            sum( state_1 ) AS "待机 R",
+            sum( state_2 ) AS "发电 S",
+            sum( state_3 ) AS "机组自降额AIP",
+            sum( state_4 ) AS "限电降额IPD",
+            sum( state_5 ) AS "站内计划停运POI",
+            sum( state_6 ) AS "站外计划停运POO",
+            sum( state_7 ) AS "限电停运DR",
+            sum( state_8 ) AS "机组自身原因故障停运ISF",
+            sum( state_9 ) AS "站内受累停运PRI",
+            sum( state_10 ) AS "站外受累停运PRO",
+            sum( state_11 ) AS "通讯中断CO",
+            sum( others ) AS "其他"
+        FROM
+            jb_status_info
+        WHERE  DATE_FORMAT(  `yearmonth`, "%Y" )= 2022
+        UNION ALL
+        SELECT
+            "断面" as name,
+            sum( state_1 ) AS "待机 R",
+            sum( state_2 ) AS "发电 S",
+            sum( state_3 ) AS "机组自降额AIP",
+            sum( state_4 ) AS "限电降额IPD",
+            sum( state_5 ) AS "站内计划停运POI",
+            sum( state_6 ) AS "站外计划停运POO",
+            sum( state_7 ) AS "限电停运DR",
+            sum( state_8 ) AS "机组自身原因故障停运ISF",
+            sum( state_9 ) AS "站内受累停运PRI",
+            sum( state_10 ) AS "站外受累停运PRO",
+            sum( state_11 ) AS "通讯中断CO",
+            sum( others ) AS "其他"
+        FROM
+            jb_status_info
+        WHERE  DATE_FORMAT(  `yearmonth`, "%Y" )= 2022
+    </select>
+
 
     <select id="faultAnalyze" resultType="java.util.LinkedHashMap">
         <choose>
@@ -800,7 +856,7 @@
                 sum( fault_cnt ) AS xData,
                 vs.station_name yData
                 FROM
-                jb_fault_info ht
+                jb_status_info ht
                 LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = ht.station_id
                 GROUP BY
                 ht.station_id
@@ -814,7 +870,7 @@
                 sum( fault_time ) AS xData,
                 vs.station_name yData
                 FROM
-                jb_fault_info ht
+                jb_status_info ht
                 LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = ht.station_id
                 GROUP BY
                 ht.station_id
@@ -828,7 +884,7 @@
                 sum( mrtbf ) AS xData,
                 vs.station_name yData
                 FROM
-                jb_fault_info ht
+                jb_status_info ht
                 LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = ht.station_id
                 GROUP BY
                 ht.station_id
@@ -846,7 +902,7 @@
                 SELECT
                 sum( mrtbf )  xData
                 FROM
-                jb_fault_info ht
+                jb_status_info ht
                 LEFT JOIN cloudiip_access_equipment.v_stations_codes vs ON vs.station_id = ht.station_id
                 WHERE
                 1 = 1
@@ -861,7 +917,7 @@
                 SELECT
                 sum( mrtbf )  xData
                 FROM
-                jb_fault_info ht
+                jb_status_info ht
                  JOIN jb_station js ON js.station_id = jp.station_id
                 WHERE
                 1 = 1
@@ -876,7 +932,7 @@
                 SELECT
                 sum( mrtbf )  xData
                 FROM
-                jb_fault_info ht
+                jb_status_info ht
                 JOIN jb_station js ON js.station_id = jp.station_id
                 WHERE
                 1 = 1
@@ -891,7 +947,7 @@
                 SELECT
                 sum( mrtbf )  xData
                 FROM
-                jb_fault_info ht
+                jb_status_info ht
                 JOIN jb_station js ON js.station_id = jp.station_id
                 WHERE
                 1 = 1

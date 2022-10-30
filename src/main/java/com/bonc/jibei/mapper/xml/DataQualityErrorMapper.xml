@@ -127,7 +127,7 @@
         ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS qualifiedRate,
         cc.type_id
         FROM
-        jb_qualified_copy1 jb
+        jb_qualified jb
         LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
         where 1=1
         and jb.station_id !=''
@@ -158,7 +158,7 @@
         cc.type_id ,
         jb.station_id
         FROM
-        jb_qualified_copy1 jb
+        jb_qualified jb
         LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = jb.station_id
         WHERE
         1 = 1
@@ -198,7 +198,7 @@
         cc.type_id ,
         jb.station_id
         FROM
-        jb_qualified_copy1 jb
+        jb_qualified jb
         LEFT JOIN cloudiip_access_equipment.v_stations_codes cc ON cc.station_id = jb.station_id
         WHERE
         1 = 1
@@ -241,7 +241,7 @@
         ROUND(SUM( CASE `data_source` WHEN '4' THEN qualified_num ELSE 0 END )/SUM( total_num )* 100 ,2 ) AS 'glycsj',
         ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS pass_rate
         FROM
-        jb_qualified_copy1 jb
+        jb_qualified jb
         LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
         where 1=1
         and jb.station_id !=''
@@ -406,7 +406,7 @@
     </select>
 
     <select id="selStation" resultType="com.bonc.jibei.entity.Station">
-        SELECT station_id,station_name,danji_code as station_code  from
+        SELECT station_id,station_name,danji_code as station_code ,station_coordinate as lit from
         cloudiip_access_equipment.v_stations_codes
         where  1=1
         <if test="type != null  and type != ''">

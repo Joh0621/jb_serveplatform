@@ -213,9 +213,17 @@ public class EchartsToPicUtil {
         }
         if (isHorizontal) {// 横轴为类别、纵轴为值
             option.xAxis(category);// x轴
-            option.yAxis(new ValueAxis().max(df.format(max>0?max*1.1:max*0.9 )).min(df.format(min>0?min*0.8:min*1.2 )).name(xYunit==null?"":xYunit[1]));// y轴
+            String maxStr = df.format(max > 0 ? max * 1.1 : max * 0.9);
+            String minStr = df.format(min > 0 ? min * 0.8 : min * 1.2);
+
+            double range = Math.abs(max - min) * 0.5;
+            if (range <= 10) {
+                maxStr = df.format(max + range);
+                minStr = df.format(min - range);
+            }
+            option.yAxis(new ValueAxis().max(maxStr).min(minStr).name(xYunit == null ? "" : xYunit[1]));// y轴
         } else {// 横轴为值、纵轴为类别
-            option.xAxis(new ValueAxis().name(xYunit==null?"":xYunit[1]));// x轴
+            option.xAxis(new ValueAxis().name(xYunit == null ? "" : xYunit[1]));// x轴
             option.yAxis(category);// y轴
         }
         return generateEChart(new Gson().toJson(option));

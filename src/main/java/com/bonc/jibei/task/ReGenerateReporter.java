@@ -6,6 +6,7 @@ import com.bonc.jibei.mapper.ReportModelInterMapper;
 import com.bonc.jibei.service.ReportMngService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +34,8 @@ public class ReGenerateReporter {
     private ReportMngService reportMngService;
 
     //5分钟执行一次
-    @Scheduled(cron = "0 0/2 * * * ?")
-    // @Async("threadPoolTaskExecutor")
+    @Scheduled(cron = "0 0/1 * * * ?")
+    @Async("threadPoolTaskExecutor")
     public void reCreateReport() throws IOException {
         //先取 场站模板
         Integer reportStatus = 2;

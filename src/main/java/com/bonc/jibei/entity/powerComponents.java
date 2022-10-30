@@ -9,6 +9,8 @@ public class powerComponents {
     private  String powerUnit;
     private  String inverter;
     private  String components;
-
+    private  String componentsLocation;
     private  String errorType;
+
+    private  String status;
 }

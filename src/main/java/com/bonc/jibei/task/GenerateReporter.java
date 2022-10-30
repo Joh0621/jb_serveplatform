@@ -24,11 +24,12 @@ public class GenerateReporter {
     private ReportMngService reportMngService;
 
     //1分钟执行一次
-    //@Scheduled(cron = "0 0/1 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     //每天0点执行一次
     @Scheduled(cron = "0 0 0 * * ?")
-    public void createReport() throws IOException {
+    public Object createReport() throws IOException {
         //先取场站模板
+        int result = 0;
         List<ReportModelInter> stationModellist = reportModelInterMapper.selectReportModel(DateUtil.lastQrtYear(), DateUtil.lastQrt());
         //场站模板接口，生成报告
         if (stationModellist != null && stationModellist.size() > 0) {
@@ -37,9 +38,15 @@ public class GenerateReporter {
                     continue;
                 }
                 //obj.setId(0);
-                int r = reportMngService.insertReport(obj);
+                try {
+                    result = reportMngService.insertReport(obj);
+                }finally {
+
+                }
+
+
             }
         }
-
+            return result;
     }
 }

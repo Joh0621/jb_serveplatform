@@ -66,7 +66,7 @@ public interface DeviceMapper extends  RootMapper<Code>{
    int  delModelDevice( String deviceType,String modelCode,String deviceCompany);
 
 
-   Code selModelCode(String codeId,String codeDetail,String dataSources);
+   Code selModelCode(Integer codeId,String codeDetail,Integer dataSources);
 
 
   List<StationBasecInfo>  stationList();

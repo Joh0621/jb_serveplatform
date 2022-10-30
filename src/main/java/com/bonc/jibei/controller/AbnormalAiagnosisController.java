@@ -7,11 +7,18 @@ import com.bonc.jibei.vo.RadiationDoseDistributedVo;
 import com.bonc.jibei.vo.UseOfHoursVo;
 import com.bonc.jibei.vo.powerComponentsVo;
 import com.bonc.jibei.vo.powerInverterStatusVo;
+import io.swagger.annotations.ApiOperation;
+import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -168,8 +175,8 @@ public class AbnormalAiagnosisController {
 
     /**
      * 逆变器健康预警监测
-     * @param yearMonth
-     * @param stationId
+     * @param inverter
+     * @param warningTime
      * @return
      */
     @RequestMapping("powerInverterWarningDetail")
@@ -271,6 +278,18 @@ public class AbnormalAiagnosisController {
 
 
     /**
+     * 组串故障详情
+     * @param yearMonth
+     * @param stationId
+     * @return
+     */
+    @RequestMapping("powerComponentsStringDetail")
+    @ResponseBody
+    public Result powerComponentsStringDetail(String yearMonth,String id) {
+        return Result.ok(abnormalAiagnosisMapper.powerComponentsStringDetail(yearMonth,id));
+    }
+
+    /**
      * 组件故障类型分布
      * @param yearMonth
      * @param stationId
@@ -332,7 +351,7 @@ public class AbnormalAiagnosisController {
             Integer xMax=0;
             Integer yMax=0;
             for ( powerComponents value : entry.getValue()) {
-                String[] split = value.getComponents().split("-");
+                String[] split = value.getComponentsLocation().split("-");
                 xMax=Integer.valueOf( split[0])>xMax?Integer.valueOf( split[0]):xMax;
                 yMax=Integer.valueOf( split[1])>yMax?Integer.valueOf( split[1]):yMax;
             }
@@ -341,6 +360,98 @@ public class AbnormalAiagnosisController {
             mapRe.put(entry.getKey(),powerComponentsStringRe);
         }
         return Result.ok(mapRe);
+    }
+
+    /**
+     * 组件故障详情
+     * @param yearMonth
+     * @param id
+     * @return
+     */
+    @RequestMapping("powerComponentsDetail")
+    @ResponseBody
+    public Result powerComponentsDetail(String yearMonth,String id) {
+        return Result.ok(abnormalAiagnosisMapper.powerComponentsDetail(yearMonth, id));
+    }
+
+
+
+    /**
+     * 发电效能RP分析
+     * @param stationId
+     * @param
+     * @return
+     */
+    @RequestMapping("powerComponentsPr")
+    @ResponseBody
+    public Result powerComponentsPr(String stationId ) {
+        List<UseOfHoursVo> useOfHoursVos = abnormalAiagnosisMapper.powerComponentsPr( stationId);
+        ArrayList<Object> xList = new ArrayList<>();
+        for (UseOfHoursVo vo: useOfHoursVos){
+            Map<String, Object> map = new HashMap<>();
+            map.put("yData",vo.getYData());
+            map.put("xData",vo.getXData());
+            xList.add(map);
+        }
+        return Result.ok(xList);
+    }
+
+    /**
+     * 损失电量分析
+     * @param stationId
+     * @param
+     * @return
+     */
+    @RequestMapping("lostPowerAnalyze")
+    @ResponseBody
+    public Result lostPowerAnalyze(String stationId ) {
+        List<UseOfHoursVo> useOfHoursVos = abnormalAiagnosisMapper.lostPowerAnalyze( stationId);
+        ArrayList<Object> xList = new ArrayList<>();
+        for (UseOfHoursVo vo: useOfHoursVos){
+            Map<String, Object> map = new HashMap<>();
+            map.put("yData",vo.getYData());
+            map.put("yData1",vo.getYData1());
+            map.put("xData",vo.getXData());
+            xList.add(map);
+        }
+        return Result.ok(xList);
+    }
+
+    /**
+     * 清洗经济性计算
+     * @param stationId
+     * @param
+     * @return
+     */
+    @RequestMapping("cleaningEconomicCalculation")
+    @ResponseBody
+    public Result cleaningEconomicCalculation(String stationId ,Double price) {
+        String s = abnormalAiagnosisMapper.cleaningEconomicCalculation(stationId);
+       if (price!=null&&s!=null){
+           return Result.ok(price*Double.valueOf(s));
+       }else {
+           return Result.ok();
+       }
+
+    }
+
+    @SneakyThrows
+    @ApiOperation(value = "返回图片流")
+    @RequestMapping(value = "/baseinfo")
+    public void infoHe(HttpServletResponse response) {
+        File file = new File("/Users/wangtao/Downloads/IMG_3958.PNG");
+        FileInputStream fis;
+        fis = new FileInputStream(file);
+        long size = file.length();
+        byte[] temp = new byte[(int) size];
+        fis.read(temp, 0, (int) size);
+        fis.close();
+        byte[] data = temp;
+        response.setContentType("image/png");
+        OutputStream out = response.getOutputStream();
+        out.write(data);
+        out.flush();
+        out.close();
     }
 
 }

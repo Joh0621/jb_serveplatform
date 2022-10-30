@@ -4,7 +4,6 @@
     <!-- 取与报告配置 关联的 场站 新增报告管理-->
     <select id="selectReportModel" resultType="com.bonc.jibei.vo.ReportModelInter">
        SELECT
-
         station.station_id AS stationId,
         station.station_type AS stationType,
         cfg.report_name as reportName,
@@ -30,6 +29,7 @@
         SELECT
         mng.id,
         mng.report_year as reportYear,
+        mng.report_url as  reportUrl,
         mng.report_quarter as reportQuarter,
         mng.station_id AS stationId,
         mng.station_type AS stationType,

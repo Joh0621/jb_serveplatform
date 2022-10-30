@@ -29,4 +29,9 @@ public class Station {
 
     @ApiModelProperty("是否显示1=显示")
     private Integer isShow;
+
+    //经度
+    private  String lit;
+    //纬度
+    private  String lat;
 }

@@ -57,6 +57,22 @@ public interface AbnormalAiagnosisMapper {
                                                               @Param("stationId") String stationId
 
   );
+
+  List<UseOfHoursVo> lostPowerAnalyze(
+                                               @Param("stationId") String stationId
+
+  );
+
+ String cleaningEconomicCalculation(
+          @Param("stationId") String stationId
+
+  );
+
+  List<UseOfHoursVo> powerComponentsPr(
+                                                              @Param("stationId") String stationId
+
+  );
+
   List<powerComponentsString> powerComponentsStringList(@Param("yearMonth") String yearMonth,
                                                               @Param("stationId") String stationId
 
@@ -66,9 +82,15 @@ public interface AbnormalAiagnosisMapper {
                                                         @Param("stationId") String stationId
 
   );
+  powerComponentsString powerComponentsStringDetail(@Param("yearMonth") String yearMonth,
+                                        @Param("id") String id);
 
   List<powerComponents> powerComponentsLocation(@Param("yearMonth") String yearMonth,
                                                             @Param("stationId") String stationId
+
+  );
+powerComponents powerComponentsDetail(@Param("yearMonth") String yearMonth,
+                                                @Param("id") String id
 
   );
 

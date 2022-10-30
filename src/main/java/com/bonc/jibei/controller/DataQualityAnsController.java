@@ -111,6 +111,13 @@ public class DataQualityAnsController {
     @ResponseBody
     public Result selStation(String type,String aname) {
         List<Station> result=   dataQualityErrorMapper.selStation(type,aname);
+        for (Station rs:result
+        ) {
+            if (rs.getLit()!=null){
+               rs.setLat(rs.getLit().substring(13).split(",")[1].substring(11).replace("}",""));
+                rs.setLit(rs.getLit().substring(13).split(",")[0]);
+            }
+        }
         return  Result.ok(result);
     }
 
