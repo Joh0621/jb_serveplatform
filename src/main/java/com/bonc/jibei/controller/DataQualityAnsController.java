@@ -28,8 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RequestMapping("DataQualityAns")
@@ -51,6 +54,51 @@ public class DataQualityAnsController {
         PassRateStatistics result = dataQualityErrorService.passRateStatistics( startTime, endTime, type,stationId);
         return Result.ok(result);
     }
+
+    /**
+     * @catalog  排名后十场站
+     * @type 1:风电 2：光伏
+     * */
+    @GetMapping("passRateDown10")
+//    @ResponseBody
+    public Result passRateDown10(String startTime, String endTime, String type) {
+        List<Station> result = dataQualityErrorMapper.passRateDown10(startTime, endTime, type);
+        return Result.ok(result);
+    }
+    /**
+     * @catalog  接入场站状态
+     * @type 1:风电 2：光伏
+     * */
+    @GetMapping("selStationStatus")
+//    @ResponseBody
+    public Result selStationStatus(String startTime, String endTime, String type) {
+        List<Station> result = dataQualityErrorMapper.selStationStatus(startTime, endTime, type);
+        return Result.ok(result);
+    }
+    /**
+     * @catalog  接入场站数
+     * @type 1:风电 2：光伏
+     * */
+    @GetMapping("selStationCnt")
+    @ResponseBody
+    public Result selStationCnt(String startTime, String endTime, String type) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> map = dataQualityErrorMapper.selStationCnt(startTime, endTime, type);
+        //key list 为xData
+        List<String> xList = map.keySet().stream()
+                .collect(Collectors.toList());
+
+        List<Object> yList = map.values().stream()
+                .collect(Collectors.toList());
+        long sum1 = map.values().stream().collect(Collectors.summarizingInt(x -> Integer.parseInt(x.toString()))).getSum();
+
+        resultMap.put("count",sum1);
+        resultMap.put("xData",xList);
+        resultMap.put("yData",yList);
+
+        return Result.ok(resultMap);
+    }
+
 
     /**
      * 数据质量合格率趋势/场站数据质量合格率

@@ -10,5 +10,8 @@ public class powerComponentsVo {
     private  String inverter;
     private  Integer componentsErrotCnt;
     private  Double componentsErrotRate;
+
+    private  Integer componentsStringErrotCnt;
+    private  Double componentsStringErrotRate;
     private  String errorType;
 }

@@ -10,7 +10,7 @@ import com.bonc.jibei.api.ResultCode;
 import com.bonc.jibei.entity.*;
 import com.bonc.jibei.mapper.DeviceTypeMapper;
 import com.bonc.jibei.mapper.TreeMapper;
-import com.bonc.jibei.util.TemplateExcelUtils;
+//import com.bonc.jibei.util.TemplateExcelUtils;
 import com.bonc.jibei.vo.*;
 import com.bonc.jibei.mapper.DeviceMapper;
 import io.swagger.annotations.Api;
@@ -893,85 +893,85 @@ public class DeviceController {
     }
 
 
-    @GetMapping("download")
-    public void download(HttpServletResponse response) throws IOException {
-        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        String fileName = URLEncoder.encode("测试", "UTF-8").replaceAll("\\+", "%20");
-        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
-
-        EasyExcel.write(response.getOutputStream(), DownloadData.class).sheet("模板").doWrite(data());
-    }
+//    @GetMapping("download")
+//    public void download(HttpServletResponse response) throws IOException {
+//        // 这里注意 有同学反应使用swagger 会导致各种问题，请直接用浏览器或者用postman
+//        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//        response.setCharacterEncoding("utf-8");
+//        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+//        String fileName = URLEncoder.encode("测试", "UTF-8").replaceAll("\\+", "%20");
+//        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+//
+//        EasyExcel.write(response.getOutputStream(), DownloadData.class).sheet("模板").doWrite(data());
+//    }
     /**
      *
      */
-    @GetMapping("outErrorDistributed11")
-    @ApiOperation(value = "daochu")
-    @ResponseBody
-    public void outErrorDistributed11(HttpServletResponse response) throws Exception {
-        DeviceModelVo deviceModelVo = new DeviceModelVo();
-        deviceModelVo.setDeviceCompany("8866");
-        deviceModelVo.setDeviceType("风电机组");
-        deviceModelVo.setModelCode("8864");
-        List<DeviceModelVo> deviceInfo = deviceMapper.getDeviceInfo(deviceModelVo);
-        //返回结果根据Category分类
-        Map<String, List<DeviceModelVo>> map = deviceInfo.stream().collect(
-                Collectors.groupingBy(
-                        model -> model.getCategoryName()
-                ));
-        List<DeviceModelVo> result = new ArrayList<>();
-        // 预设Excel表格
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        // 设置sheet名
-        HSSFSheet sheet = workbook.createSheet("1");
-        HSSFRow qualityRow1 = sheet.createRow(0);
-        Cell cell = qualityRow1.createCell(0);
-        HSSFCellStyle styleHeaderCell = workbook.createCellStyle();
-        styleHeaderCell.setAlignment(HorizontalAlignment.CENTER);
-        int i = 0;
-        for(String key : map.keySet()){
-            qualityRow1.createCell(i).setCellValue(    key);
-            i++;
-            result = map.get(key);
-//            for (int j = 0; i < map.get(key).size(); j++) {
+//    @GetMapping("outErrorDistributed11")
+//    @ApiOperation(value = "daochu")
+//    @ResponseBody
+//    public void outErrorDistributed11(HttpServletResponse response) throws Exception {
+//        DeviceModelVo deviceModelVo = new DeviceModelVo();
+//        deviceModelVo.setDeviceCompany("8866");
+//        deviceModelVo.setDeviceType("风电机组");
+//        deviceModelVo.setModelCode("8864");
+//        List<DeviceModelVo> deviceInfo = deviceMapper.getDeviceInfo(deviceModelVo);
+//        //返回结果根据Category分类
+//        Map<String, List<DeviceModelVo>> map = deviceInfo.stream().collect(
+//                Collectors.groupingBy(
+//                        model -> model.getCategoryName()
+//                ));
+//        List<DeviceModelVo> result = new ArrayList<>();
+//        // 预设Excel表格
+//        HSSFWorkbook workbook = new HSSFWorkbook();
+//        // 设置sheet名
+//        HSSFSheet sheet = workbook.createSheet("1");
+//        HSSFRow qualityRow1 = sheet.createRow(0);
+//        Cell cell = qualityRow1.createCell(0);
+//        HSSFCellStyle styleHeaderCell = workbook.createCellStyle();
+//        styleHeaderCell.setAlignment(HorizontalAlignment.CENTER);
+//        int i = 0;
+//        for(String key : map.keySet()){
+//            qualityRow1.createCell(i).setCellValue(    key);
+//            i++;
+//            result = map.get(key);
+////            for (int j = 0; i < map.get(key).size(); j++) {
+////
+////            }
+//        }
+////        qualityRow1.createCell(0).setCellValue("缺数");
+////        qualityRow1.createCell(1).setCellValue("死数");
+////        qualityRow1.createCell(2).setCellValue("错数");
 //
-//            }
-        }
-//        qualityRow1.createCell(0).setCellValue("缺数");
-//        qualityRow1.createCell(1).setCellValue("死数");
-//        qualityRow1.createCell(2).setCellValue("错数");
-
-
-        String fileName = URLEncoder.encode("123.xls", "UTF-8");
-
-        String fileName="报表";
-        response.setContentType("application/vnd.ms-excel");
-        response.setCharacterEncoding("utf-8");
-        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
-        fileName = URLEncoder.encode(fileName, "UTF-8");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
-        ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
-
-        List<Student> studentList=new ArrayList<Student>();
-        Student student=new Student("1","张三","2000-01-01");
-        studentList.add(student);
-        //这里 需要指定写用哪个class去写
-        WriteSheet writeSheet = EasyExcel.writerSheet(0, "学生信息1").head(Student.class).build();
-        excelWriter.write(studentList, writeSheet);
-        writeSheet = EasyExcel.writerSheet(1, "学生信息2").head(Student.class).build();
-        excelWriter.write(studentList, writeSheet);
-        //千万别忘记finish 会帮忙关闭流
-        excelWriter.finish();
-
-
-//        response.setContentType("application/octet-stream");
+//
+//        String fileName = URLEncoder.encode("123.xls", "UTF-8");
+//
+//        String fileName="报表";
+//        response.setContentType("application/vnd.ms-excel");
 //        response.setCharacterEncoding("utf-8");
-//        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
-//        response.flushBuffer();
-//        workbook.write(response.getOutputStream());
-    }
+//        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+//        fileName = URLEncoder.encode(fileName, "UTF-8");
+//        response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+//        ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
+//
+//        List<Student> studentList=new ArrayList<Student>();
+//        Student student=new Student("1","张三","2000-01-01");
+//        studentList.add(student);
+//        //这里 需要指定写用哪个class去写
+//        WriteSheet writeSheet = EasyExcel.writerSheet(0, "学生信息1").head(Student.class).build();
+//        excelWriter.write(studentList, writeSheet);
+//        writeSheet = EasyExcel.writerSheet(1, "学生信息2").head(Student.class).build();
+//        excelWriter.write(studentList, writeSheet);
+//        //千万别忘记finish 会帮忙关闭流
+//        excelWriter.finish();
+//
+//
+////        response.setContentType("application/octet-stream");
+////        response.setCharacterEncoding("utf-8");
+////        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+////        response.flushBuffer();
+////        workbook.write(response.getOutputStream());
+//    }
 
 //    @ApiOperation(value = "场站基本信息台账_导出数据")
 //    @PostMapping("stationInfo/output")

@@ -95,28 +95,28 @@
                                  SELECT Round( AVG(fault_total),2) xdata,station_id  FROM jb_fault_info_type
                                  WHERE 1=1
                                  <if test="startTime != null ">
-                                     and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                                     and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
                                  </if>
                                  <if test="endTime != null ">
-                                     and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                                     and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
                                  </if>
                              </when>
                              <when test = "type=='5'.toString()">
                                  SELECT Round( AVG(fault_total),2) xdata ,station_id FROM jb_fault_info_type WHERE type=1
                                  <if test="startTime != null ">
-                                     and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                                     and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
                                  </if>
                                  <if test="endTime != null ">
-                                     and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                                     and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
                                  </if>
                              </when>
                              <when test = "type=='6'.toString()">
                                  SELECT Round( AVG(fault_total),2) xdata ,station_id FROM jb_fault_info_type WHERE type=2
                                  <if test="startTime != null ">
-                                     and    DATE_FORMAT( year_month, "%Y-%m" ) &gt;= #{startTime}
+                                     and    DATE_FORMAT( data_time, "%Y-%m" ) &gt;= #{startTime}
                                  </if>
                                  <if test="endTime != null ">
-                                     and  DATE_FORMAT( year_month, "%Y-%m" )  &lt;= #{endTime}
+                                     and  DATE_FORMAT( data_time, "%Y-%m" )  &lt;= #{endTime}
                                  </if>
                              </when>
                          </choose>
@@ -219,12 +219,12 @@
         and   dd.station_id=1430
     </select>
     <select id="powerGenerationOverview" resultType="com.bonc.jibei.vo.UseOfHoursVo">
-        ( SELECT "type_1" xData, Round( sum( utilize_hour ), 2 ) yData FROM jb_power_generation_efficiency ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
-        ( SELECT "type_2" xData, Round( sum( pr_value ), 2 ) yData FROM jb_power_generation_efficiency ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
-        ( SELECT "type_3" xData, Round( sum( power_prediction_rate ), 2 ) yData FROM jb_power_prediction ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
-        ( SELECT "type_4" xData, Round( sum( fault_cnt ), 2 ) yData FROM jb_status_info ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
-        ( SELECT "type_5" xData, Round( sum( fault_time ), 2 ) yData FROM jb_status_info ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
-        ( SELECT "type_6" xData, Round( sum( mrtbf ), 2 ) yData FROM jb_status_info ht WHERE 1 = 1 AND ht.station_id = 1430 )
+        ( SELECT "发电小时数" xData, Round( sum( utilize_hour ), 2 ) yData FROM jb_power_generation_efficiency ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
+        ( SELECT "发电能效PR" xData, Round( sum( pr_value ), 2 ) yData FROM jb_power_generation_efficiency ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
+        ( SELECT "功率预测准确率" xData, Round( sum( power_prediction_rate ), 2 ) yData FROM jb_power_prediction ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
+        ( SELECT "故障检修次数" xData, Round( sum( fault_cnt ), 2 ) yData FROM jb_status_info ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
+        ( SELECT "故障检修时间" xData, Round( sum( fault_time ), 2 ) yData FROM jb_status_info ht WHERE 1 = 1 AND ht.station_id = 1430 ) UNION ALL
+        ( SELECT "MTBF" xData, Round( sum( mrtbf ), 2 ) yData FROM jb_status_info ht WHERE 1 = 1 AND ht.station_id = 1430 )
     </select>
 
     <select id="seluesOfHoursTrendDq" resultType="com.bonc.jibei.vo.UseOfHoursVo">

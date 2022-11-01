@@ -47,7 +47,7 @@
     </select>
     
     <select id="powerInverterErrorPosition"   resultType="com.bonc.jibei.entity.powerInverter">
-        select  * from powerinverterError
+        select  * from jb_power_inverter_data
     </select>
 
 
@@ -77,11 +77,12 @@
 
 
     <select id="powerInverterWarning"  resultType="com.bonc.jibei.entity.powerInverterWarning">
-        SELECT inverter,warning_time,warning_type,warning_desc FROM jb_power_inverter_warning GROUP BY inverter,warning_time,warning_type,warning_desc
+        SELECT inverter,warning_time,warning_type,warning_desc FROM jb_power_inverter_warning
             WHERE 1=1
         <if test="stationId != null and '' != stationId">
-            station_id=#{stationId}
+           and station_id=#{stationId}
         </if>
+        GROUP BY inverter,warning_time,warning_type,warning_desc
     </select>
 
     <select id="powerInverterWarningDetail"  resultType="com.bonc.jibei.entity.powerInverterWarning">
@@ -188,8 +189,8 @@
 
     <select id="powerComponentsErrorDistributed"  resultType="com.bonc.jibei.vo.UseOfHoursVo">
         select
-            ROUND(count(error_type) /(SELECT COUNT(error_type) from jb_power_components)*100,2) error_type,
-            error_type
+            ROUND(count(error_type) /(SELECT COUNT(error_type) from jb_power_components)*100,2) yData,
+            error_type xData
         from jb_power_components GROUP BY  error_type
     </select>
 
@@ -197,7 +198,9 @@
     select
     count(error_type)  errorCnt,
     error_type,
-    count(DISTINCT(components)) components
+    count(DISTINCT(components)) components,
+    0 as componentsStringErrotCnt,
+    0 as componentsStringErrotRate
     from jb_power_components GROUP BY  error_type
     </select>
 

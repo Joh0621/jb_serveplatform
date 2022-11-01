@@ -145,6 +145,55 @@
         </if>
         GROUP BY cc.type_id
     </select>
+
+    <select id="passRateDown10" resultType="com.bonc.jibei.entity.Station">
+        SELECT
+            ROUND( SUM( qualified_num )/ SUM( total_num )* 100, 2 ) AS qualifiedRate,
+            jb.station_id ,
+            cc.station_name
+        FROM
+            jb_qualified jb
+                LEFT JOIN cloudiip_access_equipment.v_stations_codes cc on cc.station_id=jb.station_id
+        where 1=1
+          and jb.station_id !=''
+        <if test="startTime != null  and startTime != ''">
+            and   jb.date_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null  and endTime != ''">
+            and   jb.date_time &lt;= #{endTime}
+        </if>
+        <if test="type != null  and type != ''">
+            and   cc.type_id=#{type}
+        </if>
+        GROUP BY jb.station_id
+        ORDER BY qualifiedRate
+            LIMIT 10
+    </select>
+
+    <select id="selStationStatus" resultType="com.bonc.jibei.entity.Station">
+        SELECT station_id,station_name
+        from
+            cloudiip_access_equipment.v_stations_codes
+        where 1=1
+        <choose>
+        <when test = "type=='1'.toString()">
+          and  ISNULL(hlpt_calcu)
+         and   ISNULL(hlpt_newengergycloud)
+        </when>
+        <when test = "type=='2'.toString()">
+            and  ISNULL(danji_code)
+        </when>
+            <when test = "type=='3'.toString()">
+                and  ISNULL(device_num)
+         </when>
+            <when test = "type=='4'.toString()">
+                and  ISNULL(glyc_code)
+            </when>
+
+        </choose>
+
+    </select>
+
     <select id="passRateStatisticsSortJb" resultType="String">
         SELECT dd.sort_jb
         FROM
@@ -406,7 +455,12 @@
     </select>
 
     <select id="selStation" resultType="com.bonc.jibei.entity.Station">
-        SELECT station_id,station_name,danji_code as station_code ,station_coordinate as lit from
+        SELECT station_id,station_name,danji_code as station_code ,station_coordinate as lit ,
+        IF(ISNULL(device_num)=1&amp;&amp;
+        ISNULL(hlpt_calcu)=1&amp;&amp;
+        ISNULL(hlpt_newengergycloud)=1&amp;&amp;
+        ISNULL(danji_code)=1 &amp;&amp;ISNULL(glyc_code)=1,0,1) as status
+        from
         cloudiip_access_equipment.v_stations_codes
         where  1=1
         <if test="type != null  and type != ''">
@@ -416,6 +470,25 @@
             and   aname=#{aname}
         </if>
     </select>
+
+
+
+    <select id="selStationCnt" resultType="Map">
+    SELECT SUM(aa.sssj) sssj,
+    SUM(aa.hlpt) hlpt,
+    SUM(aa.djxc) djxc,
+    SUM(aa.glyc) glyc
+    from
+    (
+    SELECT station_id,station_name,
+    IF(ISNULL(device_num)=1,0,1) sssj,
+    IF(ISNULL(hlpt_calcu)=1&amp;&amp;ISNULL(hlpt_newengergycloud)=1,0,1) hlpt,
+    IF(ISNULL(danji_code)=1,0,1) djxc,
+    IF(ISNULL(glyc_code)=1,0,1) glyc from
+    cloudiip_access_equipment.v_stations_codes
+    ) aa
+    </select>
+
 
     <select id="selDevice" resultType="String" >
         SELECT device_id from jb_data_quality_error  err

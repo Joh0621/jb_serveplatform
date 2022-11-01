@@ -199,9 +199,9 @@ public class AbnormalAiagnosisController {
         Map<String, Object> map = new HashMap<>();
         for (powerComponentsString vo: powerComponentsStrings){
             if ("0".equals(vo.getStatus())) {
-                map.put("异常", vo.getComponentsString());
+                map.put("error", vo.getComponentsString());
             } else {
-                map.put("正常", vo.getComponentsString());
+                map.put("normal", vo.getComponentsString());
             }
 
 
@@ -219,14 +219,17 @@ public class AbnormalAiagnosisController {
     @ResponseBody
     public Result powerComponentsStringTop5(String yearMonth,String stationId) {
         List<UseOfHoursVo> useOfHoursVos = abnormalAiagnosisMapper.powerComponentsStringTop5(yearMonth, stationId);
+
+        Map<String, Object> map = new HashMap<>();
         ArrayList<Object> xList = new ArrayList<>();
+        ArrayList<Object> yList = new ArrayList<>();
         for (UseOfHoursVo vo: useOfHoursVos){
-            Map<String, Object> map = new HashMap<>();
-            map.put("yData",vo.getYData());
-            map.put("xData",vo.getXData());
-            xList.add(map);
+            xList.add(vo.getXData());
+            yList.add(vo.getYData());
         }
-        return Result.ok(xList);
+        map.put("xData",xList);
+        map.put("yData",yList);
+        return Result.ok(map);
     }
 
     /**
@@ -321,9 +324,9 @@ public class AbnormalAiagnosisController {
     public Result powerComponentsErrorList(String yearMonth,String stationId) {
         List<powerComponentsVo> useOfHoursVos = abnormalAiagnosisMapper.powerComponentsErrorList(yearMonth, stationId);
         ArrayList<Object> xList = new ArrayList<>();
-        double sum = useOfHoursVos.stream().mapToDouble(powerComponentsVo::getComponentsErrotCnt).sum();
+        double sum = useOfHoursVos.stream().mapToDouble(powerComponentsVo::getErrorCnt).sum();
         for (powerComponentsVo vo: useOfHoursVos){
-           vo.setComponentsErrotRate(vo.getComponentsErrotCnt()/sum);
+           vo.setComponentsErrotRate(vo.getErrorCnt()/sum);
         }
         return Result.ok(useOfHoursVos);
     }
@@ -437,7 +440,7 @@ public class AbnormalAiagnosisController {
 
     @SneakyThrows
     @ApiOperation(value = "返回图片流")
-    @RequestMapping(value = "/baseinfo")
+    @RequestMapping(value = "/getPic")
     public void infoHe(HttpServletResponse response) {
         File file = new File("/Users/wangtao/Downloads/IMG_3958.PNG");
         FileInputStream fis;

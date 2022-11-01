@@ -1,6 +1,7 @@
 package com.bonc.jibei.controller;
 
 
+import com.alibaba.excel.util.StringUtils;
 import com.alibaba.fastjson2.JSON;
 import com.bonc.jibei.api.Result;
 import com.bonc.jibei.mapper.PerformanceAnalysisMapper;
@@ -201,6 +202,9 @@ public class PerformanceAnalysisController {
             table="jb_status_info";
             param="mrtbf";
             time="yearmonth";
+        }
+        if (StringUtils.isBlank(table)||StringUtils.isBlank(param)){
+            return Result.error(400,"参数检验失败");
         }
         List<UseOfHoursVo> useOfHoursVos = performanceAnalysisMapper.uesOfHoursTrendCz(startTime,endTime,stationId,table,param,time);
 

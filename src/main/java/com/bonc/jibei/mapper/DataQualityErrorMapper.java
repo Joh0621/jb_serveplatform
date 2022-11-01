@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @description data_quality_error
@@ -122,4 +123,20 @@ public interface DataQualityErrorMapper {
 
     DataQualityError  errorDataStatisticsTablieName (@Param("id") String id);
 
+
+    List<Station> passRateDown10(@Param("startTime") String startTime,
+                                 @Param("endTime") String endTime,
+                                 @Param("type") String type
+                                 );
+
+    List<Station> selStationStatus(@Param("startTime") String startTime,
+                                 @Param("endTime") String endTime,
+                                 @Param("type") String type
+    );
+
+
+Map<String ,Object> selStationCnt(@Param("startTime") String startTime,
+                     @Param("endTime") String endTime,
+                     @Param("type") String type
+    );
 }
