@@ -28,6 +28,16 @@ public class PassRateStatistics {
      * 光伏合格率
      */
     private Double pVQualifiedRate;
+
+    /**
+     * 风电合格数
+     */
+    private Double windQualifiedNum;
+
+    /**
+     * 光伏合格数
+     */
+    private Double pVQualifiedNum;
     /**
      * 光伏/光电类型
      */

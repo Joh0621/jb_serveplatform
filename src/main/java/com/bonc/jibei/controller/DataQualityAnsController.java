@@ -49,7 +49,7 @@ public class DataQualityAnsController {
      * @type 1:风电 2：光伏
      * */
     @GetMapping("passRateStatistics")
-//    @ResponseBody
+    @ResponseBody
     public Result passRateStatistics(String startTime, String endTime, String type,String stationId) {
         PassRateStatistics result = dataQualityErrorService.passRateStatistics( startTime, endTime, type,stationId);
         return Result.ok(result);
@@ -60,7 +60,7 @@ public class DataQualityAnsController {
      * @type 1:风电 2：光伏
      * */
     @GetMapping("passRateDown10")
-//    @ResponseBody
+    @ResponseBody
     public Result passRateDown10(String startTime, String endTime, String type) {
         List<Station> result = dataQualityErrorMapper.passRateDown10(startTime, endTime, type);
         return Result.ok(result);
@@ -70,7 +70,7 @@ public class DataQualityAnsController {
      * @type 1:风电 2：光伏
      * */
     @GetMapping("selStationStatus")
-//    @ResponseBody
+    @ResponseBody
     public Result selStationStatus(String startTime, String endTime, String type) {
         List<Station> result = dataQualityErrorMapper.selStationStatus(startTime, endTime, type);
         return Result.ok(result);

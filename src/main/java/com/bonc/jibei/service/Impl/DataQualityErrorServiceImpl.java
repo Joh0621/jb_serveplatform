@@ -84,30 +84,34 @@ public class DataQualityErrorServiceImpl implements DataQualityErrorService {
         PassRateStatistics PassRateStatistics = new PassRateStatistics();
         Double total = 0.00;
         Double QualifiedNum = 0.00;
-        DecimalFormat df = new DecimalFormat("#0.00");
-        df.setRoundingMode(RoundingMode.HALF_UP);
+//        DecimalFormat df = new DecimalFormat("#0.00");
+//        df.setRoundingMode(RoundingMode.HALF_UP);
         for (PassRateStatistics ps:passRateStatisticsList){
             //传入参数为全部时
             if (type==null||"".equals(type)||type.equals(0)){
                 total+=ps.getTotalNum();
                 QualifiedNum+=ps.getQualifiedNum();
-                PassRateStatistics.setTotalNum(total);
-                PassRateStatistics.setQualifiedNum(Double.valueOf(df.format(QualifiedNum)));
+//                PassRateStatistics.setTotalNum(total);
+//                PassRateStatistics.setQualifiedNum(Double.valueOf(df.format(QualifiedNum)));
                 //总合格率
                 PassRateStatistics.setQualifiedRate( Double.valueOf( NumberUtil.round((Double.valueOf(QualifiedNum)/total*100), 2).toString()));
                 if (ps.getTypeId()!=null&&!"".equals(ps.getTypeId())){
                     if (ps.getTypeId().equals(1)){
+                        PassRateStatistics.setWindQualifiedNum(ps.getQualifiedNum());
                         PassRateStatistics.setWindQualifiedRate(ps.getQualifiedRate());
                     }else if (ps.getTypeId().equals(2)){
+                        PassRateStatistics.setPVQualifiedNum(ps.getQualifiedNum());
                         PassRateStatistics.setPVQualifiedRate(ps.getQualifiedRate());
                     }
                 }
             }else {
                 BeanUtil.copyProperties(ps,PassRateStatistics);
                 if (ps.getTypeId().equals(1)){
+                    PassRateStatistics.setWindQualifiedNum(ps.getQualifiedNum());
                     PassRateStatistics.setWindQualifiedRate(ps.getQualifiedRate());
                 }else if (ps.getTypeId().equals(2)){
                     PassRateStatistics.setPVQualifiedRate(ps.getQualifiedRate());
+                    PassRateStatistics.setPVQualifiedNum(ps.getQualifiedNum());
                 }
 
             }
